@@ -28,8 +28,8 @@ export default function Sidebar({
       }`}
     >
       <div className="flex flex-col gap-5">
-        {/* Brand Header with Collapse Toggle */}
-        <div className="px-2 pt-1 flex items-center justify-between">
+        {/* Brand Header */}
+        <div className="px-2 pt-1 flex items-center">
           <div className="flex items-center gap-3">
             <div className="w-2.5 h-2.5 rounded-full bg-gold-burnished shadow-[0_0_8px_rgba(184,134,11,0.6)] shrink-0"></div>
             <div className="flex flex-col">
@@ -41,16 +41,6 @@ export default function Sidebar({
               </span>
             </div>
           </div>
-
-          {/* Hide Sidebar button inside sidebar */}
-          <button
-            type="button"
-            onClick={onToggleSidebar}
-            className="p-1 rounded-lg text-warm-charcoal hover:text-sepia-ink hover:bg-parchment-card transition-colors shrink-0 ml-1"
-            title="Ocultar barra lateral"
-          >
-            <span className="material-symbols-outlined text-xl">menu_open</span>
-          </button>
         </div>
 
         {/* Navigation Links */}
