@@ -28,6 +28,14 @@ export default function CatalogoView({
     'Historia & Biografías',
   ];
 
+  const physicalBooksCount = (books || []).filter(
+    (b) => b.format === 'physical' || b.format === 'both' || b.format === 'Físico' || b.format === 'Ambos' || !b.format
+  ).length;
+
+  const digitalBooksCount = (books || []).filter(
+    (b) => b.has_digital || b.format === 'digital' || b.format === 'both' || b.format === 'Digital' || b.format === 'Ambos' || Boolean(b.digital_url)
+  ).length;
+
   useEffect(() => {
     if (books && books.length > 0 && !selectedBook) {
       setSelectedBook(books[0]);
@@ -259,7 +267,9 @@ export default function CatalogoView({
               <span className="material-symbols-outlined text-gold-burnished text-2xl">shelves</span>
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase text-warm-charcoal font-semibold">Volúmenes Físicos</span>
-                <span className="text-sm font-bold text-sepia-heading">318 Títulos</span>
+                <span className="text-sm font-bold text-sepia-heading">
+                  {physicalBooksCount} {physicalBooksCount === 1 ? 'Título' : 'Títulos'}
+                </span>
               </div>
             </div>
 
@@ -267,7 +277,9 @@ export default function CatalogoView({
               <span className="material-symbols-outlined text-marian-blue text-2xl">cloud_done</span>
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase text-warm-charcoal font-semibold">Depósito Digital</span>
-                <span className="text-sm font-bold text-sepia-heading">164 Documentos</span>
+                <span className="text-sm font-bold text-sepia-heading">
+                  {digitalBooksCount} {digitalBooksCount === 1 ? 'Documento' : 'Documentos'}
+                </span>
               </div>
             </div>
           </div>
@@ -318,7 +330,7 @@ export default function CatalogoView({
                     : 'text-warm-charcoal hover:text-sepia-ink'
                 }`}
               >
-                Libros Físicos
+                Libros Físicos ({physicalBooksCount})
               </button>
               <button
                 type="button"
@@ -329,7 +341,7 @@ export default function CatalogoView({
                     : 'text-warm-charcoal hover:text-sepia-ink'
                 }`}
               >
-                Documentos PDF
+                Documentos PDF ({digitalBooksCount})
               </button>
             </div>
           </div>

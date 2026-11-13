@@ -120,8 +120,8 @@ export default function DashboardView({
             <p className="text-xs text-warm-charcoal mt-1 font-medium">Títulos Catalogados</p>
           </div>
           <div className="mt-4 pt-2 border-t border-marble-border/60 flex items-center justify-between text-[11px] text-warm-charcoal">
-            <span>{books.filter(b => b.format !== 'digital').length} Físicos</span>
-            <span>{books.filter(b => b.has_digital).length} Digitales PDF</span>
+            <span>{books.filter(b => b.format === 'physical' || b.format === 'both' || b.format === 'Físico' || b.format === 'Ambos' || !b.format).length} Físicos</span>
+            <span>{books.filter(b => b.has_digital || b.format === 'digital' || b.format === 'both' || b.format === 'Digital' || b.format === 'Ambos' || Boolean(b.digital_url)).length} Digitales PDF</span>
           </div>
         </div>
 
@@ -138,7 +138,7 @@ export default function DashboardView({
               </span>
             </div>
             <p className="text-3xl font-bold font-display text-sepia-heading mt-2 leading-none">
-              {stats?.total_members || 1}
+              {stats?.total_members || 0}
             </p>
             <p className="text-xs text-warm-charcoal mt-1 font-medium">Lectores Inscriptos</p>
           </div>
