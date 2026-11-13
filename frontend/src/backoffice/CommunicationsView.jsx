@@ -121,9 +121,9 @@ export default function CommunicationsView({
               Lecturas Estimadas
             </span>
             <h4 className="text-2xl font-bold font-display text-emerald-800 mt-1">
-              1,420
+              {news.length > 0 ? news.length * 25 : 0}
             </h4>
-            <span className="text-[11px] text-emerald-700 font-semibold">Comunidad del barrio</span>
+            <span className="text-[11px] text-emerald-700 font-semibold">{news.length > 0 ? 'Comunidad del barrio' : 'Sin lecturas aún'}</span>
           </div>
           <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
             <span className="material-symbols-outlined text-xl">visibility</span>
@@ -136,9 +136,9 @@ export default function CommunicationsView({
               Canales Integrados
             </span>
             <h4 className="text-2xl font-bold font-display text-marian-blue mt-1">
-              3
+              {news.length > 0 ? 1 : 0}
             </h4>
-            <span className="text-[11px] text-marian-blue font-semibold">Web · Atrio · Hoja Dominical</span>
+            <span className="text-[11px] text-marian-blue font-semibold">{news.length > 0 ? 'Portal Web Oficial' : 'Sin canales vinculados'}</span>
           </div>
           <div className="w-10 h-10 rounded-xl bg-blue-50 text-marian-blue flex items-center justify-center">
             <span className="material-symbols-outlined text-xl">share</span>
@@ -151,9 +151,9 @@ export default function CommunicationsView({
               Próximo Boletín
             </span>
             <h4 className="text-2xl font-bold font-display text-gold-burnished mt-1">
-              Domingo
+              {news.length > 0 ? 'En Edición' : 'Pendiente'}
             </h4>
-            <span className="text-[11px] text-warm-charcoal">Post-Misa de 11 hs</span>
+            <span className="text-[11px] text-warm-charcoal">{news.length > 0 ? 'Post-Misa dominical' : 'Sin fecha programada'}</span>
           </div>
           <div className="w-10 h-10 rounded-xl bg-gold-light text-gold-burnished flex items-center justify-center">
             <span className="material-symbols-outlined text-xl">event</span>

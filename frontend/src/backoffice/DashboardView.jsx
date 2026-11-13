@@ -67,7 +67,7 @@ export default function DashboardView({
               </span>
             </div>
             <p className="text-3xl font-bold font-display text-sepia-heading mt-2 leading-none">
-              {stats?.active_loans || 1}
+              {stats?.active_loans || 0}
             </p>
             <p className="text-xs text-warm-charcoal mt-1 font-medium">Libros en Préstamo</p>
           </div>
