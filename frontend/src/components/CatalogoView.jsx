@@ -554,14 +554,26 @@ export default function CatalogoView({
                     <span className="text-xs sm:text-sm text-marian-blue font-bold">
                       Edición Digital Completa (PDF)
                     </span>
-                    <button
-                      type="button"
-                      onClick={() => alert(`Descarga iniciada para: ${selectedBook.title}`)}
-                      className="px-6 py-2 rounded-lg bg-marian-blue hover:bg-blue-800 text-white text-xs font-semibold shadow-xs transition-all flex items-center gap-2"
-                    >
-                      <span className="material-symbols-outlined text-base">download</span>
-                      Descargar PDF
-                    </button>
+                    {selectedBook.digital_url ? (
+                      <a
+                        href={selectedBook.digital_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-6 py-2 rounded-lg bg-marian-blue hover:bg-blue-800 text-white text-xs font-semibold shadow-xs transition-all flex items-center gap-2"
+                      >
+                        <span className="material-symbols-outlined text-base">open_in_new</span>
+                        Abrir / Descargar PDF desde Neon
+                      </a>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => alert(`Versión digital no disponible aún para: ${selectedBook.title}`)}
+                        className="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 text-xs font-semibold shadow-xs flex items-center gap-2 cursor-not-allowed"
+                      >
+                        <span className="material-symbols-outlined text-base">picture_as_pdf</span>
+                        PDF no cargado
+                      </button>
+                    )}
                   </div>
                 )}
               </div>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { api } from '../api';
 
 export default function InventoryView({
   books = [],
@@ -13,6 +14,11 @@ export default function InventoryView({
   const [showAddModal, setShowAddModal] = useState(false);
   const [qrModalBook, setQrModalBook] = useState(null);
 
+  // File upload loading states
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [uploadError, setUploadError] = useState('');
+
   // Form state for new book
   const [formData, setFormData] = useState({
     title: '',
@@ -24,6 +30,7 @@ export default function InventoryView({
     available_copies: 2,
     format: 'Físico',
     cover_image: '',
+    digital_url: '',
     description: '',
   });
 
@@ -42,13 +49,47 @@ export default function InventoryView({
     const matchesSearch =
       b.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       b.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (b.shelf_location && b.shelf_location.toLowerCase().includes(searchTerm.toLowerCase()));
+      ((b.shelf_location || b.location) && (b.shelf_location || b.location).toLowerCase().includes(searchTerm.toLowerCase()));
     const matchesCategory = selectedCategory === 'ALL' || b.genre === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
   const handleSelectBook = (book) => {
     setSelectedBook(book);
+  };
+
+  const handleCoverUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingCover(true);
+    setUploadError('');
+    try {
+      const res = await api.uploadFile(file, 'covers');
+      setFormData((prev) => ({ ...prev, cover_image: res.url }));
+    } catch (err) {
+      setUploadError('Error al subir la imagen de portada a Neon: ' + (err.message || err));
+    } finally {
+      setUploadingCover(false);
+    }
+  };
+
+  const handlePdfUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPdf(true);
+    setUploadError('');
+    try {
+      const res = await api.uploadFile(file, 'pdfs');
+      setFormData((prev) => ({
+        ...prev,
+        digital_url: res.url,
+        format: prev.format === 'Físico' ? 'Ambos' : prev.format,
+      }));
+    } catch (err) {
+      setUploadError('Error al subir el archivo PDF a Neon: ' + (err.message || err));
+    } finally {
+      setUploadingPdf(false);
+    }
   };
 
   const handleSubmitNewBook = async (e) => {
@@ -63,6 +104,7 @@ export default function InventoryView({
     await onAddBook({
       ...formData,
       cover_image: cover,
+      cover_url: cover,
       copies: parseInt(formData.copies) || 1,
       available_copies: parseInt(formData.copies) || 1,
       year: parseInt(formData.year) || 2024,
@@ -78,6 +120,7 @@ export default function InventoryView({
       available_copies: 2,
       format: 'Físico',
       cover_image: '',
+      digital_url: '',
       description: '',
     });
   };
@@ -241,102 +284,121 @@ export default function InventoryView({
                 </tr>
               </thead>
               <tbody className="divide-y divide-marble-border text-sepia-heading">
-                {filteredBooks.map((book) => {
-                  const isSelected = activeSelected && activeSelected.id === book.id;
-                  const isAvailable = (book.available_copies || 0) > 0;
-                  return (
-                    <tr
-                      key={book.id}
-                      onClick={() => handleSelectBook(book)}
-                      className={`hover:bg-gold-light/20 transition-colors cursor-pointer group ${
-                        isSelected ? 'bg-gold-light/30' : ''
-                      }`}
-                    >
-                      <td className="py-3 px-4 align-middle">
-                        <div className="flex items-center gap-2.5">
-                          <img
-                            src={book.cover_image}
-                            alt={book.title}
-                            className="w-9 h-13 object-cover rounded shadow-xs shrink-0 border border-marble-border"
-                          />
-                          <div>
-                            <span className="inline-block px-1.5 py-0.5 rounded bg-gold-light text-gold-burnished font-mono font-bold text-[9px]">
-                              {book.shelf_location ? book.shelf_location.split('·')[0].trim() : 'CDU-800'}
-                            </span>
-                            <p className="text-[10px] text-warm-charcoal mt-0.5">{book.year || 2024}</p>
-                          </div>
-                        </div>
-                      </td>
-
-                      <td className="py-3 px-4 align-middle">
-                        <p className="font-bold text-sepia-heading group-hover:text-gold-burnished transition-colors">
-                          {book.title}
+                {filteredBooks.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="py-12 text-center text-warm-charcoal">
+                      <div className="flex flex-col items-center justify-center gap-2">
+                        <span className="material-symbols-outlined text-4xl text-gold-burnished/60">menu_book</span>
+                        <p className="font-bold text-sm text-sepia-heading">No hay libros en el inventario</p>
+                        <p className="text-xs text-warm-charcoal max-w-sm">
+                          La base de datos se encuentra limpia. Haz clic en el botón superior "+ Registrar Nuevo Título" para dar de alta el primer libro.
                         </p>
-                        <p className="text-[11px] text-warm-charcoal">{book.author}</p>
-                        <span className="inline-block mt-0.5 px-1.5 py-0.2 rounded text-[9px] bg-parchment-surface border border-marble-border text-warm-charcoal font-semibold">
-                          {book.genre}
-                        </span>
-                      </td>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredBooks.map((book) => {
+                    const isSelected = activeSelected && activeSelected.id === book.id;
+                    const available = book.available_copies !== undefined ? book.available_copies : (book.copies || 1);
+                    const total = book.total_copies || book.copies || 1;
+                    const isAvailable = available > 0;
+                    const cover = book.cover_url || book.cover_image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80';
+                    const loc = book.location || book.shelf_location || 'Estantería General';
 
-                      <td className="py-3 px-4 align-middle">
-                        <div className="flex items-center gap-1 text-sepia-heading font-semibold">
-                          <span className="material-symbols-outlined text-xs text-gold-burnished">meeting_room</span>
-                          <span>{book.shelf_location || 'Estantería 2A'}</span>
-                        </div>
-                      </td>
+                    return (
+                      <tr
+                        key={book.id}
+                        onClick={() => handleSelectBook(book)}
+                        className={`hover:bg-gold-light/20 transition-colors cursor-pointer group ${
+                          isSelected ? 'bg-gold-light/30' : ''
+                        }`}
+                      >
+                        <td className="py-3 px-4 align-middle">
+                          <div className="flex items-center gap-2.5">
+                            <img
+                              src={cover}
+                              alt={book.title}
+                              className="w-9 h-13 object-cover rounded shadow-xs shrink-0 border border-marble-border"
+                            />
+                            <div>
+                              <span className="inline-block px-1.5 py-0.5 rounded bg-gold-light text-gold-burnished font-mono font-bold text-[9px]">
+                                {loc.split('·')[0].trim()}
+                              </span>
+                              <p className="text-[10px] text-warm-charcoal mt-0.5">{book.year || 2024}</p>
+                            </div>
+                          </div>
+                        </td>
 
-                      <td className="py-3 px-4 align-middle">
-                        <span className="font-semibold text-sepia-heading">
-                          {book.available_copies} / {book.copies}
-                        </span>
-                        <span className="block text-[10px] text-warm-charcoal">
-                          {book.format || 'Físico'}
-                        </span>
-                      </td>
-
-                      <td className="py-3 px-4 align-middle">
-                        {isAvailable ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
-                            Disponible
+                        <td className="py-3 px-4 align-middle">
+                          <p className="font-bold text-sepia-heading group-hover:text-gold-burnished transition-colors">
+                            {book.title}
+                          </p>
+                          <p className="text-[11px] text-warm-charcoal">{book.author}</p>
+                          <span className="inline-block mt-0.5 px-1.5 py-0.2 rounded text-[9px] bg-parchment-surface border border-marble-border text-warm-charcoal font-semibold">
+                            {book.genre}
                           </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800">
-                            <span className="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
-                            Prestado / Reservado
-                          </span>
-                        )}
-                      </td>
+                        </td>
 
-                      <td className="py-3 px-4 align-middle text-right" onClick={(e) => e.stopPropagation()}>
-                        <div className="flex items-center justify-end gap-1">
-                          <button
-                            type="button"
-                            onClick={() => setQrModalBook(book)}
-                            title="Ver QR del Tomo"
-                            className="p-1 rounded hover:bg-gold-light text-gold-burnished transition-colors"
-                          >
-                            <span className="material-symbols-outlined text-base">qr_code_2</span>
-                          </button>
-                          {onDeleteBook && (
+                        <td className="py-3 px-4 align-middle">
+                          <div className="flex items-center gap-1 text-sepia-heading font-semibold">
+                            <span className="material-symbols-outlined text-xs text-gold-burnished">meeting_room</span>
+                            <span>{loc}</span>
+                          </div>
+                        </td>
+
+                        <td className="py-3 px-4 align-middle">
+                          <span className="font-semibold text-sepia-heading">
+                            {available} / {total}
+                          </span>
+                          <span className="block text-[10px] text-warm-charcoal">
+                            {book.format || 'Físico'}
+                          </span>
+                        </td>
+
+                        <td className="py-3 px-4 align-middle">
+                          {isAvailable ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                              Disponible
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800">
+                              <span className="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+                              Prestado / Reservado
+                            </span>
+                          )}
+                        </td>
+
+                        <td className="py-3 px-4 align-middle text-right" onClick={(e) => e.stopPropagation()}>
+                          <div className="flex items-center justify-end gap-1">
                             <button
                               type="button"
-                              onClick={() => {
-                                if (window.confirm(`¿Desea eliminar "${book.title}" del inventario?`)) {
-                                  onDeleteBook(book.id);
-                                }
-                              }}
-                              title="Eliminar del Catálogo"
-                              className="p-1 rounded hover:bg-red-50 text-terracotta transition-colors"
+                              onClick={() => setQrModalBook(book)}
+                              title="Ver QR del Tomo"
+                              className="p-1 rounded hover:bg-gold-light text-gold-burnished transition-colors"
                             >
-                              <span className="material-symbols-outlined text-base">delete</span>
+                              <span className="material-symbols-outlined text-base">qr_code_2</span>
                             </button>
-                          )}
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                            {onDeleteBook && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (window.confirm(`¿Desea eliminar "${book.title}" del inventario?`)) {
+                                    onDeleteBook(book.id);
+                                  }
+                                }}
+                                title="Eliminar del Catálogo"
+                                className="p-1 rounded hover:bg-red-50 text-terracotta transition-colors"
+                              >
+                                <span className="material-symbols-outlined text-base">delete</span>
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
               </tbody>
             </table>
           </div>
@@ -365,7 +427,7 @@ export default function InventoryView({
 
               <div className="mt-4 flex gap-4 items-start">
                 <img
-                  src={activeSelected.cover_image}
+                  src={activeSelected.cover_url || activeSelected.cover_image || 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80'}
                   alt={activeSelected.title}
                   className="w-20 h-28 object-cover rounded-lg shadow-sm shrink-0 border border-marble-border"
                 />
@@ -375,17 +437,28 @@ export default function InventoryView({
                   </h5>
                   <p className="text-xs text-warm-charcoal mt-0.5">{activeSelected.author}</p>
                   <span className="inline-block mt-2 px-2 py-0.5 rounded text-[10px] bg-parchment-base border border-marble-border text-gold-burnished font-semibold">
-                    {activeSelected.genre} · {activeSelected.year}
+                    {activeSelected.genre} · {activeSelected.year || 2024}
                   </span>
                   <span className="text-[11px] text-emerald-700 font-semibold mt-1">
-                    {activeSelected.available_copies} de {activeSelected.copies} disponibles
+                    {activeSelected.available_copies !== undefined ? activeSelected.available_copies : (activeSelected.copies || 1)} de {activeSelected.total_copies || activeSelected.copies || 1} disponibles
                   </span>
+                  {activeSelected.digital_url && (
+                    <a
+                      href={activeSelected.digital_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 mt-1.5 text-[11px] font-bold text-burgundy-primary hover:underline"
+                    >
+                      <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
+                      <span>Ver PDF en Neon</span>
+                    </a>
+                  )}
                 </div>
               </div>
 
-              {activeSelected.description && (
+              {(activeSelected.synopsis || activeSelected.description) && (
                 <div className="mt-3 p-3 bg-parchment-base rounded-xl border border-marble-border text-xs text-warm-charcoal leading-relaxed">
-                  {activeSelected.description}
+                  {activeSelected.synopsis || activeSelected.description}
                 </div>
               )}
 
@@ -396,7 +469,7 @@ export default function InventoryView({
                 <div className="flex items-center gap-2 mt-1">
                   <span className="material-symbols-outlined text-gold-burnished text-base">shelves</span>
                   <span className="text-xs font-bold text-sepia-heading">
-                    {activeSelected.shelf_location || 'Estantería 2A'}
+                    {activeSelected.location || activeSelected.shelf_location || 'Estantería General'}
                   </span>
                 </div>
                 <p className="text-[11px] text-warm-charcoal mt-1">
@@ -543,16 +616,94 @@ export default function InventoryView({
                 />
               </div>
 
+              {/* Portada: URL o subir desde PC a Neon Bucket 'biblioteca' */}
               <div>
-                <label className="block font-bold text-sepia-heading mb-1">URL de Portada (Opcional)</label>
-                <input
-                  type="url"
-                  placeholder="https://..."
-                  value={formData.cover_image}
-                  onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
-                  className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading"
-                />
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-bold text-sepia-heading">Portada del Libro</label>
+                  <span className="text-[10px] text-warm-charcoal">URL directa o subir archivo</span>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    placeholder="https://... o sube una imagen de tu PC"
+                    value={formData.cover_image}
+                    onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
+                    className="flex-1 px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading text-xs"
+                  />
+                  <label className={`px-3 py-2 rounded-lg border border-gold-burnished/50 bg-gold-light/30 hover:bg-gold-light/60 text-gold-burnished font-bold text-xs flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs shrink-0 ${uploadingCover ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <span className="material-symbols-outlined text-base">cloud_upload</span>
+                    <span>{uploadingCover ? 'Subiendo...' : 'Subir Portada'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={uploadingCover}
+                      onChange={handleCoverUpload}
+                    />
+                  </label>
+                </div>
+                {formData.cover_image && (
+                  <div className="mt-2 flex items-center gap-2 p-1.5 bg-parchment-base rounded-lg border border-marble-border text-[11px] text-warm-charcoal">
+                    <img src={formData.cover_image} alt="Preview Portada" className="w-7 h-9 object-cover rounded shadow-2xs border border-marble-border shrink-0" />
+                    <span className="truncate flex-1 font-mono text-[10px]">{formData.cover_image}</span>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, cover_image: '' })}
+                      className="text-terracotta hover:underline font-bold text-[10px]"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                )}
               </div>
+
+              {/* PDF Digital: URL o subir archivo a Neon Bucket 'biblioteca' */}
+              <div>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-bold text-sepia-heading">Archivo Digital / PDF (Opcional)</label>
+                  <span className="text-[10px] text-warm-charcoal">Almacenamiento Neon</span>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    placeholder="URL del PDF o sube el documento"
+                    value={formData.digital_url || ''}
+                    onChange={(e) => setFormData({ ...formData, digital_url: e.target.value })}
+                    className="flex-1 px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading text-xs"
+                  />
+                  <label className={`px-3 py-2 rounded-lg border border-burgundy-soft/40 bg-burgundy-soft/10 hover:bg-burgundy-soft/20 text-burgundy-primary font-bold text-xs flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs shrink-0 ${uploadingPdf ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <span className="material-symbols-outlined text-base">upload_file</span>
+                    <span>{uploadingPdf ? 'Subiendo PDF...' : 'Subir PDF'}</span>
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      className="hidden"
+                      disabled={uploadingPdf}
+                      onChange={handlePdfUpload}
+                    />
+                  </label>
+                </div>
+                {formData.digital_url && (
+                  <div className="mt-2 flex items-center gap-2 p-1.5 bg-emerald-50 rounded-lg border border-emerald-200 text-[11px] text-emerald-800">
+                    <span className="material-symbols-outlined text-sm text-emerald-600">picture_as_pdf</span>
+                    <span className="truncate flex-1 font-mono text-[10px]">{formData.digital_url}</span>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, digital_url: '' })}
+                      className="text-terracotta hover:underline font-bold text-[10px]"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {uploadError && (
+                <div className="p-2 rounded-lg bg-red-50 border border-red-200 text-terracotta text-xs flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-sm">error</span>
+                  <span>{uploadError}</span>
+                </div>
+              )}
 
               <div>
                 <label className="block font-bold text-sepia-heading mb-1">Reseña / Descripción</label>

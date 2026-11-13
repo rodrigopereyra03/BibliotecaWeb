@@ -11,6 +11,7 @@ import (
 
 	"biblioteca-web/internal/database"
 	"biblioteca-web/internal/handlers"
+	"biblioteca-web/internal/storage"
 )
 
 // Enable CORS for dev
@@ -74,6 +75,11 @@ func main() {
 			log.Fatalf("Error inicializando base de datos SQLite local: %v", err)
 		}
 		fmt.Println("Base de datos SQLite local inicializada en", dbPath)
+	}
+
+	// Inicializar servicio de almacenamiento (Neon Object Storage bucket 'biblioteca')
+	if err := storage.InitStorage(); err != nil {
+		log.Printf("Advertencia storage: %v\n", err)
 	}
 
 	mux := http.NewServeMux()
@@ -198,6 +204,29 @@ func main() {
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}
 	})
+
+	// Subida de archivos al bucket 'biblioteca'
+	mux.HandleFunc("/api/upload", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			handlers.UploadFile(w, r)
+		} else {
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+
+	// Reset de base de datos a 0 registros (para iniciar limpia)
+	mux.HandleFunc("/api/admin/reset-db", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			handlers.ResetDatabaseHandler(w, r)
+		} else {
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+
+	// Servir archivos locales /uploads/ si se usase almacenamiento local
+	uploadDir := filepath.Join(".", "uploads")
+	_ = os.MkdirAll(uploadDir, 0755)
+	mux.Handle("/uploads/", http.StripPrefix("/uploads/", http.FileServer(http.Dir(uploadDir))))
 
 	// Buscar directorio dist del frontend en rutas relativas comunes
 	candidateDirs := []string{

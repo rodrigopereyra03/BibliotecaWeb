@@ -176,5 +176,34 @@ export const api = {
     const res = await fetch(`${API_BASE}/stats`);
     if (!res.ok) throw new Error('Error al obtener analítica');
     return res.json();
+  },
+
+  // File Upload (Neon Object Storage bucket 'biblioteca')
+  async uploadFile(file, folder = 'general') {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('folder', folder);
+
+    const res = await fetch(`${API_BASE}/upload`, {
+      method: 'POST',
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Error al subir archivo');
+    }
+    return res.json(); // { url: '...', filename: '...' }
+  },
+
+  // Admin DB Reset
+  async resetDatabase() {
+    const res = await fetch(`${API_BASE}/admin/reset-db`, {
+      method: 'POST'
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Error al resetear la base de datos');
+    }
+    return res.json();
   }
 };

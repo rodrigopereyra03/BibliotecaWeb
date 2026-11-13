@@ -12,6 +12,7 @@ import (
 
 	"biblioteca-web/internal/database"
 	"biblioteca-web/internal/models"
+	"biblioteca-web/internal/storage"
 )
 
 // Helper para responder JSON
@@ -27,7 +28,7 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 	genre := r.URL.Query().Get("genre")
 	format := r.URL.Query().Get("format")
 
-	baseQuery := `SELECT id, title, author, genre, isbn, cover_url, synopsis, location, format, has_digital, total_copies, available_copies, rating, reviews_count, featured FROM books WHERE 1=1`
+	baseQuery := `SELECT id, title, author, genre, isbn, cover_url, synopsis, location, format, has_digital, digital_url, total_copies, available_copies, rating, reviews_count, featured FROM books WHERE 1=1`
 	var args []interface{}
 
 	if query != "" {
@@ -59,7 +60,7 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 	var books []models.Book
 	for rows.Next() {
 		var b models.Book
-		err := rows.Scan(&b.ID, &b.Title, &b.Author, &b.Genre, &b.ISBN, &b.CoverURL, &b.Synopsis, &b.Location, &b.Format, &b.HasDigital, &b.TotalCopies, &b.AvailableCopies, &b.Rating, &b.ReviewsCount, &b.Featured)
+		err := rows.Scan(&b.ID, &b.Title, &b.Author, &b.Genre, &b.ISBN, &b.CoverURL, &b.Synopsis, &b.Location, &b.Format, &b.HasDigital, &b.DigitalURL, &b.TotalCopies, &b.AvailableCopies, &b.Rating, &b.ReviewsCount, &b.Featured)
 		if err != nil {
 			continue
 		}
@@ -84,9 +85,9 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 
 	var b models.Book
 	err = database.QueryRow(`
-		SELECT id, title, author, genre, isbn, cover_url, synopsis, location, format, has_digital, total_copies, available_copies, rating, reviews_count, featured
+		SELECT id, title, author, genre, isbn, cover_url, synopsis, location, format, has_digital, digital_url, total_copies, available_copies, rating, reviews_count, featured
 		FROM books WHERE id = ?
-	`, id).Scan(&b.ID, &b.Title, &b.Author, &b.Genre, &b.ISBN, &b.CoverURL, &b.Synopsis, &b.Location, &b.Format, &b.HasDigital, &b.TotalCopies, &b.AvailableCopies, &b.Rating, &b.ReviewsCount, &b.Featured)
+	`, id).Scan(&b.ID, &b.Title, &b.Author, &b.Genre, &b.ISBN, &b.CoverURL, &b.Synopsis, &b.Location, &b.Format, &b.HasDigital, &b.DigitalURL, &b.TotalCopies, &b.AvailableCopies, &b.Rating, &b.ReviewsCount, &b.Featured)
 	if err == sql.ErrNoRows {
 		jsonResponse(w, http.StatusNotFound, map[string]string{"error": "Libro no encontrado"})
 		return
@@ -100,45 +101,130 @@ func GetBook(w http.ResponseWriter, r *http.Request) {
 
 // POST /api/books (Backoffice: Create Book)
 func CreateBook(w http.ResponseWriter, r *http.Request) {
-	var b models.Book
-	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
+	var req struct {
+		Title           string  `json:"title"`
+		Author          string  `json:"author"`
+		Genre           string  `json:"genre"`
+		ISBN            string  `json:"isbn"`
+		CoverURL        string  `json:"cover_url"`
+		CoverImage      string  `json:"cover_image"`
+		Synopsis        string  `json:"synopsis"`
+		Description     string  `json:"description"`
+		Location        string  `json:"location"`
+		ShelfLocation   string  `json:"shelf_location"`
+		Format          string  `json:"format"`
+		HasDigital      bool    `json:"has_digital"`
+		DigitalURL      string  `json:"digital_url"`
+		Copies          int     `json:"copies"`
+		TotalCopies     int     `json:"total_copies"`
+		AvailableCopies int     `json:"available_copies"`
+		Rating          float64 `json:"rating"`
+		ReviewsCount    int     `json:"reviews_count"`
+		Featured        bool    `json:"featured"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Datos inválidos"})
 		return
 	}
 
-	if b.Title == "" || b.Author == "" {
+	if req.Title == "" || req.Author == "" {
 		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Título y autor son obligatorios"})
 		return
 	}
-	if b.CoverURL == "" {
-		b.CoverURL = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80"
+
+	coverURL := req.CoverURL
+	if coverURL == "" {
+		coverURL = req.CoverImage
 	}
-	if b.Genre == "" {
-		b.Genre = "Novelas & Ficción"
+	if coverURL == "" {
+		coverURL = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80"
 	}
-	if b.TotalCopies <= 0 {
-		b.TotalCopies = 1
+
+	synopsis := req.Synopsis
+	if synopsis == "" {
+		synopsis = req.Description
 	}
-	if b.AvailableCopies <= 0 {
-		b.AvailableCopies = b.TotalCopies
+
+	location := req.Location
+	if location == "" {
+		location = req.ShelfLocation
 	}
-	if b.Rating <= 0 {
-		b.Rating = 5.0
+	if location == "" {
+		location = "Sector General · Estante 3B"
 	}
-	if b.Location == "" {
-		b.Location = "Sector General · Estante 3B"
+
+	genre := req.Genre
+	if genre == "" {
+		genre = "Novelas & Ficción"
+	}
+
+	totalCopies := req.TotalCopies
+	if totalCopies <= 0 {
+		totalCopies = req.Copies
+	}
+	if totalCopies <= 0 {
+		totalCopies = 1
+	}
+
+	availCopies := req.AvailableCopies
+	if availCopies <= 0 {
+		availCopies = totalCopies
+	}
+
+	rating := req.Rating
+	if rating <= 0 {
+		rating = 5.0
+	}
+
+	format := strings.ToLower(req.Format)
+	if format == "físico" || format == "fisico" {
+		format = "physical"
+	} else if format == "digital (pdf)" || format == "digital" {
+		format = "digital"
+	} else if format == "ambos" || format == "both" {
+		format = "both"
+	}
+	if format == "" {
+		format = "physical"
+	}
+
+	hasDigital := req.HasDigital
+	if req.DigitalURL != "" {
+		hasDigital = true
+		if format == "physical" {
+			format = "both"
+		}
 	}
 
 	newID, err := database.InsertWithReturnID(`
-		INSERT INTO books (title, author, genre, isbn, cover_url, synopsis, location, format, has_digital, total_copies, available_copies, rating, reviews_count, featured)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, b.Title, b.Author, b.Genre, b.ISBN, b.CoverURL, b.Synopsis, b.Location, b.Format, b.HasDigital, b.TotalCopies, b.AvailableCopies, b.Rating, b.ReviewsCount, b.Featured)
+		INSERT INTO books (title, author, genre, isbn, cover_url, synopsis, location, format, has_digital, digital_url, total_copies, available_copies, rating, reviews_count, featured)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`, req.Title, req.Author, genre, req.ISBN, coverURL, synopsis, location, format, hasDigital, req.DigitalURL, totalCopies, availCopies, rating, req.ReviewsCount, req.Featured)
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
 	}
 
-	b.ID = newID
+	b := models.Book{
+		ID:              newID,
+		Title:           req.Title,
+		Author:          req.Author,
+		Genre:           genre,
+		ISBN:            req.ISBN,
+		CoverURL:        coverURL,
+		Synopsis:        synopsis,
+		Location:        location,
+		Format:          format,
+		HasDigital:      hasDigital,
+		DigitalURL:      req.DigitalURL,
+		TotalCopies:     totalCopies,
+		AvailableCopies: availCopies,
+		Rating:          rating,
+		ReviewsCount:    req.ReviewsCount,
+		Featured:        req.Featured,
+	}
+
 	jsonResponse(w, http.StatusCreated, b)
 }
 
@@ -487,9 +573,9 @@ func GetNews(w http.ResponseWriter, r *http.Request) {
 	}
 	defer rows.Close()
 
-	var news []models.NewsItem
+	var news []models.News
 	for rows.Next() {
-		var n models.NewsItem
+		var n models.News
 		err := rows.Scan(&n.ID, &n.Title, &n.Category, &n.Content, &n.ImageURL, &n.Published, &n.Author)
 		if err != nil {
 			continue
@@ -498,7 +584,7 @@ func GetNews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if news == nil {
-		news = []models.NewsItem{}
+		news = []models.News{}
 	}
 
 	jsonResponse(w, http.StatusOK, news)
@@ -506,37 +592,55 @@ func GetNews(w http.ResponseWriter, r *http.Request) {
 
 // POST /api/news (Backoffice: Publicar noticia)
 func CreateNews(w http.ResponseWriter, r *http.Request) {
-	var n models.NewsItem
-	if err := json.NewDecoder(r.Body).Decode(&n); err != nil {
+	var req struct {
+		Title    string `json:"title"`
+		Category string `json:"category"`
+		Content  string `json:"content"`
+		ImageURL string `json:"image_url"`
+		Image    string `json:"image"`
+		Author   string `json:"author"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Datos inválidos"})
 		return
 	}
 
-	if n.Title == "" || n.Content == "" {
+	if req.Title == "" || req.Content == "" {
 		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Título y contenido son obligatorios"})
 		return
 	}
-	if n.Category == "" {
-		n.Category = "Comunidad"
+	if req.Category == "" {
+		req.Category = "Comunidad"
 	}
-	if n.Author == "" {
-		n.Author = "Secretaría Parroquial"
+	if req.Author == "" {
+		req.Author = "Secretaría Parroquial"
 	}
-	if n.ImageURL == "" {
-		n.ImageURL = "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=600&q=80"
+	imageURL := req.ImageURL
+	if imageURL == "" {
+		imageURL = req.Image
+	}
+	if imageURL == "" {
+		imageURL = "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=600&q=80"
 	}
 
 	newID, err := database.InsertWithReturnID(`
 		INSERT INTO news (title, category, content, image_url, published, author)
 		VALUES (?, ?, ?, ?, ?, ?)
-	`, n.Title, n.Category, n.Content, n.ImageURL, time.Now(), n.Author)
+	`, req.Title, req.Category, req.Content, imageURL, time.Now(), req.Author)
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
 	}
 
-	n.ID = newID
-	n.Published = time.Now()
+	n := models.News{
+		ID:        newID,
+		Title:     req.Title,
+		Category:  req.Category,
+		Content:   req.Content,
+		ImageURL:  imageURL,
+		Published: time.Now(),
+		Author:    req.Author,
+	}
 	jsonResponse(w, http.StatusCreated, n)
 }
 
@@ -560,7 +664,7 @@ func DeleteNews(w http.ResponseWriter, r *http.Request) {
 
 // GET /api/users (Backoffice: Listar lectores/miembros)
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	rows, err := database.Query("SELECT id, name, email, member_number, phone, avatar_url, role FROM users ORDER BY id ASC")
+	rows, err := database.Query("SELECT user_id, name, email, member_number, phone, avatar_url, role FROM users ORDER BY user_id ASC")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
@@ -570,10 +674,11 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	var users []models.User
 	for rows.Next() {
 		var u models.User
-		err := rows.Scan(&u.ID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.AvatarURL, &u.Role)
+		err := rows.Scan(&u.UserID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.AvatarURL, &u.Role)
 		if err != nil {
 			continue
 		}
+		u.ID = u.UserID
 		users = append(users, u)
 	}
 
@@ -587,14 +692,18 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 // GET /api/user/me
 func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 	var u models.User
-	err := database.QueryRow("SELECT id, name, email, member_number, phone, avatar_url, role FROM users LIMIT 1").Scan(
-		&u.ID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.AvatarURL, &u.Role,
+	err := database.QueryRow("SELECT user_id, name, email, member_number, phone, avatar_url, role FROM users LIMIT 1").Scan(
+		&u.UserID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.AvatarURL, &u.Role,
 	)
-	if err != nil {
+	if err == sql.ErrNoRows {
+		jsonResponse(w, http.StatusOK, nil)
+		return
+	} else if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
 	}
 
+	u.ID = u.UserID
 	jsonResponse(w, http.StatusOK, u)
 }
 
@@ -614,7 +723,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	memberNumber := fmt.Sprintf("GT-%d", num)
 	avatar := "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"
 
-	newID, err := database.InsertWithReturnID(`
+	newID, err := database.InsertUserWithReturnID(`
 		INSERT INTO users (name, email, member_number, phone, avatar_url, role)
 		VALUES (?, ?, ?, ?, ?, 'lector')
 	`, body.Name, body.Email, memberNumber, body.Phone, avatar)
@@ -624,6 +733,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u := models.User{
+		UserID:       newID,
 		ID:           newID,
 		Name:         body.Name,
 		Email:        body.Email,
@@ -659,4 +769,45 @@ func GetStats(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonResponse(w, http.StatusOK, stats)
+}
+
+// POST /api/upload
+func UploadFile(w http.ResponseWriter, r *http.Request) {
+	// Limitar subida a 60MB (soporta imágenes y PDFs completos)
+	if err := r.ParseMultipartForm(60 << 20); err != nil {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "El archivo es demasiado grande o el formulario no es válido"})
+		return
+	}
+
+	file, header, err := r.FormFile("file")
+	if err != nil {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "No se recibió ningún archivo"})
+		return
+	}
+	file.Close()
+
+	folder := r.FormValue("folder")
+	if folder == "" {
+		folder = "uploads"
+	}
+
+	url, err := storage.UploadFile(header, folder)
+	if err != nil {
+		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("Error al subir archivo: %v", err)})
+		return
+	}
+
+	jsonResponse(w, http.StatusOK, map[string]string{
+		"url":      url,
+		"filename": header.Filename,
+	})
+}
+
+// POST /api/admin/reset-db
+func ResetDatabaseHandler(w http.ResponseWriter, r *http.Request) {
+	if err := database.ResetCleanDatabase(); err != nil {
+		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("Error al resetear base de datos: %v", err)})
+		return
+	}
+	jsonResponse(w, http.StatusOK, map[string]string{"message": "Base de datos reseteada con éxito a 0 registros"})
 }

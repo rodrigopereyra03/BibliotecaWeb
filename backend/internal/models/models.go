@@ -22,13 +22,15 @@ type Book struct {
 }
 
 type User struct {
-	ID           int64  `json:"id"`
-	Name         string `json:"name"`
-	Email        string `json:"email"`
-	MemberNumber string `json:"member_number"`
-	Phone        string `json:"phone"`
-	AvatarURL    string `json:"avatar_url"`
-	Role         string `json:"role"`
+	UserID       int64     `json:"user_id"`
+	ID           int64     `json:"id"` // alias for convenience
+	Name         string    `json:"name"`
+	Email        string    `json:"email"`
+	MemberNumber string    `json:"member_number"`
+	Phone        string    `json:"phone,omitempty"`
+	AvatarURL    string    `json:"avatar_url,omitempty"`
+	Role         string    `json:"role"`
+	CreatedAt    time.Time `json:"created_at,omitempty"`
 }
 
 type Reservation struct {
@@ -58,7 +60,7 @@ type Loan struct {
 	Status         string     `json:"status"` // "EN_CURSO", "DEVUELTO", "VENCIDO"
 }
 
-type NewsItem struct {
+type News struct {
 	ID        int64     `json:"id"`
 	Title     string    `json:"title"`
 	Category  string    `json:"category"`

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { api } from '../api';
 
 export default function CommunicationsView({
   news = [],
@@ -6,6 +7,8 @@ export default function CommunicationsView({
   onDeleteNews,
 }) {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadError, setUploadError] = useState('');
   const [formData, setFormData] = useState({
     title: '',
     category: 'Avisos & Comunidad',
@@ -23,10 +26,25 @@ export default function CommunicationsView({
     'Horarios & Culto',
   ];
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingImage(true);
+    setUploadError('');
+    try {
+      const res = await api.uploadFile(file, 'news');
+      setFormData((prev) => ({ ...prev, image_url: res.url }));
+    } catch (err) {
+      setUploadError('Error al subir imagen a Neon: ' + (err.message || err));
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.title || !formData.snippet) {
-      alert('Por favor ingrese el título y el resumen del comunicado.');
+    if (!formData.title || (!formData.snippet && !formData.content)) {
+      alert('Por favor ingrese el título y el contenido del comunicado.');
       return;
     }
     const img =
@@ -34,6 +52,7 @@ export default function CommunicationsView({
       'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80';
     await onAddNews({
       ...formData,
+      content: formData.content || formData.snippet,
       image_url: img,
     });
     setShowAddModal(false);
@@ -158,57 +177,66 @@ export default function CommunicationsView({
             </span>
           </div>
 
-          {news.map((item) => (
-            <div
-              key={item.id}
-              className="p-5 rounded-2xl bg-white border border-marble-border shadow-xs hover:border-gold-burnished/40 transition-all flex flex-col sm:flex-row gap-4 items-start"
-            >
-              {item.image_url && (
-                <img
-                  src={item.image_url}
-                  alt={item.title}
-                  className="w-full sm:w-36 h-28 object-cover rounded-xl shadow-xs border border-marble-border shrink-0"
-                />
-              )}
-              <div className="flex-1 flex flex-col justify-between h-full">
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-1.5">
-                    <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-gold-light text-gold-burnished">
-                      {item.category || 'Avisos & Comunidad'}
-                    </span>
-                    <span className="text-[11px] text-warm-charcoal">
-                      {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'Reciente'}
-                    </span>
+          {news.length === 0 ? (
+            <div className="p-12 rounded-2xl bg-white border border-marble-border shadow-xs text-center flex flex-col items-center justify-center gap-2">
+              <span className="material-symbols-outlined text-4xl text-gold-burnished/60">campaign</span>
+              <p className="font-bold text-sm text-sepia-heading">No hay comunicados publicados aún</p>
+              <p className="text-xs text-warm-charcoal max-w-sm">
+                Haz clic en "+ Redactar Nuevo Comunicado" para publicar la primera noticia parroquial.
+              </p>
+            </div>
+          ) : (
+            news.map((item) => (
+              <div
+                key={item.id}
+                className="p-5 rounded-2xl bg-white border border-marble-border shadow-xs hover:border-gold-burnished/40 transition-all flex flex-col sm:flex-row gap-4 items-start"
+              >
+                {item.image_url && (
+                  <img
+                    src={item.image_url}
+                    alt={item.title}
+                    className="w-full sm:w-36 h-28 object-cover rounded-xl shadow-xs border border-marble-border shrink-0"
+                  />
+                )}
+                <div className="flex-1 flex flex-col justify-between h-full">
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-1.5">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-gold-light text-gold-burnished">
+                        {item.category || 'Avisos & Comunidad'}
+                      </span>
+                      <span className="text-[11px] text-warm-charcoal">
+                        {item.created_at || item.published ? new Date(item.created_at || item.published).toLocaleDateString() : 'Reciente'}
+                      </span>
+                    </div>
+
+                    <h4 className="font-bold font-display text-base text-sepia-heading hover:text-gold-burnished transition-colors">
+                      {item.title}
+                    </h4>
+                    <p className="text-xs text-warm-charcoal mt-1 line-clamp-2 leading-relaxed">
+                      {item.snippet || item.content}
+                    </p>
                   </div>
 
-                  <h4 className="font-bold font-display text-base text-sepia-heading hover:text-gold-burnished transition-colors">
-                    {item.title}
-                  </h4>
-                  <p className="text-xs text-warm-charcoal mt-1 line-clamp-2 leading-relaxed">
-                    {item.snippet || item.content}
-                  </p>
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-marble-border flex items-center justify-between text-xs text-warm-charcoal">
-                  <span>Por {item.author || 'Secretaría Parroquial'}</span>
-                  {onDeleteNews && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        if (window.confirm(`¿Eliminar el comunicado "${item.title}"?`)) {
-                          onDeleteNews(item.id);
-                        }
-                      }}
-                      className="text-terracotta hover:underline font-bold text-xs flex items-center gap-1"
-                    >
-                      <span className="material-symbols-outlined text-sm">delete</span>
-                      <span>Retirar de Cartelera</span>
-                    </button>
-                  )}
+                  <div className="mt-4 pt-3 border-t border-marble-border flex items-center justify-between text-xs text-warm-charcoal">
+                    <span>Por {item.author || 'Secretaría Parroquial'}</span>
+                    {onDeleteNews && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (window.confirm(`¿Eliminar el comunicado "${item.title}"?`)) {
+                            onDeleteNews(item.id);
+                          }
+                        }}
+                        className="text-terracotta hover:underline font-bold text-xs"
+                      >
+                        Eliminar
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         {/* Editorial Guidelines Card (Right 4 cols) */}
@@ -329,14 +357,49 @@ export default function CommunicationsView({
               </div>
 
               <div>
-                <label className="block font-bold text-sepia-heading mb-1">URL de Fotografía / Imagen (Opcional)</label>
-                <input
-                  type="url"
-                  placeholder="https://images.unsplash.com/..."
-                  value={formData.image_url}
-                  onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-                  className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading"
-                />
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block font-bold text-sepia-heading">Imagen del Comunicado (Opcional)</label>
+                  <span className="text-[10px] text-warm-charcoal">Almacenada en Neon 'biblioteca'</span>
+                </div>
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    placeholder="https://... o sube una imagen de tu PC"
+                    value={formData.image_url}
+                    onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
+                    className="flex-1 px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading text-xs"
+                  />
+                  <label className={`px-3 py-2 rounded-lg border border-gold-burnished/50 bg-gold-light/30 hover:bg-gold-light/60 text-gold-burnished font-bold text-xs flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs shrink-0 ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <span className="material-symbols-outlined text-base">cloud_upload</span>
+                    <span>{uploadingImage ? 'Subiendo...' : 'Subir Imagen'}</span>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={uploadingImage}
+                      onChange={handleImageUpload}
+                    />
+                  </label>
+                </div>
+                {formData.image_url && (
+                  <div className="mt-2 flex items-center gap-2 p-1.5 bg-parchment-base rounded-lg border border-marble-border text-[11px] text-warm-charcoal">
+                    <img src={formData.image_url} alt="Preview Noticia" className="w-10 h-7 object-cover rounded shadow-2xs border border-marble-border shrink-0" />
+                    <span className="truncate flex-1 font-mono text-[10px]">{formData.image_url}</span>
+                    <button
+                      type="button"
+                      onClick={() => setFormData({ ...formData, image_url: '' })}
+                      className="text-terracotta hover:underline font-bold text-[10px]"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                )}
+                {uploadError && (
+                  <div className="mt-2 p-2 rounded-lg bg-red-50 border border-red-200 text-terracotta text-xs flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-sm">error</span>
+                    <span>{uploadError}</span>
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-marble-border mt-2">
