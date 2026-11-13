@@ -238,32 +238,56 @@ export default function CatalogoView({
       {/* ============================================================ */}
       {/* DESKTOP HERO & FILTERS (hidden on mobile, visible on desktop) */}
       {/* ============================================================ */}
-      <div className="hidden lg:block relative w-full overflow-hidden rounded-2xl bg-gradient-to-b from-parchment-surface via-parchment-card to-parchment-base border border-marble-border p-8 shadow-sm mb-8">
-        <div className="absolute -right-16 -top-16 w-80 h-80 rounded-full bg-gold-burnished/10 blur-3xl pointer-events-none"></div>
-        <div className="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-marian-blue/5 blur-2xl pointer-events-none"></div>
+      <div className="hidden lg:block relative w-full overflow-hidden rounded-3xl bg-gradient-to-r from-parchment-surface via-parchment-card to-[#d69838]/15 border border-gold-burnished/30 p-8 sm:p-10 shadow-sm mb-8">
+        {/* Glow ambient effects */}
+        <div className="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-gold-burnished/10 blur-3xl pointer-events-none"></div>
+        <div className="absolute right-1/3 -top-16 w-80 h-80 rounded-full bg-amber-500/10 blur-3xl pointer-events-none"></div>
 
-        <div className="relative z-10 flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-8">
-          <div className="flex flex-col gap-2 max-w-3xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/80 border border-marble-border shadow-2xs w-max">
+        {/* Hero Image: San Tito Brandsma (Editorial fade blend) */}
+        <div className="absolute right-0 top-0 bottom-0 w-[420px] pointer-events-none select-none overflow-hidden hidden xl:block">
+          <img
+            src="/hero-titus.jpg"
+            alt="San Tito Brandsma"
+            className="w-full h-full object-cover object-top opacity-90 transition-opacity duration-500"
+            style={{
+              maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 98%)',
+              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 98%)',
+            }}
+          />
+          <div className="absolute bottom-3 right-5 px-2.5 py-1 rounded-full bg-sepia-heading/75 backdrop-blur-md border border-gold-burnished/30 flex items-center gap-1.5 shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished animate-pulse"></span>
+            <span className="text-[10px] text-parchment-surface font-display font-medium tracking-wide">
+              San Tito Brandsma · Mártir & Académico
+            </span>
+          </div>
+        </div>
+
+        <div className="relative z-10 flex flex-col gap-5 max-w-2xl xl:max-w-3xl mb-8">
+          <div className="flex flex-col gap-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-gold-burnished/30 shadow-2xs w-max">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
-              <span className="text-xs uppercase tracking-wider text-gold-burnished font-semibold">
+              <span className="text-xs uppercase tracking-wider text-gold-burnished font-bold">
                 Biblioteca Comunitaria Barrial
               </span>
               <span className="text-outline text-xs">•</span>
-              <span className="text-xs text-warm-charcoal">Préstamos a Domicilio: 21 Días</span>
+              <span className="text-xs text-warm-charcoal font-medium">Préstamos a Domicilio: 21 Días</span>
             </div>
 
-            <h2 className="text-3xl font-bold font-display text-sepia-heading tracking-tight pt-1">
+            <h2 className="text-3xl sm:text-4xl font-bold font-display text-sepia-heading tracking-tight pt-1 leading-tight">
               Biblioteca Comunitaria de la Capilla Ntra. Sra. de Lourdes
             </h2>
 
-            <p className="text-sm text-warm-charcoal leading-relaxed">
-              Consulte todos nuestros libros abiertos a todo el barrio: novelas universales, literatura contemporánea, cuentos, terror, suspenso y divulgación para retiro a domicilio en Sigmund Freud 201, Temperley.
+            <p className="text-xs sm:text-sm text-sepia-heading/85 italic font-display border-l-2 border-gold-burnished pl-3 my-1">
+              "La lectura, la reflexión y la verdad como faro abierto para toda nuestra comunidad."
+            </p>
+
+            <p className="text-xs sm:text-sm text-warm-charcoal leading-relaxed">
+              Consulte y retire libros para todo el barrio: novelas universales, literatura contemporánea, cuentos, terror, suspenso y divulgación para retiro a domicilio en Sigmund Freud 201, Temperley.
             </p>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white border border-marble-border shadow-xs">
+            <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-xs hover:border-gold-burnished/40 transition-colors">
               <span className="material-symbols-outlined text-gold-burnished text-2xl">shelves</span>
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase text-warm-charcoal font-semibold">Volúmenes Físicos</span>
@@ -273,7 +297,7 @@ export default function CatalogoView({
               </div>
             </div>
 
-            <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white border border-marble-border shadow-xs">
+            <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-xs hover:border-marian-blue/40 transition-colors">
               <span className="material-symbols-outlined text-marian-blue text-2xl">cloud_done</span>
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase text-warm-charcoal font-semibold">Depósito Digital</span>
