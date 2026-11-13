@@ -27,7 +27,35 @@ func corsMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+// Simple .env / .env.local loader without third-party dependencies
+func loadDotEnv(paths ...string) {
+	for _, p := range paths {
+		data, err := os.ReadFile(p)
+		if err != nil {
+			continue
+		}
+		lines := strings.Split(string(data), "\n")
+		for _, line := range lines {
+			line = strings.TrimSpace(line)
+			if line == "" || strings.HasPrefix(line, "#") {
+				continue
+			}
+			parts := strings.SplitN(line, "=", 2)
+			if len(parts) == 2 {
+				key := strings.TrimSpace(parts[0])
+				val := strings.Trim(strings.TrimSpace(parts[1]), `"'`)
+				if os.Getenv(key) == "" {
+					os.Setenv(key, val)
+				}
+			}
+		}
+	}
+}
+
 func main() {
+	// Automatically load .env.local or .env from root or current dir
+	loadDotEnv("../.env.local", ".env.local", "../.env", ".env")
+
 	databaseURL := os.Getenv("DATABASE_URL")
 	if databaseURL == "" {
 		databaseURL = os.Getenv("POSTGRES_URL")
