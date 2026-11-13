@@ -355,7 +355,7 @@ export default function App() {
       {/* Main Content Area */}
       <div
         className={`flex flex-col min-h-screen relative z-10 transition-all duration-300 ease-in-out ${
-          sidebarOpen ? 'lg:pl-72' : 'lg:pl-0'
+          sidebarOpen ? 'lg:pl-72' : 'lg:pl-20'
         }`}
       >
         {/* Desktop Fixed Header */}

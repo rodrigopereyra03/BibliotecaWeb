@@ -9,6 +9,7 @@ export default function BackofficeLayout({
   children,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [desktopSidebarOpen, setDesktopSidebarOpen] = useState(true);
 
   const navItems = [
     { id: 'dashboard', label: 'Panel y Analítica', icon: 'analytics' },
@@ -33,55 +34,68 @@ export default function BackofficeLayout({
   return (
     <div className="bg-parchment-base min-h-screen text-sepia-ink flex flex-col antialiased">
       {/* Desktop Sidebar (Fixed Left) */}
-      <aside className="fixed left-0 top-0 h-full w-72 bg-parchment-surface border-r border-marble-border shadow-xs z-50 hidden lg:flex flex-col justify-between">
+      <aside
+        className={`fixed left-0 top-0 h-full ${
+          desktopSidebarOpen ? 'w-72' : 'w-20'
+        } bg-parchment-surface border-r border-marble-border shadow-xs z-50 hidden lg:flex flex-col justify-between transition-all duration-300 ease-in-out`}
+      >
         <div className="flex flex-col">
           {/* Header Brand */}
-          <div className="p-5 flex items-center gap-3 bg-white/70 border-b border-marble-border">
-            <div className="w-10 h-10 rounded-lg bg-gold-light border border-gold-burnished/30 text-gold-burnished flex items-center justify-center shrink-0 shadow-xs">
+          <div className={`p-4 flex items-center ${desktopSidebarOpen ? 'gap-3' : 'justify-center'} bg-white/70 border-b border-marble-border`}>
+            <div className="w-10 h-10 rounded-lg bg-gold-light border border-gold-burnished/30 text-gold-burnished flex items-center justify-center shrink-0 shadow-xs" title="Centro de Gestión">
               <span className="material-symbols-outlined text-2xl">local_library</span>
             </div>
-            <div className="flex flex-col min-w-0">
-              <h2 className="text-sm font-bold font-display text-sepia-heading leading-tight truncate">
-                Centro de Gestión
-              </h2>
-              <span className="text-[10px] uppercase tracking-wider text-gold-burnished font-bold truncate">
-                Biblioteca & Archivo Parroquial
-              </span>
-            </div>
+            {desktopSidebarOpen && (
+              <div className="flex flex-col min-w-0 overflow-hidden">
+                <h2 className="text-sm font-bold font-display text-sepia-heading leading-tight truncate">
+                  Centro de Gestión
+                </h2>
+                <span className="text-[10px] uppercase tracking-wider text-gold-burnished font-bold truncate">
+                  Biblioteca & Archivo Parroquial
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Navigation Links */}
-          <nav className="flex flex-col gap-1.5 p-3.5">
+          <nav className="flex flex-col gap-1.5 p-3">
             {navItems.map((item) => {
               const isActive = activeView === item.id;
               return (
                 <button
                   key={item.id}
                   onClick={() => setActiveView(item.id)}
-                  className={`flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs transition-all group text-left ${
+                  title={item.label}
+                  className={`flex items-center ${
+                    desktopSidebarOpen ? 'px-3.5 py-2.5 justify-between' : 'p-2.5 justify-center'
+                  } rounded-lg text-xs transition-all group text-left relative ${
                     isActive
                       ? 'bg-gold-burnished text-white font-bold shadow-xs'
                       : 'text-warm-charcoal hover:bg-white hover:text-sepia-heading'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className={`flex items-center ${desktopSidebarOpen ? 'gap-3 min-w-0' : 'justify-center'}`}>
                     <span
-                      className={`material-symbols-outlined text-xl transition-colors ${
+                      className={`material-symbols-outlined text-xl shrink-0 transition-colors ${
                         isActive ? 'text-white' : 'text-outline group-hover:text-gold-burnished'
                       }`}
                     >
                       {item.icon}
                     </span>
-                    <span>{item.label}</span>
+                    {desktopSidebarOpen && <span className="truncate">{item.label}</span>}
                   </div>
                   {item.badge && (
-                    <span
-                      className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold ${
-                        item.badgeColor || (isActive ? 'bg-white/20 text-white' : 'bg-parchment-card text-warm-charcoal')
-                      }`}
-                    >
-                      {item.badge}
-                    </span>
+                    desktopSidebarOpen ? (
+                      <span
+                        className={`text-[10px] px-2 py-0.5 rounded font-mono font-bold shrink-0 ml-1 ${
+                          item.badgeColor || (isActive ? 'bg-white/20 text-white' : 'bg-parchment-card text-warm-charcoal')
+                        }`}
+                      >
+                        {item.badge}
+                      </span>
+                    ) : (
+                      <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-terracotta"></span>
+                    )
                   )}
                 </button>
               );
@@ -90,29 +104,56 @@ export default function BackofficeLayout({
         </div>
 
         {/* Footer: Return to Public Portal */}
-        <div className="p-4 bg-white/60 border-t border-marble-border flex flex-col gap-3">
+        <div className={`p-4 bg-white/60 border-t border-marble-border flex flex-col ${desktopSidebarOpen ? 'gap-3' : 'items-center gap-2'}`}>
           <button
             onClick={onExitBackoffice}
-            className="flex items-center gap-2 text-xs font-bold text-gold-burnished hover:text-gold-accent transition-colors"
+            title="Volver al Portal de Lectores"
+            className={`flex items-center ${desktopSidebarOpen ? 'gap-2 text-left' : 'justify-center p-1'} text-xs font-bold text-gold-burnished hover:text-gold-accent transition-colors`}
           >
             <span className="material-symbols-outlined text-base">arrow_back</span>
-            <span>← Portal de Lectores</span>
+            {desktopSidebarOpen && <span>← Portal de Lectores</span>}
           </button>
-          <div className="flex items-start gap-2 text-warm-charcoal text-[11px]">
-            <span className="material-symbols-outlined text-sm text-gold-burnished mt-0.5">church</span>
-            <div>
-              <p className="font-bold text-sepia-heading">Sede Temperley</p>
-              <p className="text-outline text-[10px]">Sigmund Freud 201</p>
+          {desktopSidebarOpen ? (
+            <div className="flex items-start gap-2 text-warm-charcoal text-[11px]">
+              <span className="material-symbols-outlined text-sm text-gold-burnished mt-0.5">church</span>
+              <div>
+                <p className="font-bold text-sepia-heading">Sede Temperley</p>
+                <p className="text-outline text-[10px]">Sigmund Freud 201</p>
+              </div>
             </div>
-          </div>
+          ) : (
+            <span className="material-symbols-outlined text-sm text-gold-burnished" title="Sede Temperley · Sigmund Freud 201">
+              church
+            </span>
+          )}
         </div>
       </aside>
 
       {/* Main Content Container with Left Offset */}
-      <div className="lg:pl-72 flex flex-col min-h-screen">
+      <div
+        className={`${
+          desktopSidebarOpen ? 'lg:pl-72' : 'lg:pl-20'
+        } flex flex-col min-h-screen transition-all duration-300 ease-in-out`}
+      >
         {/* Top Header Bar */}
-        <header className="fixed top-0 lg:left-72 left-0 right-0 h-16 bg-white/95 backdrop-blur-xl border-b border-marble-border z-40 flex items-center justify-between px-4 sm:px-8 shadow-xs">
+        <header
+          className={`fixed top-0 ${
+            desktopSidebarOpen ? 'lg:left-72' : 'lg:left-20'
+          } left-0 right-0 h-16 bg-white/95 backdrop-blur-xl border-b border-marble-border z-40 flex items-center justify-between px-4 sm:px-8 shadow-xs transition-all duration-300 ease-in-out`}
+        >
           <div className="flex items-center gap-3 min-w-0">
+            {/* Desktop Sidebar Collapse Toggle */}
+            <button
+              type="button"
+              onClick={() => setDesktopSidebarOpen(!desktopSidebarOpen)}
+              className="hidden lg:flex p-2 rounded-lg bg-parchment-surface hover:bg-parchment-card text-sepia-ink border border-marble-border hover:border-gold-burnished/50 transition-all items-center justify-center shrink-0 cursor-pointer shadow-2xs mr-1"
+              title={desktopSidebarOpen ? 'Colapsar menú (solo iconos)' : 'Expandir menú lateral'}
+            >
+              <span className="material-symbols-outlined text-xl text-gold-burnished">
+                {desktopSidebarOpen ? 'menu_open' : 'menu'}
+              </span>
+            </button>
+
             {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

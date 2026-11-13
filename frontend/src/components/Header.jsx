@@ -13,9 +13,9 @@ export default function Header({
 }) {
   return (
     <header
-      className={`fixed top-0 right-0 h-20 bg-parchment-base/90 backdrop-blur-xl border-b border-marble-border z-40 px-6 sm:px-8 shadow-xs transition-all duration-300 ease-in-out ${
-        sidebarOpen ? 'left-72' : 'left-0'
-      }`}
+      className={`fixed top-0 right-0 h-20 bg-parchment-base/90 backdrop-blur-xl border-b border-marble-border z-40 px-4 sm:px-8 shadow-xs transition-all duration-300 ease-in-out ${
+        sidebarOpen ? 'lg:left-72' : 'lg:left-20'
+      } left-0`}
     >
       <div className="h-20 w-full flex items-center justify-between gap-4">
         {/* Left Side: Sidebar Toggle Button + Logo / Title */}
@@ -25,7 +25,7 @@ export default function Header({
             type="button"
             onClick={onToggleSidebar}
             className="p-2 rounded-lg bg-parchment-surface hover:bg-parchment-card text-sepia-ink border border-marble-border hover:border-gold-burnished/50 transition-all flex items-center justify-center shrink-0 cursor-pointer shadow-2xs"
-            title={sidebarOpen ? 'Ocultar barra lateral' : 'Mostrar barra lateral'}
+            title={sidebarOpen ? 'Colapsar menú (solo iconos)' : 'Expandir menú lateral'}
           >
             <span className="material-symbols-outlined text-xl text-gold-burnished">
               {sidebarOpen ? 'menu_open' : 'menu'}
