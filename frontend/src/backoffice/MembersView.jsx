@@ -16,15 +16,7 @@ export default function MembersView({
     return nameMatches || emailMatches || dniMatches;
   });
 
-  const activeSelected = selectedUser || filteredUsers[0] || users[0] || {
-    id: 1,
-    name: 'David Miller',
-    email: 'david.miller@lourdes.org',
-    dni: '32.184.920',
-    phone: '+54 11 4455-6677',
-    address: 'Sigmund Freud 201, Temperley',
-    membership_number: '#GT-4821',
-  };
+  const activeSelected = selectedUser || filteredUsers[0] || users[0] || null;
 
   return (
     <div className="flex flex-col w-full pb-8">
@@ -66,7 +58,7 @@ export default function MembersView({
               Total Miembros
             </span>
             <h4 className="text-2xl font-bold font-display text-sepia-heading mt-1">
-              {Math.max(users.length, 215)}
+              {users.length}
             </h4>
             <span className="text-[11px] text-gold-burnished font-semibold">Socios Activos</span>
           </div>
@@ -81,9 +73,9 @@ export default function MembersView({
               Perfiles Verificados
             </span>
             <h4 className="text-2xl font-bold font-display text-emerald-800 mt-1">
-              184
+              {users.length}
             </h4>
-            <span className="text-[11px] text-emerald-700 font-semibold">85% Al Día / En Regla</span>
+            <span className="text-[11px] text-emerald-700 font-semibold">{users.length > 0 ? '100% Al Día' : 'Sin pendientes'}</span>
           </div>
           <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-700 flex items-center justify-center">
             <span className="material-symbols-outlined text-xl">check_circle</span>
@@ -96,9 +88,9 @@ export default function MembersView({
               Nuevos Registrados
             </span>
             <h4 className="text-2xl font-bold font-display text-gold-burnished mt-1">
-              24
+              {users.length}
             </h4>
-            <span className="text-[11px] text-warm-charcoal">+8 este mes</span>
+            <span className="text-[11px] text-warm-charcoal">{users.length > 0 ? `+${users.length} este mes` : '0 este mes'}</span>
           </div>
           <div className="w-10 h-10 rounded-xl bg-gold-light text-gold-burnished flex items-center justify-center">
             <span className="material-symbols-outlined text-xl">how_to_reg</span>
@@ -111,7 +103,7 @@ export default function MembersView({
               Grupos Parroquiales
             </span>
             <h4 className="text-2xl font-bold font-display text-marian-blue mt-1">
-              7
+              {users.length > 0 ? 1 : 0}
             </h4>
             <span className="text-[11px] text-marian-blue font-semibold">Comunidades de Lectura</span>
           </div>
@@ -144,83 +136,93 @@ export default function MembersView({
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
         {/* Members List */}
         <div className="xl:col-span-7 flex flex-col gap-3">
-          {filteredUsers.map((member) => {
-            const isSelected = activeSelected && activeSelected.id === member.id;
-            const initials = member.name
-              ? member.name
-                  .split(' ')
-                  .map((n) => n[0])
-                  .join('')
-                  .substring(0, 2)
-                  .toUpperCase()
-              : 'FL';
+          {filteredUsers.length === 0 ? (
+            <div className="p-12 rounded-2xl bg-white border border-marble-border shadow-xs text-center flex flex-col items-center justify-center gap-2">
+              <span className="material-symbols-outlined text-4xl text-gold-burnished/60">groups</span>
+              <p className="font-bold text-sm text-sepia-heading">No hay socios registrados en la biblioteca aún</p>
+              <p className="text-xs text-warm-charcoal max-w-sm">
+                La base de datos está completamente limpia. Cuando un nuevo lector complete el formulario de registro o se inscriba en el atrio, aparecerá aquí su ficha y credencial.
+              </p>
+            </div>
+          ) : (
+            filteredUsers.map((member) => {
+              const isSelected = activeSelected && activeSelected.id === member.id;
+              const initials = member.name
+                ? member.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .substring(0, 2)
+                    .toUpperCase()
+                : 'FL';
 
-            return (
-              <div
-                key={member.id}
-                onClick={() => setSelectedUser(member)}
-                className={`p-4 rounded-2xl bg-white border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
-                  isSelected
-                    ? 'border-gold-burnished ring-1 ring-gold-burnished/30 bg-gold-light/10'
-                    : 'border-marble-border hover:border-gold-burnished/40 hover:bg-gold-light/5'
-                }`}
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-start gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-gold-burnished text-white flex items-center justify-center font-display font-bold text-sm shrink-0 shadow-xs">
-                      {initials}
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h4 className="font-bold font-display text-sm text-sepia-heading group-hover:text-gold-burnished transition-colors">
-                          {member.name}
-                        </h4>
-                        <span className="px-1.5 py-0.5 rounded font-mono text-[9px] bg-gold-light text-gold-burnished font-bold">
-                          #GT-{member.id ? (4000 + member.id) : '4821'}
-                        </span>
-                        {member.dni && (
-                          <span className="px-1.5 py-0.5 rounded text-[9px] bg-parchment-base text-warm-charcoal">
-                            DNI {member.dni}
-                          </span>
-                        )}
+              return (
+                <div
+                  key={member.id}
+                  onClick={() => setSelectedUser(member)}
+                  className={`p-4 rounded-2xl bg-white border transition-all cursor-pointer relative overflow-hidden group shadow-xs ${
+                    isSelected
+                      ? 'border-gold-burnished ring-1 ring-gold-burnished/30 bg-gold-light/10'
+                      : 'border-marble-border hover:border-gold-burnished/40 hover:bg-gold-light/5'
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-11 h-11 rounded-xl bg-gold-burnished text-white flex items-center justify-center font-display font-bold text-sm shrink-0 shadow-xs">
+                        {initials}
                       </div>
-                      <div className="flex flex-wrap items-center gap-3 text-xs text-warm-charcoal mt-1">
-                        <span className="flex items-center gap-1">
-                          <span className="material-symbols-outlined text-xs text-outline">mail</span>
-                          <span>{member.email}</span>
-                        </span>
-                        {member.phone && (
+                      <div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="font-bold font-display text-sm text-sepia-heading group-hover:text-gold-burnished transition-colors">
+                            {member.name}
+                          </h4>
+                          <span className="px-1.5 py-0.5 rounded font-mono text-[9px] bg-gold-light text-gold-burnished font-bold">
+                            #GT-{member.id ? (4000 + member.id) : (member.user_id ? 4000 + member.user_id : '4001')}
+                          </span>
+                          {member.dni && (
+                            <span className="px-1.5 py-0.5 rounded text-[9px] bg-parchment-base text-warm-charcoal">
+                              DNI {member.dni}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-warm-charcoal mt-1">
                           <span className="flex items-center gap-1">
-                            <span className="material-symbols-outlined text-xs text-outline">call</span>
-                            <span>{member.phone}</span>
+                            <span className="material-symbols-outlined text-xs text-outline">mail</span>
+                            <span>{member.email}</span>
                           </span>
-                        )}
+                          {member.phone && (
+                            <span className="flex items-center gap-1">
+                              <span className="material-symbols-outlined text-xs text-outline">call</span>
+                              <span>{member.phone}</span>
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
+
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 shrink-0">
+                      Al Día
+                    </span>
                   </div>
 
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 shrink-0">
-                    Al Día
-                  </span>
+                  <div className="mt-3 pt-3 border-t border-marble-border flex items-center justify-between text-xs text-warm-charcoal">
+                    <span>Capilla Ntra. Sra. de Lourdes · Temperley</span>
+                    <button
+                      type="button"
+                      className="text-[11px] font-bold text-gold-burnished hover:text-gold-accent flex items-center gap-1"
+                    >
+                      <span>Ver Expediente</span>
+                      <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                    </button>
+                  </div>
                 </div>
-
-                <div className="mt-3 pt-3 border-t border-marble-border flex items-center justify-between text-xs text-warm-charcoal">
-                  <span>Capilla Ntra. Sra. de Lourdes · Temperley</span>
-                  <button
-                    type="button"
-                    className="text-[11px] font-bold text-gold-burnished hover:text-gold-accent flex items-center gap-1"
-                  >
-                    <span>Ver Expediente</span>
-                    <span className="material-symbols-outlined text-xs">arrow_forward</span>
-                  </button>
-                </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
 
         {/* Right Dossier / Credencial CRM Card */}
-        {activeSelected && (
+        {activeSelected ? (
           <div className="xl:col-span-5 flex flex-col gap-4">
             <div className="bg-white rounded-2xl p-5 border border-marble-border shadow-xs">
               <div className="flex items-center justify-between pb-3 border-b border-marble-border mb-4">
@@ -344,6 +346,16 @@ export default function MembersView({
                 </button>
               </div>
             </div>
+          </div>
+        ) : (
+          <div className="xl:col-span-5 bg-white rounded-2xl p-8 border border-marble-border shadow-xs text-center flex flex-col items-center justify-center gap-2">
+            <div className="w-12 h-12 rounded-full bg-gold-light text-gold-burnished flex items-center justify-center mb-1">
+              <span className="material-symbols-outlined text-2xl">badge</span>
+            </div>
+            <h4 className="font-bold font-display text-base text-sepia-heading">Expediente de Lector</h4>
+            <p className="text-xs text-warm-charcoal max-w-xs">
+              No hay socios registrados aún. Las credenciales litúrgicas se generarán automáticamente al inscribirse cada socio.
+            </p>
           </div>
         )}
       </div>

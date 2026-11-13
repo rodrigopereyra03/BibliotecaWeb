@@ -298,11 +298,11 @@ export default function CirculationView({
                     <div className="mt-3 p-3 bg-parchment-surface rounded-xl border border-marble-border">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-full bg-gold-burnished text-white font-bold text-xs flex items-center justify-center">
-                          {activeSelected.user_name ? activeSelected.user_name.substring(0, 2).toUpperCase() : 'DM'}
+                          {activeSelected.user_name ? activeSelected.user_name.substring(0, 2).toUpperCase() : 'SL'}
                         </div>
                         <div>
                           <p className="font-bold text-xs text-sepia-heading">
-                            {activeSelected.user_name || 'David Miller'}
+                            {activeSelected.user_name || 'Socio Lector'}
                           </p>
                           <p className="text-[10px] text-warm-charcoal">
                             Socio Registrado · Sede Central Lourdes
@@ -391,7 +391,7 @@ export default function CirculationView({
                     </td>
 
                     <td className="py-3 px-4 align-middle font-medium">
-                      {loan.user_name || 'David Miller'}
+                      {loan.user_name || 'Lector Registrado'}
                     </td>
 
                     <td className="py-3 px-4 align-middle text-warm-charcoal">

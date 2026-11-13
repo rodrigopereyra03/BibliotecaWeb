@@ -23,7 +23,7 @@ export default function MisReservasView({
             </div>
             <div>
               <p className="text-[10px] text-warm-charcoal uppercase tracking-wider font-semibold">Lector Parroquial</p>
-              <p className="text-xs font-bold font-display text-sepia-heading leading-tight">David Miller</p>
+              <p className="text-xs font-bold font-display text-sepia-heading leading-tight">{activeReservation?.user_name || 'Socio Lector'}</p>
             </div>
           </div>
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-gold-light text-gold-burnished border border-gold-burnished/30 flex items-center gap-1">

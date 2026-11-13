@@ -212,7 +212,7 @@ export default function SettingsView() {
               </div>
               <div className="flex justify-between py-1 border-b border-marble-border">
                 <span>Base de Datos:</span>
-                <span className="font-bold text-sepia-heading">SQLite (Zero CGO)</span>
+                <span className="font-bold text-sepia-heading">PostgreSQL (Neon Cloud)</span>
               </div>
               <div className="flex justify-between py-1 border-b border-marble-border">
                 <span>Validación de Pases:</span>

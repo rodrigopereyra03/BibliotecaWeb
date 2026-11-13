@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 
 export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalog }) {
-  const [identificador, setIdentificador] = useState('david.miller@vecinos.org');
-  const [password, setPassword] = useState('••••••••••••');
+  const [identificador, setIdentificador] = useState('');
+  const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(true);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const emailVal = identificador || 'lector@comunidad.org';
+    const nameVal = emailVal.split('@')[0];
+    const capitalizedName = nameVal.charAt(0).toUpperCase() + nameVal.slice(1);
     onLoginSuccess({
-      name: 'David Miller',
-      email: identificador.includes('@') ? identificador : 'david.miller@vecinos.org',
-      member_number: 'GT-4821',
+      name: capitalizedName,
+      email: emailVal,
+      member_number: 'GT-4001',
       avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
       role: 'lector',
     });

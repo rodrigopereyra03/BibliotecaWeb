@@ -132,7 +132,7 @@ export default function BackofficeLayout({
 
             <div className="hidden xl:flex items-center gap-1.5 bg-parchment-surface border border-marble-border px-3 py-1 rounded-full text-xs text-warm-charcoal">
               <span className="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span>
-              <span>Base de Datos SQLite Sincronizada</span>
+              <span>Base de Datos PostgreSQL Conectada</span>
             </div>
           </div>
 
