@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+
+<html lang="es"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-primary-fixed-variant": "#5d4200", "secondary": "#4059aa", "primary-fixed-dim": "#f7bd48", "on-secondary-fixed-variant": "#264191", "outline-variant": "#d3c4af", "surface-variant": "#e9e1da", "on-primary-fixed": "#271900", "outline": "#817563", "primary-container": "#986d00", "error": "#ba1a1a", "on-tertiary-fixed-variant": "#891c1d", "on-tertiary-fixed": "#410003", "inverse-surface": "#33302b", "inverse-primary": "#f7bd48", "surface-dim": "#e0d9d2", "surface-container-high": "#efe7e0", "on-tertiary-container": "#fffbff", "on-secondary": "#ffffff", "on-error": "#ffffff", "surface-container": "#f4ede6", "on-secondary-container": "#1d3989", "on-error-container": "#93000a", "secondary-fixed": "#dce1ff", "secondary-container": "#8fa7fe", "tertiary-fixed-dim": "#ffb3ad", "tertiary": "#a6322f", "primary-fixed": "#ffdea6", "tertiary-fixed": "#ffdad6", "on-surface-variant": "#4f4535", "on-surface": "#1e1b17", "error-container": "#ffdad6", "secondary-fixed-dim": "#b6c4ff", "primary": "#785600", "surface-container-lowest": "#ffffff", "tertiary-container": "#c84a45", "surface-container-low": "#faf2eb", "background": "#fff8f3", "on-primary-container": "#fffbff", "on-primary": "#ffffff", "on-background": "#1e1b17", "inverse-on-surface": "#f7efe8", "on-tertiary": "#ffffff", "surface": "#fff8f3", "surface-bright": "#fff8f3", "surface-container-highest": "#e9e1da", "on-secondary-fixed": "#00164e", "surface-tint": "#7b5800" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "margin": "3rem", "space-xl": "2.5rem", "space-xs": "0.25rem", "space-sm": "0.5rem", "gutter-mobile": "1rem", "space-lg": "1.5rem", "gutter": "1.5rem", "margin-mobile": "1rem", "space-md": "1rem" }, "fontFamily": { "display-lg-mobile": ["Playfair Display"], "label-lg": ["Plus Jakarta Sans"], "headline-md": ["Playfair Display"], "body-sm": ["Plus Jakarta Sans"], "display-md": ["Playfair Display"], "display-md-mobile": ["Playfair Display"], "label-sm": ["Plus Jakarta Sans"], "display-lg": ["Playfair Display"], "headline-sm": ["Playfair Display"], "body-md": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "headline-lg": ["Playfair Display"] }, "fontSize": { "display-lg-mobile": ["34px", { "lineHeight": "42px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-md": ["22px", { "lineHeight": "30px", "fontWeight": "500" }], "body-sm": ["13px", { "lineHeight": "20px", "fontWeight": "400" }], "display-md": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "display-md-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-sm": ["10px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "700" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-sm": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "body-md": ["15px", { "lineHeight": "24px", "fontWeight": "400" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }], "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "500" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-on-surface antialiased flex flex-col min-h-screen selection:bg-primary-fixed selection:text-on-primary-fixed"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl pt-safe shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-20 px-gutter-mobile flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center flex-shrink-0 text-primary"><span class="material-symbols-outlined text-[22px]">local_library</span></div><div class="flex flex-col min-w-0"><h1 class="font-headline-sm text-headline-sm text-on-surface truncate tracking-tight">Capilla Ntra. Sra. de Lourdes</h1><p class="font-label-sm text-label-sm uppercase tracking-wider text-outline truncate">Biblioteca Comunitaria · Temperley</p></div></div><div class="flex items-center gap-space-xs flex-shrink-0"><button aria-label="Notificaciones y Carnet Parroquial" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface transition-colors" type="button"><span class="material-symbols-outlined text-[22px]">notifications</span></button><a aria-label="Perfil de Feligrés David Miller" class="flex items-center justify-center w-11 h-11" href="#"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></a></div></div></header><main class="flex-1 flex flex-col relative w-full pt-20 pb-28 px-gutter-mobile bg-surface"><div class="flex flex-col w-full gap-space-md">
+<!-- Saludo Cálido & Contexto Pastoral -->
+<div class="flex items-center justify-between bg-surface-container-low px-space-md py-space-sm rounded-xl">
+<div class="flex items-center gap-space-sm">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<div>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Lector Parroquial</p>
+<p class="font-headline-sm text-headline-sm text-on-surface leading-tight">David Miller</p>
+</div>
+</div>
+<span class="font-label-md text-label-md px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span> Carnet al Día
+    </span>
+</div>
+<!-- Métricas Rápidas Compactas -->
+<div class="grid grid-cols-2 gap-space-sm">
+<div class="bg-surface-container rounded-xl p-space-sm flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between text-primary">
+<span class="material-symbols-outlined text-[20px]">mark_email_read</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-semibold">Listo</span>
+</div>
+<div class="mt-2">
+<p class="font-headline-md text-headline-md text-on-surface leading-tight">2</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Reservas en Sede</p>
+</div>
+</div>
+<div class="bg-surface-container rounded-xl p-space-sm flex flex-col justify-between shadow-sm">
+<div class="flex items-center justify-between text-secondary">
+<span class="material-symbols-outlined text-[20px]">hourglass_top</span>
+<span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed">4 días</span>
+</div>
+<div class="mt-2">
+<p class="font-headline-md text-headline-md text-on-surface leading-tight">1</p>
+<p class="font-label-md text-label-md text-on-surface-variant">Préstamo Activo</p>
+</div>
+</div>
+<div class="col-span-2 bg-surface-container-low rounded-xl px-space-md py-2.5 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-2.5 min-w-0">
+<span class="material-symbols-outlined text-outline text-[20px] shrink-0">church</span>
+<div class="min-w-0">
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Punto de Entrega</p>
+<p class="font-body-sm text-body-sm text-on-surface truncate font-medium">Sigmund Freud 201 · Temperley</p>
+</div>
+</div>
+<button class="font-label-md text-label-md text-primary font-semibold shrink-0 pl-2" onclick="document.getElementById('horarios-accordion').scrollIntoView({behavior: 'smooth'})" type="button">
+        Ver Horarios
+      </button>
+</div>
+</div>
+<!-- Tarjeta Destacada: Reserva Lista para Retiro -->
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-md">
+<!-- Header del Estado -->
+<div class="bg-primary px-space-md py-2.5 flex items-center justify-between text-on-primary">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="font-label-lg text-label-lg font-bold">¡Listo para Retirar!</span>
+</div>
+<span class="font-label-sm text-label-sm bg-primary-container text-on-primary-container px-2 py-0.5 rounded tracking-wide">
+        #RES-7829-DOM
+      </span>
+</div>
+<div class="p-space-md flex flex-col gap-space-md">
+<!-- Datos Bibliográficos con Imagen de Tapa -->
+<div class="flex gap-space-md items-start">
+<div class="relative w-20 h-28 rounded-lg overflow-hidden shrink-0 shadow-md bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="Classic vintage book cover of Ficciones by Jorge Luis Borges, embossed typography on aged warm ivory parchment background, subtle golden ecclesiastical details, elegant literary styling" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAF4qLgYdVtkabqAzqRXPnBolbQTWxyX6KRFdRdUvPQb9kk2P_1l05A6IDSHQT831aeqgiePzU-YocZIeham_JJPd6rBWUyTzW1PsgWCf-GSctiM9IuS8jFQvPDiyEhtVCJugG9GfSJngq2lSy8GcUkl89PP4sWkd4-ubCeUSsPDXAtkJsQz88egRT_gDPFHH55PLn2C7xDa03JgK0oZ4IWb2QCDU3gg-UtdvhUO0Wk"/>
+<div class="absolute bottom-0 inset-x-0 bg-surface-container-highest/90 px-1 py-0.5 text-center">
+<span class="font-label-sm text-[9px] text-on-surface-variant tracking-wider font-semibold">CUSTODIA</span>
+</div>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<div class="flex items-center gap-1.5 mb-1">
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-surface-container-highest text-on-surface-variant font-mono">
+              863.6 BOR
+            </span>
+<span class="font-label-sm text-label-sm text-outline truncate">Ed. Conmemorativa</span>
+</div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface leading-snug line-clamp-2">
+            Ficciones
+          </h2>
+<p class="font-body-sm text-body-sm text-outline truncate mt-0.5">
+            Jorge Luis Borges
+          </p>
+<div class="flex items-center gap-1 text-primary mt-2">
+<span class="material-symbols-outlined text-[16px]">menu_book</span>
+<span class="font-label-sm text-label-sm">Colección Letras Rioplatenses</span>
+</div>
+</div>
+</div>
+<!-- Bloque Equilibrado de Retiro y Plazo -->
+<div class="bg-surface-container-high rounded-xl p-space-sm flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0">event_available</span>
+<div class="min-w-0">
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Límite de Guardia</p>
+<p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">Sábado 26 Oct, 18:00 hs</p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-1 rounded-full bg-primary-fixed text-on-primary-fixed font-bold shrink-0">
+            Quedan 2d 14h
+          </span>
+</div>
+<div class="h-[1px] bg-outline-variant/30 w-full"></div>
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-outline text-[18px] shrink-0 mt-0.5">pin_drop</span>
+<div class="min-w-0 text-on-surface-variant font-body-sm text-body-sm">
+<p class="text-on-surface font-medium truncate">Mesa de Entrada &amp; Atrio Parroquial</p>
+<p class="text-outline text-body-sm">Sigmund Freud 201, Temperley</p>
+</div>
+</div>
+</div>
+<!-- Acciones de la Tarjeta -->
+<div class="flex flex-col gap-2 pt-1">
+<button class="w-full h-12 bg-primary text-on-primary rounded-lg font-label-lg text-label-lg flex items-center justify-center gap-2 shadow hover:bg-primary/90 transition-all active:scale-[0.99]" onclick="document.getElementById('modal-qr').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[22px]">qr_code_2</span>
+          Ver Pase de Retiro / QR
+        </button>
+<button class="w-full h-10 bg-surface-container-highest text-on-surface rounded-lg font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-surface-variant transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">auto_stories</span>
+          Volver al Catálogo
+        </button>
+</div>
+</div>
+</div>
+<!-- Sección: Préstamos en Curso -->
+<div class="flex flex-col gap-space-sm mt-space-xs">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[22px]">book</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Préstamos en Curso</h3>
+</div>
+<span class="font-label-sm text-label-sm text-outline">1 ejemplar</span>
+</div>
+<!-- Tarjeta de Préstamo Activo -->
+<div class="bg-surface-container rounded-xl p-space-md flex flex-col gap-space-sm shadow-sm">
+<div class="flex gap-space-sm items-start">
+<div class="w-14 h-20 rounded-md overflow-hidden shrink-0 shadow bg-surface-variant">
+<img class="w-full h-full object-cover" data-alt="Warm tone religious theological book cover of Treatise on True Devotion to the Blessed Virgin by Saint Louis de Montfort, golden Marian blue details, scriptorium aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkI_JCzXQtqT1AH5DI54-tQC91sj5kkKT0v2pn0jcGVSPn-_orXJffNVJ62hy_99q6ZOj603WTjP43bj-xjObWeTLqlq4l5QsfDmDPivacUT0coOrO6v_AbWhoZMcIIS75guwDpq7ZxXt_cE1c2gN5zI1qJcGOsz1Qyced0giETfrDoLkNKFGri5fHnPNed6mPZLupCcaoT4mWZfrTatkooPa3w7y_Hi0uVzeX8gc9"/>
+</div>
+<div class="flex flex-col min-w-0 flex-1">
+<span class="font-label-sm text-label-sm text-secondary font-semibold uppercase tracking-wider">Espiritualidad Mariana</span>
+<h4 class="font-headline-sm text-body-lg text-on-surface font-semibold leading-tight line-clamp-2 mt-0.5">
+            Tratado de la Verdadera Devoción a la Santísima Virgen
+          </h4>
+<p class="font-body-sm text-body-sm text-outline truncate">San Luis María Grignion de Montfort</p>
+</div>
+</div>
+<!-- Barra de Progreso y Vencimiento -->
+<div class="bg-surface-container-low rounded-lg p-2.5 flex flex-col gap-2">
+<div class="flex items-center justify-between text-on-surface">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-outline text-[18px]">calendar_clock</span>
+<span class="font-body-sm text-body-sm font-medium">Vence el Domingo 27 de Octubre</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed font-bold">
+            Día 10 de 14
+          </span>
+</div>
+<!-- Indicador de línea de tiempo de lectura -->
+<div class="w-full bg-surface-container-highest rounded-full h-2 overflow-hidden">
+<div class="bg-secondary h-full rounded-full transition-all" style="width: 71%;"></div>
+</div>
+<div class="flex items-center justify-between text-outline font-label-sm text-[11px]">
+<span>Retirado: 13 Oct</span>
+<span class="text-secondary font-semibold">Quedan 4 días hábiles</span>
+</div>
+</div>
+<!-- Botón de Prórroga con Modal Interactivo -->
+<button class="w-full h-11 bg-surface-container-highest text-secondary rounded-lg font-label-md text-label-md font-semibold flex items-center justify-center gap-2 hover:bg-secondary-fixed transition-colors" id="btn-prorroga" onclick="solicitarProrroga()" type="button">
+<span class="material-symbols-outlined text-[18px]">update</span>
+<span id="prorroga-text">Solicitar Prórroga (+7 días)</span>
+</button>
+</div>
+</div>
+<!-- Horarios de Atención y Secretaría (Acordeón Colapsable Scriptorium) -->
+<div class="bg-surface-container rounded-xl overflow-hidden shadow-sm mt-space-xs" id="horarios-accordion">
+<button class="w-full px-space-md py-3.5 flex items-center justify-between bg-surface-container hover:bg-surface-container-high transition-colors text-left" onclick="toggleAccordion('acordeon-horarios', 'acordeon-icon')" type="button">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed shrink-0">
+<span class="material-symbols-outlined text-[16px]">schedule</span>
+</div>
+<div>
+<p class="font-label-lg text-label-lg text-on-surface">Horarios de Atención Parroquial</p>
+<p class="font-body-sm text-body-sm text-outline">Entregas, devoluciones y guardia</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-outline transition-transform duration-200" id="acordeon-icon">expand_more</span>
+</button>
+<div class="px-space-md pb-space-md pt-1 flex flex-col gap-space-sm hidden" id="acordeon-horarios">
+<div class="grid grid-cols-1 gap-2 text-on-surface">
+<div class="bg-surface-container-lowest p-2.5 rounded-lg flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">church</span>
+<div class="min-w-0">
+<p class="font-label-md text-label-md font-bold text-on-surface">Domingos &amp; Celebraciones</p>
+<p class="font-body-sm text-body-sm text-outline">09:30 a 12:30 hs &amp; 18:00 a 20:30 hs</p>
+<p class="font-label-sm text-[11px] text-primary mt-0.5">Atención en el Atrio tras las Misas dominicales.</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-2.5 rounded-lg flex items-start gap-2.5">
+<span class="material-symbols-outlined text-secondary text-[20px] shrink-0 mt-0.5">desk</span>
+<div class="min-w-0">
+<p class="font-label-md text-label-md font-bold text-on-surface">Secretaría Parroquial (Mar a Vie)</p>
+<p class="font-body-sm text-body-sm text-outline">16:30 a 19:30 hs</p>
+<p class="font-label-sm text-[11px] text-outline mt-0.5">Entrada lateral por Sigmund Freud 201.</p>
+</div>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg flex items-center justify-between text-outline font-label-sm text-label-sm">
+<span>Contacto de Biblioteca:</span>
+<span class="font-semibold text-on-surface">biblioteca.lourdes@diocesis.org</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Diálogo Modal: Pase de Retiro / QR Parroquial -->
+<div class="fixed inset-0 z-50 bg-inverse-surface/60 backdrop-blur-sm flex items-center justify-center p-gutter-mobile hidden" id="modal-qr">
+<div class="bg-surface-container-lowest w-full max-w-sm rounded-xl p-space-md flex flex-col items-center gap-space-sm shadow-xl text-center">
+<div class="flex items-center justify-between w-full">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline">Pase de Retiro Digital</span>
+<button class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-outline hover:text-on-surface" onclick="document.getElementById('modal-qr').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="mt-1">
+<h4 class="font-headline-sm text-headline-sm text-on-surface">Ficciones</h4>
+<p class="font-body-sm text-body-sm text-outline">Jorge Luis Borges · Copia 1</p>
+</div>
+<!-- Código QR Ilustrado Estilo Manuscrito -->
+<div class="bg-surface p-4 rounded-xl shadow-inner flex flex-col items-center">
+<svg class="w-40 h-40 text-on-surface" viewbox="0 0 160 160">
+<!-- Patrones de QR Simulado -->
+<rect fill="currentColor" height="48" opacity="0.9" rx="6" width="48" x="0" y="0"></rect>
+<rect fill="#fff8f3" height="32" rx="3" width="32" x="8" y="8"></rect>
+<rect fill="currentColor" height="16" rx="2" width="16" x="16" y="16"></rect>
+<rect fill="currentColor" height="48" opacity="0.9" rx="6" width="48" x="112" y="0"></rect>
+<rect fill="#fff8f3" height="32" rx="3" width="32" x="120" y="8"></rect>
+<rect fill="currentColor" height="16" rx="2" width="16" x="128" y="16"></rect>
+<rect fill="currentColor" height="48" opacity="0.9" rx="6" width="48" x="0" y="112"></rect>
+<rect fill="#fff8f3" height="32" rx="3" width="32" x="8" y="120"></rect>
+<rect fill="currentColor" height="16" rx="2" width="16" x="16" y="128"></rect>
+<!-- Puntos y cuadrículas centrales -->
+<circle cx="64" cy="24" fill="currentColor" r="5"></circle>
+<circle cx="80" cy="24" fill="currentColor" r="5"></circle>
+<circle cx="96" cy="24" fill="currentColor" r="5"></circle>
+<circle cx="64" cy="40" fill="currentColor" r="5"></circle>
+<circle cx="80" cy="56" fill="currentColor" r="5"></circle>
+<circle cx="96" cy="72" fill="currentColor" r="5"></circle>
+<circle cx="24" cy="64" fill="currentColor" r="5"></circle>
+<circle cx="40" cy="80" fill="currentColor" r="5"></circle>
+<circle cx="64" cy="80" fill="currentColor" r="5"></circle>
+<circle cx="80" cy="80" fill="#785600" r="6"></circle>
+<circle cx="96" cy="96" fill="currentColor" r="5"></circle>
+<circle cx="120" cy="64" fill="currentColor" r="5"></circle>
+<circle cx="136" cy="80" fill="currentColor" r="5"></circle>
+<circle cx="64" cy="120" fill="currentColor" r="5"></circle>
+<circle cx="80" cy="136" fill="currentColor" r="5"></circle>
+<circle cx="120" cy="120" fill="currentColor" r="5"></circle>
+<circle cx="136" cy="136" fill="currentColor" r="5"></circle>
+</svg>
+<span class="font-label-sm text-[11px] font-mono tracking-widest text-outline mt-2">#RES-7829-DOM</span>
+</div>
+<div class="text-center font-body-sm text-body-sm text-outline">
+        Presentá este código o tu carnet parroquial en Sigmund Freud 201 antes del <strong class="text-on-surface">26 de Octubre</strong>.
+      </div>
+<button class="w-full h-11 bg-primary text-on-primary rounded-lg font-label-md text-label-md font-bold mt-1" onclick="document.getElementById('modal-qr').classList.add('hidden')" type="button">
+        Cerrar Pase
+      </button>
+</div>
+</div>
+</div>
+<script>
+  function toggleAccordion(contentId, iconId) {
+    const el = document.getElementById(contentId);
+    const icon = document.getElementById(iconId);
+    if (!el || !icon) return;
+    const isHidden = el.classList.contains('hidden');
+    if (isHidden) {
+      el.classList.remove('hidden');
+      icon.style.transform = 'rotate(180deg)';
+    } else {
+      el.classList.add('hidden');
+      icon.style.transform = 'rotate(0deg)';
+    }
+  }
+
+  function solicitarProrroga() {
+    const btn = document.getElementById('btn-prorroga');
+    const txt = document.getElementById('prorroga-text');
+    if (!btn || !txt) return;
+
+    btn.disabled = true;
+    txt.textContent = 'Procesando con Secretaría...';
+
+    setTimeout(() => {
+      txt.textContent = '¡Prórroga Concedida hasta el 3 Nov!';
+      btn.classList.remove('bg-surface-container-highest', 'text-secondary');
+      btn.classList.add('bg-primary-fixed', 'text-on-primary-fixed');
+    }, 800);
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(31,28,24,0.06)]" data-active-classes="text-primary font-semibold"><div class="h-16 px-gutter-mobile flex items-center justify-around"><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs text-on-surface-variant hover:text-on-surface transition-colors" data-path="catalog" href="#"><span class="material-symbols-outlined text-[24px]">auto_stories</span><span class="font-label-sm text-label-sm mt-0.5">Catálogo</span></a><a aria-current="page" class="relative flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs transition-colors text-primary font-semibold" data-path="reservations" href="#"><div class="relative flex items-center justify-center"><span class="material-symbols-outlined text-[24px]">confirmation_number</span><span class="absolute -top-1 -right-2 px-1.5 py-0.2 bg-tertiary text-on-tertiary font-label-sm text-[10px] rounded-full min-w-[16px] h-4 flex items-center justify-center">2</span></div><span class="font-label-sm text-label-sm mt-0.5">Mis Reservas</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs text-on-surface-variant hover:text-on-surface transition-colors" data-path="history" href="#"><span class="material-symbols-outlined text-[24px]">history</span><span class="font-label-sm text-label-sm mt-0.5">Historial</span></a><a class="flex flex-col items-center justify-center min-w-[44px] min-h-[44px] px-space-xs text-on-surface-variant hover:text-on-surface transition-colors" data-path="news" href="#"><span class="material-symbols-outlined text-[24px]">campaign</span><span class="font-label-sm text-label-sm mt-0.5">Noticias</span></a></div></nav></body></html>

@@ -1,0 +1,836 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-surface": "#1e1b17", "secondary-fixed": "#dce1ff", "tertiary": "#a6322f", "on-surface-variant": "#4f4535", "surface-container-low": "#faf2eb", "surface-container-highest": "#e9e1da", "tertiary-fixed": "#ffdad6", "inverse-primary": "#f7bd48", "surface-container-lowest": "#ffffff", "tertiary-container": "#c84a45", "surface-dim": "#e0d9d2", "outline-variant": "#d3c4af", "on-error-container": "#93000a", "on-primary": "#ffffff", "on-tertiary-container": "#fffbff", "on-primary-fixed": "#271900", "inverse-surface": "#33302b", "surface": "#fff8f3", "secondary-fixed-dim": "#b6c4ff", "inverse-on-surface": "#f7efe8", "surface-container": "#f4ede6", "background": "#fff8f3", "error-container": "#ffdad6", "on-tertiary-fixed-variant": "#891c1d", "primary": "#785600", "surface-tint": "#7b5800", "tertiary-fixed-dim": "#ffb3ad", "primary-fixed": "#ffdea6", "on-primary-container": "#fffbff", "surface-bright": "#fff8f3", "on-tertiary": "#ffffff", "on-secondary-fixed-variant": "#264191", "error": "#ba1a1a", "surface-container-high": "#efe7e0", "on-error": "#ffffff", "on-secondary-fixed": "#00164e", "on-secondary-container": "#1d3989", "primary-fixed-dim": "#f7bd48", "on-background": "#1e1b17", "outline": "#817563", "secondary": "#4059aa", "secondary-container": "#8fa7fe", "on-primary-fixed-variant": "#5d4200", "surface-variant": "#e9e1da", "on-secondary": "#ffffff", "on-tertiary-fixed": "#410003", "primary-container": "#986d00" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-sm": "0.5rem", "gutter-mobile": "1rem", "space-xs": "0.25rem", "space-xl": "2.5rem", "space-md": "1rem", "space-lg": "1.5rem", "margin": "3rem", "margin-mobile": "1rem", "gutter": "1.5rem" }, "fontFamily": { "display-lg": [ "Playfair Display" ], "display-md-mobile": [ "Playfair Display" ], "label-lg": [ "Plus Jakarta Sans" ], "headline-md": [ "Playfair Display" ], "label-sm": [ "Plus Jakarta Sans" ], "display-lg-mobile": [ "Playfair Display" ], "headline-sm": [ "Playfair Display" ], "body-md": [ "Plus Jakarta Sans" ], "display-md": [ "Playfair Display" ], "body-sm": [ "Plus Jakarta Sans" ], "label-md": [ "Plus Jakarta Sans" ], "body-lg": [ "Plus Jakarta Sans" ], "headline-lg": [ "Playfair Display" ] }, "fontSize": { "display-lg": [ "48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" } ], "display-md-mobile": [ "28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "label-lg": [ "14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" } ], "headline-md": [ "22px", { "lineHeight": "30px", "fontWeight": "500" } ], "label-sm": [ "10px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "700" } ], "display-lg-mobile": [ "34px", { "lineHeight": "42px", "letterSpacing": "-0.01em", "fontWeight": "600" } ], "headline-sm": [ "18px", { "lineHeight": "26px", "fontWeight": "600" } ], "body-md": [ "15px", { "lineHeight": "24px", "fontWeight": "400" } ], "display-md": [ "36px", { "lineHeight": "44px", "letterSpacing": "-0.015em", "fontWeight": "600" } ], "body-sm": [ "13px", { "lineHeight": "20px", "fontWeight": "400" } ], "label-md": [ "12px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600" } ], "body-lg": [ "18px", { "lineHeight": "28px", "fontWeight": "400" } ], "headline-lg": [ "28px", { "lineHeight": "36px", "fontWeight": "500" } ] } } } };</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><aside class="fixed left-0 top-0 h-full w-72 bg-surface-container-low z-50 flex flex-col justify-between shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex flex-col"><div class="p-space-lg flex items-center gap-space-sm bg-surface-container"><div class="w-10 h-10 rounded-lg bg-primary-container text-on-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-[24px]">account_balance</span></div><div><h2 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Centro de Conocimiento</h2><span class="font-label-sm text-label-sm uppercase tracking-wider text-primary">SISTEMA DE ARCHIVO Y CRM</span></div></div><nav class="flex flex-col gap-space-xs p-space-md" data-active-classes="bg-primary-container text-on-primary-container font-label-lg"><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant font-label-lg hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="metricas-panel-general" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">analytics</span><span>Panel y Analítica</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant font-label-lg hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="gestion-de-libros-acervo" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">inventory_2</span><span>Catálogo e Inventario de Activos</span></div><span class="px-space-xs py-0.5 rounded text-label-sm font-label-sm bg-surface-container-highest text-on-surface">318 Físicos</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant font-label-lg hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="prestamos-entregas-qr" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">sync_alt</span><span>Circulación y Entregas</span></div><span class="px-space-xs py-0.5 rounded text-label-sm font-label-sm bg-surface-container-highest text-on-surface">4 En Cola</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant font-label-lg hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="feligreses-lectores" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">badge</span><span>Miembros y Perfiles</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant font-label-lg hover:bg-surface-container-high hover:text-on-surface transition-colors" data-path="publicar-noticias-gaceta" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">campaign</span><span>Comunicaciones y Anuncios</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg bg-primary text-on-primary shadow-sm" data-path="configuracion-despacho" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">settings_suggest</span><span>Configuración y Despacho</span></div></a></nav></div><div class="p-space-md bg-surface-container-low flex flex-col gap-space-sm"><a class="flex items-center gap-space-xs text-secondary font-label-md text-label-md hover:underline" href="#"><span class="material-symbols-outlined text-[16px]">open_in_new</span><span>Portal de Autogestión de Miembros</span></a><div class="flex items-start gap-space-xs text-on-surface-variant font-body-sm text-body-sm"><span class="material-symbols-outlined text-[16px] text-primary mt-0.5">business</span><div><p class="font-label-sm text-label-sm text-on-surface font-semibold">Sede Central</p><p class="text-outline">Distrito 1 · Despacho y Circulación</p></div></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface/90 backdrop-blur-xl z-40 flex items-center justify-between px-gutter shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="flex items-center gap-space-md"><div class="flex flex-col"><h1 class="font-headline-sm text-headline-sm text-on-surface leading-tight">Sistema de Gestión Bibliotecaria y Archivo Empresarial</h1><span class="font-label-sm text-label-sm text-outline">Operaciones de Circulación y Entregas</span></div><div class="hidden xl:flex items-center gap-space-xs bg-surface-container px-space-sm py-1 rounded-full"><span class="w-2 h-2 rounded-full bg-primary"></span><span class="font-label-sm text-label-sm text-on-surface-variant">Sincronización Operativa Activa • Sede Central</span></div></div><div class="flex items-center gap-space-md"><div class="relative hidden md:block w-80"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span><input class="w-full pl-9 pr-space-sm py-1.5 rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" placeholder="Buscar orden, ID de reserva, SKU..." type="text"></div><div class="flex items-center gap-space-sm bg-surface-container px-space-sm py-1 rounded-full"><div class="text-right hidden sm:block"><p class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Administrador General</p><span class="font-label-sm text-label-sm text-primary">Líder de Operaciones</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 min-h-screen bg-surface px-gutter"><div class="flex flex-col w-full pb-16">
+<!-- Sincronizador de Navegación Lateral en Shell -->
+<script>
+    (function() {
+      const currentActive = document.querySelector('aside nav a[data-path="publicar-noticias-gaceta"]');
+      const targetNav = document.querySelector('aside nav a[data-path="configuracion-despacho"]');
+      if (currentActive && targetNav) {
+        currentActive.className = "flex items-center justify-between px-space-md py-space-sm rounded-lg text-on-surface-variant font-label-lg hover:bg-surface-container-high hover:text-on-surface transition-colors";
+        targetNav.className = "flex items-center justify-between px-space-md py-space-sm rounded-lg font-label-lg bg-primary text-on-primary shadow-sm";
+      }
+    })();
+  </script>
+<!-- Encabezado de la Pantalla -->
+<header class="py-space-lg flex flex-col md:flex-row md:items-end justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs max-w-3xl">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-primary font-bold">
+          ADMINISTRACIÓN DEL SISTEMA • POLÍTICAS &amp; LOGÍSTICA OPERATIVA
+        </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">
+        Configuración y Parámetros de Despacho
+      </h1>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Definición centralizada de reglas de préstamo, logística de puntos de entrega física, ventanas de reserva, alertas automáticas y permisos del personal de archivo.
+      </p>
+</div>
+<!-- Botonera Superior -->
+<div class="flex flex-wrap items-center gap-space-sm shrink-0">
+<button class="px-space-md py-2.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-label-md text-label-md transition-colors flex items-center gap-1.5 shadow-sm" type="button">
+<span class="material-symbols-outlined text-[18px] text-outline">file_download</span>
+<span>Exportar (JSON/PDF)</span>
+</button>
+<button class="px-space-md py-2.5 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-label-md text-label-md transition-colors flex items-center gap-1.5" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+<span>Restablecer</span>
+</button>
+<button class="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold transition-all shadow-md active:scale-[0.98] flex items-center gap-1.5" id="btn-save-master" type="button">
+<span class="material-symbols-outlined text-[18px]">verified</span>
+<span>Guardar Cambios</span>
+</button>
+</div>
+</header>
+<!-- Barra de Notificación y Vigencia -->
+<div class="mb-space-md p-space-sm px-space-md rounded-xl bg-surface-container-low flex flex-wrap items-center justify-between gap-space-sm text-on-surface-variant text-body-sm shadow-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-7 h-7 rounded-lg bg-primary-fixed/50 text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[18px]">history_edu</span>
+</div>
+<div class="flex flex-wrap items-center gap-x-3 gap-y-1">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Políticas en vigencia desde el 1 de Octubre de 2024</span>
+<span class="text-outline hidden sm:inline">•</span>
+<span class="text-body-sm">Última sincronización: Hoy a las 08:15 por <strong class="text-on-surface font-semibold">Administrador General</strong></span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-highest text-primary font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+        MOTOR DE REGLAS ACTIVO
+      </span>
+</div>
+</div>
+<!-- Pestañas de Navegación Interna (Tabs) -->
+<div class="flex items-center gap-2 overflow-x-auto pb-2 mb-space-lg scrollbar-none">
+<button class="px-space-md py-2 rounded-xl bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-sm flex items-center gap-2 whitespace-nowrap" type="button">
+<span class="material-symbols-outlined text-[18px]">auto_stories</span>
+<span>Políticas de Préstamo</span>
+</button>
+<button class="px-space-md py-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap" type="button">
+<span class="material-symbols-outlined text-[18px]">local_shipping</span>
+<span>Puntos de Retiro &amp; Logística</span>
+</button>
+<button class="px-space-md py-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap" type="button">
+<span class="material-symbols-outlined text-[18px]">event_repeat</span>
+<span>Reglas de Reserva &amp; Vencimientos</span>
+</button>
+<button class="px-space-md py-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap" type="button">
+<span class="material-symbols-outlined text-[18px]">notifications_active</span>
+<span>Notificaciones &amp; Automatización</span>
+</button>
+<button class="px-space-md py-2 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors flex items-center gap-2 whitespace-nowrap" type="button">
+<span class="material-symbols-outlined text-[18px]">print</span>
+<span>Hardware &amp; Impresoras de Marbetes</span>
+</button>
+</div>
+<!-- Contenedor Maestro en Cuadrícula 12-Columnas -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
+<!-- Columna Principal Izquierda (8 Columnas) -->
+<div class="lg:col-span-8 flex flex-col gap-space-xl">
+<!-- SECCIÓN 1: Reglas y Plazos de Préstamo -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">schedule</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Reglas y Plazos de Préstamo Físico</h2>
+<p class="font-body-sm text-body-sm text-outline">Definición de horizontes temporales para el fondo bibliográfico y control de devoluciones</p>
+</div>
+</div>
+<span class="px-2.5 py-1 rounded-md bg-secondary-fixed text-on-secondary-fixed text-label-sm font-label-sm font-bold">CIRCULACIÓN CANÓNICA</span>
+</div>
+<!-- Bento Grid de Reglas de Préstamo -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+<!-- Card 1: Plazo estándar de préstamo -->
+<div class="p-space-lg rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-sm relative overflow-hidden group">
+<div class="absolute -right-4 -bottom-4 w-28 h-28 bg-primary/5 rounded-full blur-2xl pointer-events-none"></div>
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">PLAZO DOMICILIARIO ESTÁNDAR</span>
+<span class="material-symbols-outlined text-primary text-[20px]">calendar_today</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Duración de Préstamo Regular</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Período asignado automáticamente en mostrador al escanear el marbete del libro.</p>
+</div>
+<div class="mt-space-md flex flex-col gap-space-sm pt-space-sm">
+<div class="flex items-center gap-3">
+<div class="flex items-center bg-surface-container rounded-xl p-1 shadow-inner">
+<button class="w-9 h-9 rounded-lg bg-surface hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<span class="w-16 text-center font-display-md text-display-md text-primary leading-none">21</span>
+<button class="w-9 h-9 rounded-lg bg-surface hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Días Corridos</span>
+<span class="font-body-sm text-body-sm text-outline">Equivale a 3 semanas litúrgicas</span>
+</div>
+</div>
+<!-- Switch Prórrogas automáticas web -->
+<label class="mt-2 p-2.5 rounded-xl bg-surface flex items-center justify-between cursor-pointer hover:bg-surface-container-high transition-colors">
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Prórrogas automáticas web</span>
+<span class="text-body-sm text-outline">Lectores pueden renovar desde su portal sin morosidad</span>
+</div>
+<input checked="" class="w-5 h-5 rounded text-primary focus:ring-0 accent-primary cursor-pointer" type="checkbox">
+</label>
+</div>
+</div>
+<!-- Card 2: Límite de renovaciones consecutivas -->
+<div class="p-space-lg rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">CONDICIÓN DE RENOVACIÓN</span>
+<span class="material-symbols-outlined text-secondary text-[20px]">sync</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Renovaciones Consecutivas</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Límite permitido por ejemplar antes de exigir devolución física en el atrio o archivo.</p>
+</div>
+<div class="mt-space-md flex flex-col gap-space-sm pt-space-sm">
+<div class="flex items-center gap-3">
+<div class="flex items-center bg-surface-container rounded-xl p-1 shadow-inner">
+<button class="w-9 h-9 rounded-lg bg-surface hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">remove</span>
+</button>
+<span class="w-16 text-center font-display-md text-display-md text-secondary leading-none">02</span>
+<button class="w-9 h-9 rounded-lg bg-surface hover:bg-surface-container-high text-on-surface flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">add</span>
+</button>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-semibold text-on-surface">Renovaciones Máximas</span>
+<span class="font-body-sm text-body-sm text-outline">Bloqueado si existe lista de espera</span>
+</div>
+</div>
+<div class="mt-2 p-2.5 rounded-xl bg-surface-container-highest/60 flex items-center gap-2 text-on-surface-variant text-body-sm">
+<span class="material-symbols-outlined text-secondary text-[18px] shrink-0">info</span>
+<span>Si otro lector reserva el tomo durante el préstamo, el sistema inhibe la renovación automática.</span>
+</div>
+</div>
+</div>
+<!-- Card 3: Período de Gracia ante Demoras -->
+<div class="p-space-lg rounded-2xl bg-surface-container-low flex flex-col justify-between shadow-sm md:col-span-2">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-1 max-w-xl">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary text-[20px]">timer</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">DISCIPLINA DE DEVOLUCIÓN</span>
+</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Período de Gracia &amp; Penalización de Bloqueo</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                  Días concedidos tras la fecha de expiración antes de suspender temporalmente el carnet del lector en la red parroquial.
+                </p>
+</div>
+<!-- Selector Visual de Gracia -->
+<div class="flex items-center gap-4 bg-surface p-3 rounded-xl shadow-sm shrink-0">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline uppercase font-semibold">Tolerancia</span>
+<span class="font-headline-lg text-headline-lg text-tertiary font-bold">3 Días</span>
+</div>
+<div class="h-8 w-px bg-outline-variant/50"></div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-outline uppercase font-semibold">Penalización</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">1 Día bloqueo × Día demora</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Subtarjeta: Cupo Máximo por Miembro Según Categoría Pastoral -->
+<div class="p-space-lg rounded-2xl bg-surface-container-low shadow-sm flex flex-col gap-space-md">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+<div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Cupo Máximo de Libros Simultáneos</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Límites adaptados al perfil y compromiso ministerial del lector registrado</p>
+</div>
+<span class="font-label-sm text-label-sm text-outline">Ajuste por rol de CRM</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-sm">
+<!-- Nivel 1 -->
+<div class="p-space-md rounded-xl bg-surface flex flex-col gap-space-xs shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">NIVEL 01</span>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-container-high text-on-surface">Básico</span>
+</div>
+<h4 class="font-label-lg text-label-lg font-semibold text-on-surface">Lector Estándar</h4>
+<p class="font-body-sm text-body-sm text-outline">Feligreses y vecinos habilitados</p>
+<div class="mt-2 flex items-baseline gap-1.5 pt-2">
+<span class="font-display-md text-display-md text-primary font-bold">3</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-medium">ejemplares simultáneos</span>
+</div>
+</div>
+<!-- Nivel 2 -->
+<div class="p-space-md rounded-xl bg-surface flex flex-col gap-space-xs shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary font-bold">NIVEL 02</span>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-secondary-fixed text-on-secondary-fixed">Investigación</span>
+</div>
+<h4 class="font-label-lg text-label-lg font-semibold text-on-surface">Miembro Investigador</h4>
+<p class="font-body-sm text-body-sm text-outline">Teólogos, tesistas y catequistas</p>
+<div class="mt-2 flex items-baseline gap-1.5 pt-2">
+<span class="font-display-md text-display-md text-secondary font-bold">6</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-medium">ejemplares simultáneos</span>
+</div>
+</div>
+<!-- Nivel 3 -->
+<div class="p-space-md rounded-xl bg-surface flex flex-col gap-space-xs shadow-sm">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-primary font-bold">NIVEL 03</span>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-primary-fixed text-on-primary-fixed">Clero &amp; Sede</span>
+</div>
+<h4 class="font-label-lg text-label-lg font-semibold text-on-surface">Personal Pastoral</h4>
+<p class="font-body-sm text-body-sm text-outline">Sacerdotes, diáconos y archiveros</p>
+<div class="mt-2 flex items-baseline gap-1.5 pt-2">
+<span class="font-display-md text-display-md text-primary-container font-bold">10</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant font-medium">ejemplares simultáneos</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECCIÓN 2: Logística de Despacho & Puntos de Retiro Físico -->
+<section class="flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">pin_drop</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Puntos de Retiro Físico y Mostradores</h2>
+<p class="font-body-sm text-body-sm text-outline">Lugares autorizados para recepción, resguardo de reservas y entrega con credencial</p>
+</div>
+</div>
+<button class="px-space-md py-2 rounded-lg bg-primary text-on-primary font-label-md text-label-md font-semibold hover:bg-primary-container transition-colors shadow-sm flex items-center gap-1.5 self-start sm:self-auto" type="button">
+<span class="material-symbols-outlined text-[18px]">add_location_alt</span>
+<span>+ Añadir Punto de Entrega</span>
+</button>
+</div>
+<!-- Listado de Puntos de Entrega -->
+<div class="flex flex-col gap-space-sm">
+<!-- Punto 1 -->
+<article class="p-space-lg rounded-2xl bg-surface-container-low flex flex-col md:flex-row md:items-center justify-between gap-space-md shadow-sm transition-all hover:shadow-md">
+<div class="flex items-start gap-space-md">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[26px]">storefront</span>
+</div>
+<div class="flex flex-col gap-1">
+<div class="flex flex-wrap items-center gap-2">
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Mesa de Recepción - Sede Temperley</h3>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-primary-fixed text-on-primary-fixed font-bold">PRINCIPAL</span>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-highest text-on-surface font-semibold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                    Activo
+                  </span>
+</div>
+<p class="font-body-sm text-body-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">location_on</span>
+                  Sigmund Freud 201 · Hall Central de Entrada
+                </p>
+<div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-on-surface-variant font-body-sm text-body-sm">
+<span><strong>Horarios:</strong> Mar a Sáb 09:00 - 13:00 / Dom 08:30 - 13:30 (Misas)</span>
+<span class="text-outline hidden sm:inline">•</span>
+<span><strong>Capacidad resguardo:</strong> 45 ejemplares</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-space-sm shrink-0 pt-2 md:pt-0">
+<button class="px-3 py-1.5 rounded-lg bg-surface hover:bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm transition-colors flex items-center gap-1" type="button">
+<span class="material-symbols-outlined text-[16px]">edit</span>
+<span>Editar</span>
+</button>
+<button class="w-8 h-8 rounded-lg bg-surface hover:bg-surface-container-high text-outline hover:text-on-surface flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</div>
+</article>
+<!-- Punto 2 -->
+
+<!-- Punto 3 -->
+
+</div>
+<!-- Ventana de Caducidad de Reservas -->
+<div class="p-space-lg rounded-2xl bg-surface-container-high flex flex-col md:flex-row md:items-center justify-between gap-space-md shadow-sm">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-highest text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">hourglass_top</span>
+</div>
+<div>
+<h4 class="font-label-lg text-label-lg font-semibold text-on-surface">Ventana de Caducidad de Reservas en Mostrador</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Tiempo límite para que el feligrés retire tras recibir la confirmación de preparación física. Al expirar, el libro se libera automáticamente para el siguiente en cola.
+              </p>
+</div>
+</div>
+<div class="flex items-center gap-3 shrink-0">
+<select class="px-3 py-2 rounded-lg bg-surface text-on-surface font-label-md text-label-md focus:outline-none focus:ring-1 focus:ring-primary shadow-sm">
+<option value="24">24 horas corridas</option>
+<option selected="" value="48">48 horas / 2 días hábiles</option>
+<option value="72">72 horas / 3 días hábiles</option>
+<option value="120">5 días laborables</option>
+</select>
+<span class="px-2.5 py-1 rounded bg-surface text-primary font-label-sm text-label-sm font-bold">LIBERACIÓN AUTO</span>
+</div>
+</div>
+</section>
+<!-- SECCIÓN 3: Alertas y Automatización de Comunicaciones -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-lg bg-surface-container-high text-primary flex items-center justify-center">
+<span class="material-symbols-outlined text-[20px]">mark_email_read</span>
+</div>
+<div>
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Alertas y Automatización de Comunicaciones</h2>
+<p class="font-body-sm text-body-sm text-outline">Despacho de avisos transaccionales por canales integrados sin intervención manual</p>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Automatización 1 -->
+<div class="p-space-md rounded-2xl bg-surface-container-low flex flex-col justify-between gap-space-md shadow-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-primary text-[22px]">outgoing_mail</span>
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 accent-primary cursor-pointer" type="checkbox">
+</div>
+<h3 class="font-label-lg text-label-lg font-semibold text-on-surface">Recordatorio Pre-Vencimiento</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Envía recordatorio preventivo con botón de renovación rápida <strong>48 horas antes</strong> del vencimiento.
+              </p>
+</div>
+<div class="pt-space-xs flex flex-wrap gap-1">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface text-on-surface font-medium">Email</span>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface text-on-surface font-medium">Push App</span>
+</div>
+</div>
+<!-- Automatización 2 -->
+<div class="p-space-md rounded-2xl bg-surface-container-low flex flex-col justify-between gap-space-md shadow-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-secondary text-[22px]">qr_code_scanner</span>
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 accent-primary cursor-pointer" type="checkbox">
+</div>
+<h3 class="font-label-lg text-label-lg font-semibold text-on-surface">Alerta de Reserva Lista</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Notificación inmediata con <strong>código QR de retiro</strong> una vez que el archivero ubica el tomo en la balda de espera.
+              </p>
+</div>
+<div class="pt-space-xs flex flex-wrap gap-1">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface text-on-surface font-medium">QR Dinámico</span>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface text-on-surface font-medium">SMS Opcional</span>
+</div>
+</div>
+<!-- Automatización 3 -->
+<div class="p-space-md rounded-2xl bg-surface-container-low flex flex-col justify-between gap-space-md shadow-sm">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between">
+<span class="material-symbols-outlined text-tertiary text-[22px]">warning</span>
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-0 accent-primary cursor-pointer" type="checkbox">
+</div>
+<h3 class="font-label-lg text-label-lg font-semibold text-on-surface">Aviso de Mora / Demora</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                Se activa al <strong>día siguiente</strong> del vencimiento del período de gracia (Día 4 post-fecha límite).
+              </p>
+</div>
+<div class="pt-space-xs flex flex-wrap gap-1">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-tertiary-fixed text-on-tertiary-fixed font-medium">Email Formal</span>
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface text-on-surface font-medium">Aviso de Suspensión</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Columna Lateral Derecha (4 Columnas) -->
+<div class="lg:col-span-4 flex flex-col gap-space-xl">
+<!-- SECCIÓN 4: Hardware & Impresoras de Marbetes -->
+
+<!-- Previsualización del Marbete Generado -->
+<section class="p-space-lg rounded-2xl bg-surface-container-low flex flex-col gap-space-sm shadow-sm">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-bold">PREVISUALIZACIÓN DE MARBETE IMPRESO</span>
+<div class="p-space-md rounded-xl bg-surface-container-lowest shadow-md flex flex-col gap-2">
+<div class="flex items-center justify-between pb-1">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">account_balance</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface font-bold">BIBLIO-PARROQUIAL</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline font-mono">SEDE TEMPERLEY</span>
+</div>
+<div class="flex items-center justify-between gap-3 py-1">
+<div class="flex flex-col">
+<span class="font-mono text-label-md font-bold text-on-surface">MAG-CAT-0492</span>
+<p class="font-headline-sm text-[14px] text-on-surface leading-tight mt-0.5 line-clamp-1">Summa Theologiae (Vol. I)</p>
+<p class="text-[11px] text-outline">Tomás de Aquino · Estante C-14</p>
+</div>
+<!-- Código QR Vectorial Ilustrativo -->
+<div class="w-14 h-14 bg-surface-container-high rounded p-1 shrink-0 flex items-center justify-center">
+<svg class="w-full h-full text-on-surface" fill="currentColor" viewBox="0 0 24 24">
+<path d="M2 2h8v8H2V2zm2 2v4h4V4H4zm10-2h8v8h-8V2zm2 2v4h4V4h-4zM2 14h8v8H2v-8zm2 2v4h4v-4H4zm14-2h4v2h-4v-2zm-4 0h2v4h-2v-4zm2 4h4v4h-4v-4zm2-2h2v2h-2v-2zm-4 2h2v2h-2v-2z"></path>
+</svg>
+</div>
+</div>
+<div class="pt-1 flex items-center justify-between text-[11px] text-outline font-mono">
+<span>EXPIRA: 21 DÍAS</span>
+<span>SKU #98024-TC</span>
+</div>
+</div>
+</section>
+<!-- Panel de Registro de Operaciones y Auditoría -->
+<section class="p-space-lg rounded-2xl bg-surface-container-high flex flex-col gap-space-sm shadow-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-outline text-[18px]">verified_user</span>
+<h3 class="font-label-lg text-label-lg font-bold text-on-surface">Auditoría de Cambios</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Las modificaciones en plazos y cupos aplican exclusivamente a nuevos préstamos emitidos a partir del guardado. Los préstamos en curso conservarán su fecha de vencimiento original.
+        </p>
+<div class="mt-2 flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="text-label-sm font-label-sm text-outline">Registro en cadena de custodia activo</span>
+</div>
+</section>
+</div>
+</div>
+<!-- Toast Flotante de Confirmación -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-3 p-space-md rounded-xl bg-on-surface text-surface shadow-2xl" id="toast-success">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-on-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]">check_circle</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md font-bold text-surface">Parámetros Guardados</span>
+<span class="text-body-sm text-surface-container-highest">Se sincronizaron las políticas con todos los mostradores.</span>
+</div>
+</div>
+<!-- Script de Interacciones Locales -->
+<script>
+    (function() {
+      // Notificación de Guardado Maestro
+      const saveBtn = document.getElementById('btn-save-master');
+      const toast = document.getElementById('toast-success');
+      
+      if (saveBtn && toast) {
+        saveBtn.addEventListener('click', function() {
+          saveBtn.disabled = true;
+          saveBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Sincronizando...</span>';
+          
+          setTimeout(function() {
+            saveBtn.disabled = false;
+            saveBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check</span><span>Guardado</span>';
+            
+            // Mostrar Toast
+            toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            
+            setTimeout(function() {
+              toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+              toast.classList.remove('translate-y-0', 'opacity-100');
+              saveBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">verified</span><span>Guardar Cambios</span>';
+            }, 3000);
+          }, 800);
+        });
+      }
+
+      // Impresión de Marbete de Prueba
+      const testPrintBtn = document.getElementById('btn-test-print');
+      const testPrintText = document.getElementById('test-print-text');
+      
+      if (testPrintBtn && testPrintText) {
+        testPrintBtn.addEventListener('click', function() {
+          testPrintBtn.disabled = true;
+          testPrintText.textContent = 'Enviando a Zebra ZD421...';
+          
+          setTimeout(function() {
+            testPrintText.textContent = '¡Etiqueta impresa con éxito!';
+            setTimeout(function() {
+              testPrintBtn.disabled = false;
+              testPrintText.textContent = 'Imprimir Marbete de Prueba';
+            }, 2000);
+          }, 1200);
+        });
+      }
+    })();
+  </script>
+</div></main></div>
+<!-- Modal de Redacción de Comunicados e Interacción -->
+<div aria-labelledby="modal-headline" aria-modal="true" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 md:p-8 bg-on-surface/60 backdrop-blur-sm transition-opacity duration-200 overflow-y-auto" id="compose-modal" role="dialog">
+<div class="relative w-full max-w-4xl bg-surface rounded-2xl shadow-2xl border border-outline-variant/40 flex flex-col max-h-[92vh] overflow-hidden my-auto">
+<!-- Encabezado del Modal -->
+<div class="px-6 py-4 border-b border-outline-variant/30 flex items-center justify-between bg-surface-container-low shrink-0">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-fixed/60 text-on-primary-fixed flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">edit_note</span>
+</div>
+<div>
+<div class="flex items-center gap-2.5">
+<h3 class="font-headline-sm text-headline-sm text-on-surface font-semibold" id="modal-headline">Redactar Nuevo Comunicado o Circular</h3>
+<span class="px-2 py-0.5 rounded-full text-label-sm font-label-sm bg-surface-container-highest text-on-surface-variant font-medium flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600 animate-pulse"></span>
+              Borrador en edición
+            </span>
+</div>
+<p class="font-body-sm text-body-sm text-outline">Sistema de Difusión y Archivo Histórico · Centro de Comunicaciones</p>
+</div>
+</div>
+<button aria-label="Cerrar modal" class="w-8 h-8 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface flex items-center justify-center transition-colors" id="modal-close-btn" type="button">
+<span class="material-symbols-outlined text-[20px]">close</span>
+</button>
+</div>
+<!-- Cuerpo Scrollable del Modal -->
+<div class="p-6 overflow-y-auto flex flex-col gap-5 text-on-surface bg-surface">
+<!-- Fila 1: Título y Categoría -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+<div class="md:col-span-8 flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-on-surface flex items-center justify-between" for="comm-title">
+<span>Título del Comunicado <span class="text-tertiary">*</span></span>
+<span class="text-outline font-normal text-[12px]" id="title-counter">0 / 75 caracteres recomendados</span>
+</label>
+<input class="w-full px-3.5 py-2.5 rounded-lg bg-surface-container-low text-on-surface placeholder:text-outline border border-outline-variant/40 focus:outline-none focus:ring-1 focus:ring-primary font-headline-sm text-[16px]" id="comm-title" placeholder="Ej. Convocatoria especial: Nueva adquisición de códices y textos..." type="text">
+</div>
+<div class="md:col-span-4 flex flex-col gap-1.5">
+<label class="font-label-md text-label-md font-semibold text-on-surface" for="comm-category">
+            Categoría Editorial <span class="text-tertiary">*</span>
+</label>
+<select class="w-full px-3 py-2.5 rounded-lg bg-surface-container-low text-on-surface border border-outline-variant/40 focus:outline-none focus:ring-1 focus:ring-primary font-body-sm text-body-sm" id="comm-category">
+<option value="fondo">Fondo Bibliográfico</option>
+<option value="comunidad">Comunidad &amp; Formación</option>
+<option value="politicas">Políticas &amp; Servicios</option>
+<option value="operaciones">Operaciones &amp; Logística</option>
+<option value="capacitacion">Capacitación de Personal</option>
+</select>
+</div>
+</div>
+<!-- Fila 2: Audiencia y Prioridad/Programación -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4 rounded-xl bg-surface-container-low border border-outline-variant/30">
+<div class="flex flex-col gap-1.5">
+<label class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold" for="comm-audience">Audiencia Objetivo</label>
+<select class="px-3 py-1.5 rounded-lg bg-surface text-on-surface border border-outline-variant/40 font-body-sm text-body-sm focus:outline-none focus:ring-1 focus:ring-primary" id="comm-audience">
+<option value="todos">Todos los Miembros y Lectores</option>
+<option value="activos">Socios con Préstamos Activos</option>
+<option value="investigadores">Investigadores &amp; Colegiados</option>
+<option value="interno">Personal Interno y Operativo</option>
+</select>
+</div>
+<div class="flex flex-col justify-center gap-1">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">Destacar en Cartelera</span>
+<label class="flex items-center gap-2 cursor-pointer mt-1">
+<input class="w-4 h-4 rounded border-outline-variant/60 text-primary focus:ring-primary accent-primary" id="comm-pin" type="checkbox">
+<span class="font-label-md text-label-md text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-primary">push_pin</span>
+              Fijar como Aviso Destacado
+            </span>
+</label>
+</div>
+<div class="flex flex-col gap-1.5">
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-outline font-semibold">Momento de Emisión</span>
+<div class="flex items-center gap-3 pt-1">
+<label class="flex items-center gap-1.5 text-body-sm cursor-pointer">
+<input checked="" class="accent-primary text-primary focus:ring-primary" name="emission_type" type="radio" value="now">
+<span>Inmediata</span>
+</label>
+<label class="flex items-center gap-1.5 text-body-sm cursor-pointer">
+<input class="accent-primary text-primary focus:ring-primary" name="emission_type" type="radio" value="schedule">
+<span>Programar</span>
+</label>
+</div>
+</div>
+</div>
+<!-- Fila 3: Canales de Difusión Multicanal -->
+<div class="flex flex-col gap-2">
+<span class="font-label-md text-label-md font-semibold text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-secondary text-[18px]">hub</span>
+          Canales de Difusión Simultánea
+        </span>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+<label class="p-2.5 rounded-lg border border-outline-variant/40 bg-surface-container-low flex items-center gap-2.5 cursor-pointer hover:bg-surface-container transition-colors">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary accent-primary" type="checkbox">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Portal Web</span>
+<span class="text-[11px] text-outline">Vista pública de miembros</span>
+</div>
+</label>
+<label class="p-2.5 rounded-lg border border-outline-variant/40 bg-surface-container-low flex items-center gap-2.5 cursor-pointer hover:bg-surface-container transition-colors">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary accent-primary" type="checkbox">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Notificación App</span>
+<span class="text-[11px] text-outline">Push en dispositivos móviles</span>
+</div>
+</label>
+<label class="p-2.5 rounded-lg border border-outline-variant/40 bg-surface-container-low flex items-center gap-2.5 cursor-pointer hover:bg-surface-container transition-colors">
+<input class="w-4 h-4 rounded text-primary focus:ring-primary accent-primary" type="checkbox">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Boletín por Email</span>
+<span class="text-[11px] text-outline">Circular a padrón suscrito</span>
+</div>
+</label>
+<label class="p-2.5 rounded-lg border border-outline-variant/40 bg-surface-container-low flex items-center gap-2.5 cursor-pointer hover:bg-surface-container transition-colors">
+<input checked="" class="w-4 h-4 rounded text-primary focus:ring-primary accent-primary" type="checkbox">
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">Tótems Físicos</span>
+<span class="text-[11px] text-outline">Carteleras de sede central</span>
+</div>
+</label>
+</div>
+</div>
+<!-- Fila 4: Editor Enriquecido & Barra de Herramientas -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md font-semibold text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">article</span>
+            Cuerpo del Comunicado
+          </label>
+<span class="text-outline text-body-sm font-label-sm" id="body-word-counter">0 palabras · 0 caracteres</span>
+</div>
+<div class="rounded-xl border border-outline-variant/40 bg-surface overflow-hidden focus-within:ring-1 focus-within:ring-primary">
+<!-- Barra de Herramientas -->
+<div class="p-2 bg-surface-container-high/60 border-b border-outline-variant/30 flex flex-wrap items-center gap-1">
+<button class="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Negrita" type="button">
+<span class="material-symbols-outlined text-[18px]">format_bold</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Cursiva" type="button">
+<span class="material-symbols-outlined text-[18px]">format_italic</span>
+</button>
+<span class="w-px h-5 bg-outline-variant/50 mx-1"></span>
+<button class="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Cita editorial" type="button">
+<span class="material-symbols-outlined text-[18px]">format_quote</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Lista de viñetas" type="button">
+<span class="material-symbols-outlined text-[18px]">format_list_bulleted</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Lista numerada" type="button">
+<span class="material-symbols-outlined text-[18px]">format_list_numbered</span>
+</button>
+<span class="w-px h-5 bg-outline-variant/50 mx-1"></span>
+<button class="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Insertar enlace" type="button">
+<span class="material-symbols-outlined text-[18px]">link</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Adjuntar archivo PDF" type="button">
+<span class="material-symbols-outlined text-[18px]">attach_file</span>
+</button>
+<button class="p-1.5 rounded hover:bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors" title="Añadir tabla" type="button">
+<span class="material-symbols-outlined text-[18px]">table_chart</span>
+</button>
+<div class="ml-auto flex items-center gap-1.5">
+<span class="px-2 py-0.5 rounded bg-surface-container text-outline font-label-sm text-[11px]">Markdown / RTF</span>
+</div>
+</div>
+<!-- Textarea Principal -->
+<textarea class="w-full p-4 bg-surface text-on-surface placeholder:text-outline font-body-md text-body-md focus:outline-none resize-y" id="comm-content" placeholder="Escriba aquí el contenido detallado de la comunicación, directrices de archivo, resoluciones o acuerdos pastorales e institucionales..." rows="6"></textarea>
+</div>
+</div>
+<!-- Fila 5: Imagen de Portada y Adjuntos -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<div class="p-4 rounded-xl border border-dashed border-outline-variant bg-surface-container-low flex flex-col items-center justify-center gap-2 text-center hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[22px]">add_photo_alternate</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Imagen de Cabecera o Portada</p>
+<p class="text-[12px] text-outline">Arrastre una imagen o haga clic (Mín. 1200×630px en JPG, WebP)</p>
+</div>
+</div>
+<div class="p-4 rounded-xl border border-dashed border-outline-variant bg-surface-container-low flex flex-col items-center justify-center gap-2 text-center hover:bg-surface-container transition-colors cursor-pointer group">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-secondary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[22px]">upload_file</span>
+</div>
+<div>
+<p class="font-label-md text-label-md text-on-surface font-semibold">Documento Anexo / Circular Oficial</p>
+<p class="text-[12px] text-outline">Adjuntar resolución firmada o afiche complementario (PDF hasta 25MB)</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Pie de Acciones del Modal -->
+<div class="px-6 py-4 border-t border-outline-variant/30 bg-surface-container-low flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+<div class="flex items-center gap-2 text-outline text-body-sm">
+<span class="material-symbols-outlined text-[16px]">cloud_done</span>
+<span>Autoguardado local activo</span>
+</div>
+<div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+<button class="px-4 py-2 rounded-lg bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface font-label-md text-label-md transition-colors" id="modal-cancel-btn" type="button">
+          Descartar
+        </button>
+<button class="px-4 py-2 rounded-lg border border-outline-variant/40 bg-surface hover:bg-surface-container text-on-surface font-label-md text-label-md transition-colors flex items-center gap-1.5" id="modal-draft-btn" type="button">
+<span class="material-symbols-outlined text-[18px] text-outline">save</span>
+<span>Guardar Borrador</span>
+</button>
+<button class="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary font-label-md text-label-md font-semibold shadow-sm transition-all active:scale-[0.98] flex items-center gap-1.5" id="modal-publish-btn" type="button">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span>Publicar Comunicado</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<script>
+(function() {
+  const modal = document.getElementById('compose-modal');
+  const openBtn = document.getElementById('btn-new-announcement');
+  const closeBtn = document.getElementById('modal-close-btn');
+  const cancelBtn = document.getElementById('modal-cancel-btn');
+  const titleInput = document.getElementById('comm-title');
+  const titleCounter = document.getElementById('title-counter');
+  const contentArea = document.getElementById('comm-content');
+  const wordCounter = document.getElementById('body-word-counter');
+  const publishBtn = document.getElementById('modal-publish-btn');
+  const editButtons = document.querySelectorAll('button[title="Editar comunicado"]');
+
+  function openModal(prefillTitle) {
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    if (prefillTitle && titleInput) {
+      titleInput.value = prefillTitle;
+      updateTitleCounter();
+    }
+    if (titleInput) titleInput.focus();
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+    document.body.style.overflow = '';
+  }
+
+  function updateTitleCounter() {
+    if (!titleInput || !titleCounter) return;
+    const len = titleInput.value.length;
+    titleCounter.textContent = len + ' / 75 caracteres recomendados';
+    if (len > 75) {
+      titleCounter.classList.add('text-tertiary');
+      titleCounter.classList.remove('text-outline');
+    } else {
+      titleCounter.classList.remove('text-tertiary');
+      titleCounter.classList.add('text-outline');
+    }
+  }
+
+  function updateWordCounter() {
+    if (!contentArea || !wordCounter) return;
+    const text = contentArea.value.trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    const chars = text.length;
+    wordCounter.textContent = words + ' palabras · ' + chars + ' caracteres';
+  }
+
+  if (openBtn) {
+    openBtn.addEventListener('click', function() {
+      openModal();
+    });
+  }
+
+  editButtons.forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const card = btn.closest('article');
+      const titleEl = card ? card.querySelector('h2') : null;
+      const text = titleEl ? titleEl.textContent.trim() : '';
+      openModal(text);
+    });
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', closeModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+  if (modal) {
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        closeModal();
+      }
+    });
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal && !modal.classList.contains('hidden')) {
+      closeModal();
+    }
+  });
+
+  if (titleInput) titleInput.addEventListener('input', updateTitleCounter);
+  if (contentArea) contentArea.addEventListener('input', updateWordCounter);
+
+  if (publishBtn) {
+    publishBtn.addEventListener('click', function() {
+      publishBtn.disabled = true;
+      publishBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span> Publicando...';
+      setTimeout(function() {
+        publishBtn.disabled = false;
+        publishBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">check</span> Publicado con éxito';
+        setTimeout(function() {
+          closeModal();
+          publishBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">send</span> Publicar Comunicado';
+        }, 900);
+      }, 800);
+    });
+  }
+})();
+</script>
+
+
+</body></html>

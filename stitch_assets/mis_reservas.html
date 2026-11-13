@@ -1,0 +1,208 @@
+<!DOCTYPE html><html class="light" lang="es"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_dashboard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&amp;family=Playfair+Display:ital,wght@0,400..700;1,400..700&amp;family=Plus+Jakarta+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "primary": "#785600",
+          "primary-container": "#986d00",
+          "on-primary": "#ffffff",
+          "on-primary-container": "#fffbff",
+          "secondary": "#1e3a8a",
+          "secondary-container": "#dce1ff",
+          "on-secondary": "#ffffff",
+          "on-secondary-container": "#1d3989",
+          "tertiary": "#a6322f",
+          "tertiary-container": "#c84a45",
+          "on-tertiary": "#ffffff",
+          "gold": "#b8860b",
+          "gold-light": "#f4eedb",
+          "parchment": "#fbf9f5",
+          "parchment-deep": "#f5f0e6",
+          "travertine": "#efe8dc",
+          "ink": "#1f1c18",
+          "ink-muted": "#5c554e",
+          "background": "#fbf9f5",
+          "surface": "#ffffff",
+          "surface-container": "#f8f5ee",
+          "surface-container-high": "#f0ebdF",
+          "surface-container-highest": "#e8e1d2",
+          "outline": "#8a7e6b",
+          "outline-variant": "#d9d0bf"
+        },
+        "fontFamily": {
+          "cinzel": ["Cinzel", "serif"],
+          "playfair": ["Playfair Display", "serif"],
+          "sans": ["Plus Jakarta Sans", "sans-serif"]
+        }
+      }
+    }
+  }</script></head><body class="bg-[#FBF9F5] font-sans text-ink antialiased selection:bg-[#B8860B]/20 selection:text-ink relative min-h-screen overflow-x-hidden"><div class="fixed inset-0 pointer-events-none z-0 bg-[radial-gradient(ellipse_at_top_left,rgba(184,134,11,0.07)_0%,transparent_50%),radial-gradient(ellipse_at_bottom_right,rgba(30,58,138,0.04)_0%,transparent_60%)]"></div><!-- Lateral Monastic Sidebar --><aside class="fixed left-0 top-0 h-full w-72 bg-[#F5F0E6]/95 border-r border-[#E5DDCD] backdrop-blur-xl z-50 flex flex-col justify-between p-4 shadow-[4px_0_24px_rgba(80,60,30,0.04)]"><div class="flex flex-col gap-6"><div class="px-2 pt-2 flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-[#B8860B] shadow-[0_0_10px_rgba(184,134,11,0.5)] shrink-0"></div><div class="flex flex-col"><span class="text-[11px] text-[#5C554E] font-medium leading-tight">Capilla Ntra. Sra. de Lourdes</span><span class="font-cinzel text-xs uppercase tracking-widest text-[#785600] font-bold leading-tight">Biblioteca Comunitaria</span></div></div><nav class="flex flex-col gap-1"><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-[#5C554E] hover:bg-[#EFE8DC] hover:text-[#1F1C18] transition-all group" data-path="catalog-and-browse" href="{{DATA:SCREEN:SCREEN_15}}"><div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[#8A7E6B] group-hover:text-[#785600] transition-colors text-xl">auto_stories</span><span class="text-sm font-medium">Catálogo</span></div><span class="text-xs px-2 py-0.5 rounded-full bg-[#E8E1D2] text-[#5C554E] font-medium">480+ Títulos</span></a><a aria-current="page" class="flex items-center justify-between px-3 py-2.5 rounded-lg transition-all group bg-[#E8E1D2] text-[#785600] font-semibold shadow-sm border border-[#DACFBC]" data-path="my-reservations" href="{{DATA:SCREEN:SCREEN_18}}"><div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[#785600] text-xl" style="font-variation-settings: &quot;FILL&quot; 1;">bookmark</span><span class="text-sm">Mis Reservas &amp; Préstamos</span></div><span class="text-xs px-2 py-0.5 rounded-full bg-[#785600] text-white shadow-sm font-medium">2 Activas</span></a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-[#5C554E] hover:bg-[#EFE8DC] hover:text-[#1F1C18] transition-all group" data-path="reading-history" href="{{DATA:SCREEN:SCREEN_3}}"><div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[#8A7E6B] group-hover:text-[#785600] transition-colors text-xl">history_edu</span><span class="text-sm font-medium">Historial de Préstamos</span></div></a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-[#5C554E] hover:bg-[#EFE8DC] hover:text-[#1F1C18] transition-all group" data-path="news-bulletin" href="#"><div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[#8A7E6B] group-hover:text-[#785600] transition-colors text-xl">newspaper</span><span class="text-sm font-medium">Noticias</span></div></a><a class="flex items-center justify-between px-3 py-2.5 rounded-lg text-[#5C554E] hover:bg-[#EFE8DC] hover:text-[#1F1C18] transition-all group" data-path="library-desk-and-hours" href="#"><div class="flex items-center gap-2.5"><span class="material-symbols-outlined text-[#8A7E6B] group-hover:text-[#785600] transition-colors text-xl">schedule</span><span class="text-sm font-medium">Horarios del Despacho</span></div></a></nav></div><div class="flex flex-col gap-3"><div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#E3DAC9] shadow-sm flex flex-col gap-2 relative overflow-hidden"><div class="flex items-center gap-1.5 text-[#785600]"><span class="material-symbols-outlined text-base">store</span><span class="font-cinzel text-xs uppercase tracking-wider font-semibold">Sede Temperley</span></div><p class="text-xs text-[#5C554E] leading-relaxed"><strong class="text-ink font-semibold">Sigmund Freud 201, Temperley</strong><br>Retiros presenciales y devoluciones de lunes a sábados.</p><button class="mt-1 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md bg-[#EFE8DC] hover:bg-[#785600] text-[#785600] hover:text-white text-xs font-medium transition-all" type="button"><span class="material-symbols-outlined text-sm">support_agent</span>¿Necesita Asistencia?</button></div><div class="px-2 py-1 flex items-center justify-between text-[#8A7E6B] text-[11px]"><span>Edición Litúrgica 2.4</span><span class="material-symbols-outlined text-sm text-[#B8860B]">verified</span></div></div></aside><!-- Main Layout Wrapper --><div class="pl-72 flex flex-col min-h-screen relative z-10"><!-- Top Classical Marble Header --><header class="fixed top-0 left-72 right-0 h-20 bg-[#FBF9F5]/90 border-b border-[#E5DDCD] backdrop-blur-xl shadow-[0_2px_12px_rgba(0,0,0,0.03)] z-40 px-8"><div class="h-20 w-full flex items-center justify-between gap-6"><div class="flex items-center gap-3.5 min-w-max"><div class="w-10 h-10 rounded-lg bg-[#EFE8DC] border border-[#DACFBC] flex items-center justify-center text-[#785600] shadow-sm"><span class="material-symbols-outlined text-2xl">menu_book</span></div><div class="flex flex-col"><h1 class="font-playfair text-lg text-ink tracking-tight font-bold">Capilla Ntra. Sra. de Lourdes - Biblioteca Comunitaria</h1><span class="font-cinzel text-xs text-[#785600] tracking-wider uppercase font-semibold">Sigmund Freud 201, B1834 Temperley, Prov. de Buenos Aires</span></div></div><div class="hidden xl:flex items-center gap-3 flex-1 max-w-lg mx-4"><div class="relative w-full"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8A7E6B] text-lg">search</span><input class="w-full bg-[#F5F0E6] hover:bg-[#EFE8DC] border border-[#DACFBC] rounded-lg py-1.5 pl-10 pr-12 text-xs text-ink placeholder:text-[#8A7E6B] focus:outline-none focus:ring-1 focus:ring-[#785600] focus:border-[#785600] transition-all" placeholder="Buscar sagradas escrituras, encíclicas, patrística o signatura..." type="text"><div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-[#E8E1D2] text-[11px] font-mono text-[#5C554E] border border-[#D9D0BF]">⌘K</div></div></div><div class="flex items-center gap-5"><div class="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-[#F5F0E6] border border-[#E0D7C5] text-xs text-[#5C554E] shadow-sm shrink-0"><span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse shrink-0"></span><span class="leading-none">Atención Hoy: <strong class="text-ink font-semibold">9:00 – 18:00 hs</strong> <span class="text-[#8A7E6B] font-normal">(Temperley)</span></span></div><button aria-label="Notificaciones" class="relative p-2 rounded-lg text-[#5C554E] hover:text-ink hover:bg-[#EFE8DC] transition-colors" type="button"><span class="material-symbols-outlined text-2xl">notifications</span><span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#A6322F] ring-2 ring-[#FBF9F5]"></span></button><div class="flex items-center gap-3 pl-2 border-l border-[#E2D9C8]"><div class="flex flex-col text-right hidden sm:flex"><span class="text-xs text-ink font-semibold">David Miller</span><span class="text-[11px] text-[#785600] font-medium">Fiel Registrado #GT-4821</span></div><img alt="Perfil Feligrés" class="w-9 h-9 rounded-full object-cover ring-2 ring-[#B8860B]/40 shadow-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDlgIenNbAXKdNaf0h8UKwoxq0vAB-OMGIqabH3vjY2i6mQ5UuYc_TdG8ZQreUTPpS6EU2_ivwKAr4iu-nxh0Y1QTRRwU8b49afQNh_IxD5bpUzvTFyNrbbLkkrcPBlsUgAdUwhPNI3ysRkXNGeOm0Q-9DOC62Y2k8UXpW6Hwx6iu-gFmmqInyKjyhMbnE9ijTdcRfPICp-sbAYe_WgQA3zmIvitEV0VLVFd9YtlvDL"></div></div></div></header><!-- Main Content View --><main class="w-full pt-24 px-8 pb-12 flex-1"><div class="flex flex-col w-full max-w-7xl mx-auto">
+<!-- Reverent Page Header & Status Panorama -->
+<div class="flex flex-col gap-6 mb-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div class="flex flex-col gap-1.5"><div class="flex items-center gap-1.5 text-[#785600]"><span class="material-symbols-outlined text-base" style="font-variation-settings: &quot;FILL&quot; 1;">auto_stories</span><span class="font-cinzel text-xs uppercase tracking-widest text-[#785600] font-bold">Portal del Lector &amp; Catálogo Abierto</span></div><h2 class="font-playfair text-3xl text-ink tracking-tight font-bold">Mis Reservas Activas &amp; Préstamos a Domicilio</h2><p class="text-sm text-[#5C554E] max-w-2xl leading-relaxed">Gestione sus libros en préstamo, reservas pendientes de retiro en Sigmund Freud 201, Temperley, y fechas límite de devolución.</p></div>
+<!-- Standing Chip -->
+<div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#EBF4EC] border border-[#C5DEC9] text-[#1E4D2B] self-start md:self-auto shadow-sm">
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+</span>
+<span class="text-xs font-semibold tracking-wide">Estado del Lector: Fiel al Día · Sin Devoluciones Pendientes</span>
+</div>
+</div>
+<!-- 4 Warm Parchment Stat Matrix Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"><div class="relative overflow-hidden rounded-xl bg-[#FAF7F2] border border-[#E3DAC9] p-4 shadow-sm hover:border-[#DAC5A0] hover:shadow-md transition-all flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="font-cinzel text-xs uppercase tracking-wider text-[#785600] font-semibold">Reservas Activas</span><div class="p-2 rounded-lg bg-[#F5EEDC] text-[#785600]"><span class="material-symbols-outlined text-xl">shelves</span></div></div><div class="flex flex-col gap-0.5"><div class="flex items-baseline gap-1.5"><span class="font-playfair text-3xl text-ink font-bold leading-none">2</span><span class="text-xs text-[#5C554E] font-medium">Libros</span></div><span class="text-xs text-emerald-800 font-medium flex items-center gap-1 mt-1.5"><span class="material-symbols-outlined text-sm text-emerald-700">event_available</span> Listos para retiro en recepción Temperley</span></div></div><div class="relative overflow-hidden rounded-xl bg-[#FAF7F2] border border-[#E3DAC9] p-4 shadow-sm hover:border-[#DAC5A0] hover:shadow-md transition-all flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="font-cinzel text-xs uppercase tracking-wider text-[#785600] font-semibold">Préstamos Vigentes</span><div class="p-2 rounded-lg bg-[#F5EEDC] text-[#785600]"><span class="material-symbols-outlined text-xl">menu_book</span></div></div><div class="flex flex-col gap-0.5"><div class="flex items-baseline gap-1.5"><span class="font-playfair text-3xl text-ink font-bold leading-none">1</span><span class="text-xs text-[#5C554E] font-medium">Libro en Préstamo</span></div><span class="text-xs text-[#A6322F] font-semibold flex items-center gap-1 mt-1.5"><span class="material-symbols-outlined text-sm">hourglass_top</span> Vence en 4 días (27 Oct)</span></div></div><div class="relative overflow-hidden rounded-xl bg-[#FAF7F2] border border-[#E3DAC9] p-4 shadow-sm hover:border-[#DAC5A0] hover:shadow-md transition-all flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="font-cinzel text-xs uppercase tracking-wider text-[#1E3A8A] font-semibold">Guías &amp; Clásicos</span><div class="p-2 rounded-lg bg-[#EBF2FC] text-[#1E3A8A]"><span class="material-symbols-outlined text-xl">picture_as_pdf</span></div></div><div class="flex flex-col gap-0.5"><div class="flex items-baseline gap-1.5"><span class="font-playfair text-3xl text-ink font-bold leading-none">14</span><span class="text-xs text-[#5C554E] font-medium">Archivos PDF</span></div><span class="text-xs text-[#1E3A8A] font-medium flex items-center gap-1 mt-1.5"><span class="material-symbols-outlined text-sm">offline_pin</span> Acceso digital libre y gratuito</span></div></div><div class="relative overflow-hidden rounded-xl bg-[#FAF7F2] border border-[#E3DAC9] p-4 shadow-sm hover:border-[#DAC5A0] hover:shadow-md transition-all flex flex-col justify-between"><div class="flex items-center justify-between mb-2"><span class="font-cinzel text-xs uppercase tracking-wider text-[#785600] font-semibold">Punto de Entrega</span><div class="p-2 rounded-lg bg-[#F5EEDC] text-[#785600]"><span class="material-symbols-outlined text-xl">location_on</span></div></div><div class="flex flex-col gap-0.5"><div class="flex items-baseline gap-1.5"><span class="text-sm font-playfair font-bold text-ink">Sigmund Freud 201</span></div><span class="text-xs text-[#5C554E] flex items-center gap-1 mt-1.5"><span class="material-symbols-outlined text-sm text-[#785600]">schedule</span> Temperley · Lun a Sáb</span></div></div></div>
+</div>
+<!-- Main Bento Grid Section: Holds & Right Panels -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-6 mb-8">
+<!-- Left Column: Holds & Active Loans (8 Cols) -->
+<div class="xl:col-span-8 flex flex-col gap-6">
+<div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-1.5 h-4 bg-[#B8860B] rounded-full"></span><h3 class="font-playfair text-xl text-ink font-bold tracking-tight">Reservas Listas para Retiro</h3></div><span class="font-cinzel text-xs text-[#785600] font-semibold tracking-wider uppercase">Recepción Sigmund Freud 201, Temperley</span></div>
+<!-- Hero Hold Card: Sacral Boarding Pass / Pase Litúrgico de Retiro (Completely Redesigned & Balanced) -->
+<div class="relative rounded-2xl bg-white border border-[#E3DAC9] shadow-[0_4px_24px_rgba(80,60,30,0.06)] overflow-hidden"><div class="absolute -right-20 -bottom-20 w-64 h-64 bg-[#B8860B]/5 rounded-full blur-3xl pointer-events-none"></div><div class="flex flex-col lg:flex-row items-stretch"><div class="flex-1 p-5 sm:p-6 flex flex-col justify-between gap-5"><div class="flex flex-col gap-5"><div class="flex flex-col sm:flex-row gap-6 items-start"><div class="w-28 sm:w-32 shrink-0 flex flex-col items-center gap-2 mx-auto sm:mx-0"><div class="relative w-full aspect-[2/3] rounded-lg overflow-hidden shadow-md bg-[#F5F0E6] border border-[#D9CEBA] group"><img class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="Portada clásica de Ficciones de Jorge Luis Borges" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDubDOT9bfRerW8pCIJ1ND-qdaY979paxM0cuIn4PRlndwKcjTEtZGReizvt6aiy-k1UtL3iOmo_u1UvZFE3gvlBOpPk_tgerijfxY7MyaX_dwjAuj-Yo4ZfLdVs4RwTyVz7X4UNJ1iElgKLrTWFgNvGNgWWEX7B2pf56tC_HBEZn-M9t4CXZGdOZ9wyChQoLi7oRy1c6__MDfoVWIgaWx69be-A1aLvVSNZ-fJW1Bf"><div class="absolute inset-y-0 left-0 w-2 bg-gradient-to-r from-black/40 to-transparent pointer-events-none"></div></div><span class="px-2 py-0.5 rounded bg-[#FAF7F2] border border-[#DACFBC] text-[#785600] font-mono text-[11px] font-bold tracking-wider shadow-sm">863.6 BOR</span><span class="text-[10px] text-[#5C554E] font-medium text-center leading-tight">Ed. Conmemorativa · 224 Págs.</span></div><div class="flex-1 flex flex-col gap-3 min-w-0 w-full"><div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-[#F0EBE1]"><div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EBF4EC] text-emerald-800 border border-[#C5DEC9]"><span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span><span class="text-[11px] font-bold tracking-wider uppercase">Listo para Retiro</span></div><div class="flex items-center gap-1"><span class="text-xs font-mono font-semibold text-[#5C554E] bg-[#F5F0E6] px-2.5 py-1 rounded border border-[#E5DDCD]">#RES-7829-DOM</span><button class="p-1 rounded hover:bg-[#EFE8DC] text-[#5C554E] hover:text-[#785600] transition-colors" id="copy-code-btn" title="Copiar Código de Reserva" type="button"><span class="material-symbols-outlined text-sm">content_copy</span></button></div></div><div><h4 class="font-playfair text-2xl sm:text-3xl font-bold text-ink leading-tight">Ficciones</h4><p class="text-xs sm:text-sm text-[#785600] font-serif italic mt-0.5">Jorge Luis Borges · Literatura Universal &amp; Cuentos Clásicos</p></div></div></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full"><div class="p-3 rounded-lg bg-[#FAF4E8] border border-[#ECD9B8] flex flex-col justify-between gap-2.5"><div class="flex items-start gap-2.5"><div class="p-1.5 rounded bg-[#F5EEDC] text-[#A6322F] shrink-0 mt-0.5"><span class="material-symbols-outlined text-base">timer</span></div><div class="flex flex-col"><span class="text-[11px] text-[#5C554E]">Disponible para retiro hasta:</span><span class="text-xs font-bold text-ink leading-tight mt-0.5">Sábado 26 de Octubre, 18:00 hs</span></div></div><div class="self-start"><span class="inline-block px-2 py-0.5 rounded-full bg-[#F5EEDC] text-[#A6322F] text-[10px] font-bold border border-[#ECD9B8]">Quedan 2 Días, 14 Hs</span></div></div><div class="p-3 rounded-lg bg-[#FAF7F2] border border-[#E3DAC9] flex flex-col justify-between gap-2.5"><div class="flex items-start gap-2.5"><div class="p-1.5 rounded bg-[#F5EEDC] text-[#785600] shrink-0 mt-0.5"><span class="material-symbols-outlined text-base">location_on</span></div><div class="flex flex-col text-xs leading-snug"><span class="text-[11px] text-[#5C554E]">Lugar de retiro:</span><span class="text-ink font-semibold text-xs mt-0.5">Sigmund Freud 201, Temperley</span><span class="text-[11px] text-[#785600]">Capilla Ntra. Sra. de Lourdes</span></div></div><div class="self-start"><span class="inline-block px-2 py-0.5 rounded-full bg-[#E8E1D2] text-[#5C554E] text-[10px] font-medium border border-[#D9D0BF]">Recepción Presencial</span></div></div></div></div><div class="flex flex-wrap items-center justify-between gap-3 pt-3.5 border-t border-[#F0EBE1]"><div class="flex flex-wrap items-center gap-2.5"><a class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#785600] hover:bg-[#604400] text-white text-xs font-semibold tracking-wide transition-all shadow-sm" href="{{DATA:SCREEN:SCREEN_9}}"><span class="material-symbols-outlined text-base">qr_code_scanner</span> Ver Pase / Imprimir</a><a class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-[#FAF7F2] hover:bg-[#EFE8DC] text-ink border border-[#DACFBC] text-xs font-semibold transition-colors" href="{{DATA:SCREEN:SCREEN_15}}"><span class="material-symbols-outlined text-base text-[#785600]">auto_stories</span> Volver al Catálogo</a></div><button class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-[#8A7E6B] hover:text-[#A6322F] hover:bg-rose-50 text-xs font-medium transition-colors" type="button"><span class="material-symbols-outlined text-sm">cancel</span> Cancelar Reserva</button></div></div><div class="w-full lg:w-64 shrink-0 bg-[#FAF7F2] border-t lg:border-t-0 lg:border-l-2 border-dashed border-[#DACFBC] p-5 flex flex-col items-center justify-between text-center relative"><div class="w-full flex flex-col items-center gap-0.5 pb-2.5 border-b border-[#E8E1D2]"><div class="flex items-center justify-between w-full"><span class="font-cinzel text-xs text-[#785600] font-bold uppercase tracking-widest">Pase de Retiro</span><span class="material-symbols-outlined text-[#785600] text-sm">confirmation_number</span></div><span class="font-mono text-xs font-bold text-ink">#RES-7829-DOM</span></div><div class="my-2 flex flex-col items-center gap-2 w-full"><div class="p-2.5 bg-white rounded-xl shadow-sm border border-[#DACFBC]"><svg class="w-28 h-28 text-ink mx-auto" fill="currentColor" viewBox="0 0 120 120"><rect fill="none" height="30" rx="2" stroke="currentColor" stroke-width="7" width="30" x="10" y="10"></rect><rect fill="currentColor" height="10" width="10" x="20" y="20"></rect><rect fill="none" height="30" rx="2" stroke="currentColor" stroke-width="7" width="30" x="80" y="10"></rect><rect fill="currentColor" height="10" width="10" x="90" y="20"></rect><rect fill="none" height="30" rx="2" stroke="currentColor" stroke-width="7" width="30" x="10" y="80"></rect><rect fill="currentColor" height="10" width="10" x="20" y="90"></rect><rect height="6" width="6" x="50" y="12"></rect><rect height="6" width="8" x="62" y="12"></rect><rect height="8" width="8" x="50" y="24"></rect><rect height="12" width="6" x="66" y="24"></rect><rect height="8" width="8" x="14" y="50"></rect><rect height="6" width="12" x="28" y="54"></rect><rect height="8" width="8" x="50" y="44"></rect><rect height="8" width="12" x="64" y="44"></rect><rect height="14" width="8" x="82" y="50"></rect><rect height="6" width="14" x="96" y="48"></rect><rect height="6" width="14" x="46" y="60"></rect><rect height="16" width="8" x="66" y="62"></rect><rect height="6" width="10" x="82" y="70"></rect><rect height="12" width="10" x="98" y="66"></rect><rect height="12" width="6" x="50" y="82"></rect><rect height="6" width="12" x="62" y="86"></rect><rect height="8" width="6" x="82" y="86"></rect><rect height="6" width="14" x="94" y="84"></rect><rect height="8" width="14" x="52" y="100"></rect><rect height="8" width="8" x="74" y="100"></rect><rect height="10" width="18" x="90" y="98"></rect></svg></div><div class="flex flex-col items-center leading-tight"><span class="font-mono text-xs text-[#785600] font-bold tracking-wide">GT-PASS-7829</span><span class="text-[10px] text-[#5C554E]">Fiel Registrado #GT-4821</span></div></div><div class="w-full pt-2 border-t border-[#E8E1D2] flex items-center justify-center gap-1 text-[10px] text-[#785600] font-medium"><span class="material-symbols-outlined text-xs text-[#B8860B]">verified</span><span>Válido Sigmund Freud 201</span></div></div></div></div>
+<!-- Second Active Hold: Preparing on Shelf -->
+<div class="relative overflow-hidden rounded-xl bg-white border border-[#E3DAC9] p-5 shadow-sm hover:border-[#DAC5A0] transition-all"><div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+  <div class="flex items-center gap-4 flex-1">
+    <div class="w-16 h-24 rounded-lg overflow-hidden shrink-0 shadow bg-[#F5F0E6] border border-[#DACFBC]">
+      <img class="w-full h-full object-cover" data-alt="Portada clásica de El Principito de Antoine de Saint-Exupery" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALCtt77EBGK29wSd099oNuc2-qdHvvjSe9OeriJVHaqXS-mK7iohWz0bB1SYl9YCWmImpTf4qic-Kb6gPM2YIIfnaFLd4R7ALA7huJf3-GMWOQQ8FUrB04uvLGB3-VKTa5jofaq6v8A6SgXD_jRtshFw1BwH4WwSI73pqR9PsEp0koLsnrTkLdD8K77QEOhIzbPnbdokVbjUyL8WhWsMnWerMmTPSE1ES0jTlxgCEg">
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <div class="flex flex-wrap items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#F5EEDC] text-[#785600] text-xs font-semibold uppercase tracking-wider">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#B8860B] animate-pulse"></span>Preparando en Estantería
+        </span>
+        <span class="text-xs font-mono text-[#8A7E6B] bg-[#FAF7F2] px-2 py-0.5 rounded border border-[#E8E1D2]">#RES-8104-TMP</span>
+      </div>
+      <h4 class="font-playfair text-lg font-bold text-ink leading-snug">El Principito</h4>
+      <p class="text-xs text-[#5C554E] font-serif italic">Antoine de Saint-Exupéry · Literatura Universal &amp; Filosofía Humanista</p>
+      <div class="flex items-center gap-1.5 text-[#5C554E] text-xs mt-0.5">
+        <span class="material-symbols-outlined text-sm text-[#785600]">inventory_2</span>
+        <span>Preparándose para retiro en mostrador Sigmund Freud 201</span>
+      </div>
+    </div>
+  </div>
+  <div class="flex flex-col md:items-end gap-1 shrink-0 w-full md:w-auto pt-3 md:pt-0 border-t md:border-t-0 border-[#F0EBE1]">
+    <span class="font-cinzel text-[11px] text-[#8A7E6B] uppercase tracking-wider">Solicitado para</span>
+    <span class="text-xs text-ink font-semibold">Turno Tarde - 16:30 hs</span>
+    <span class="text-xs text-[#785600] font-medium">Recepción Temperley</span>
+    <a class="mt-1.5 inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#FAF7F2] hover:bg-[#EFE8DC] text-ink border border-[#DACFBC] text-xs font-semibold transition-colors w-full md:w-auto" href="{{DATA:SCREEN:SCREEN_15}}">
+      <span class="material-symbols-outlined text-xs text-[#785600]">tune</span> Ver en Catálogo
+    </a>
+  </div>
+</div></div>
+<!-- Currently Checked Out / On-Loan Physical Books -->
+<div class="mt-2 flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-4 bg-[#785600] rounded-full"></span>
+<h3 class="font-playfair text-xl text-ink font-bold tracking-tight">Préstamos en Curso</h3>
+</div>
+<span class="font-cinzel text-xs text-[#8A7E6B] tracking-wider uppercase font-semibold">Ciclo Estándar de 21 Días</span>
+</div>
+<div class="rounded-xl bg-white border border-[#E3DAC9] p-5 shadow-sm flex flex-col gap-4"><div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+  <div class="flex items-center gap-4 flex-1">
+    <div class="w-14 h-20 rounded-md overflow-hidden shrink-0 shadow bg-[#F5F0E6] border border-[#DACFBC]">
+      <img class="w-full h-full object-cover" data-alt="Tratado de la Verdadera Devoción a la Santísima Virgen por San Luis María Grignion de Montfort" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGQ9i4YZmPjIy4EVZaDcvnaoxf_CGExNsdEMuPXivFUvnfk4dXf5ioq53VRy9WoPopVy7rximmfUCp40Kr7iFOJTWTNbJEKWLayfSDxhASEc-l5eWs3aqE5ZcRddgkKpQ42rbqYPo5iOgHe-jqv2rdM_Q4CTmrmokLkBPfxELVv4Nvn6NGfWE3sxiApwx5gFxJ2a4l89Gih_Q4L8nEGpWWFrsWRBvsrirPOvCUmfmL">
+    </div>
+    <div class="flex flex-col gap-1">
+      <div class="flex items-center gap-2">
+        <span class="px-2 py-0.5 rounded bg-[#FAF7F2] border border-[#DACFBC] text-[#5C554E] text-[11px] font-mono">GT-PREST-391</span>
+        <span class="text-[#785600] text-xs font-semibold flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#785600]"></span> Prestado: 6 de Octubre, 2024
+        </span>
+      </div>
+      <h4 class="font-playfair text-base font-bold text-ink leading-snug">Tratado de la Verdadera Devoción a la Santísima Virgen</h4>
+      <p class="text-xs text-[#5C554E] font-serif italic">San Luis María Grignion de Montfort · Espiritualidad Mariana</p>
+    </div>
+  </div>
+  <div class="flex flex-col md:items-end gap-1 shrink-0 w-full md:w-auto p-3 rounded-lg bg-[#FAF7F2] border border-[#E8E1D2]">
+    <span class="font-cinzel text-[11px] text-[#8A7E6B] uppercase tracking-wider">Fecha Límite de Devolución</span>
+    <div class="flex items-baseline gap-1.5">
+      <span class="font-playfair text-lg text-[#A6322F] font-bold">27 de Octubre, 2024</span>
+      <span class="text-xs text-[#A6322F] font-semibold">(Vence en 4 días)</span>
+    </div>
+    <span class="text-xs text-[#5C554E]">Día 17 del Período de 21 Días</span>
+  </div>
+</div>
+
+<div class="flex flex-col gap-1.5 mt-1">
+  <div class="w-full h-2 rounded-full bg-[#EFE8DC] overflow-hidden">
+    <div class="h-full bg-gradient-to-r from-[#B8860B] to-[#A6322F] rounded-full transition-all duration-500" style="width: 81%;"></div>
+  </div>
+  <div class="flex justify-between items-center text-[#8A7E6B] text-[11px]">
+    <span>Día de Inicio: 6 Oct</span>
+    <span class="text-[#785600] font-semibold">81% del período transcurrido</span>
+    <span>Ventana de Devolución Dominical</span>
+  </div>
+</div>
+
+<div class="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#F0EBE1]">
+  <div class="flex flex-wrap items-center gap-2.5">
+    <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#785600] hover:bg-[#604400] text-white text-xs font-semibold transition-all shadow-sm" id="renew-btn" type="button">
+      <span class="material-symbols-outlined text-sm">autorenew</span> Renovar Préstamo (+14 Días)
+    </button>
+    <button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#FAF7F2] hover:bg-[#EFE8DC] text-ink border border-[#DACFBC] text-xs font-semibold transition-colors" type="button">
+      <span class="material-symbols-outlined text-sm text-[#785600]">assignment_turned_in</span> Notificar Devolución
+    </button>
+  </div>
+  <button class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[#5C554E] hover:text-[#785600] text-xs font-medium transition-colors" type="button">
+    <span class="material-symbols-outlined text-sm">help</span> Guía del Buzón de Devoluciones
+  </button>
+</div></div>
+</div>
+</div>
+<!-- Right Column: Marian Blue Vault & Church Schedule (4 Cols) -->
+<div class="xl:col-span-4 flex flex-col gap-6">
+<!-- Digital Vault Panel (Marian Blue / Scriptorium accents with improved spacing) -->
+<div class="rounded-xl bg-white border border-[#E3DAC9] p-5 shadow-sm flex flex-col gap-4"><div class="flex items-center justify-between"><div class="flex items-center gap-2 text-[#1E3A8A]"><span class="material-symbols-outlined text-xl">folder_zip</span><h3 class="font-playfair text-lg text-ink font-bold tracking-tight">Guías Literarias &amp; Clásicos Digitales</h3></div><span class="text-xs px-2.5 py-0.5 rounded-full bg-[#E5EDF9] text-[#1E3A8A] font-semibold">14 Archivos</span></div><p class="text-xs text-[#5C554E] leading-relaxed">Cuentos breves, guías de lectura crítica y análisis literario para descarga libre comunitaria.</p><div class="flex flex-col gap-3"><div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EBE4D5] hover:border-[#1E3A8A]/30 transition-all flex flex-col gap-2.5 group"><div class="flex items-start justify-between gap-2"><div class="flex items-start gap-2.5"><span class="material-symbols-outlined text-[#1E3A8A] text-lg mt-0.5">description</span><div class="flex flex-col"><span class="text-xs font-bold text-ink group-hover:text-[#1E3A8A] transition-colors leading-snug">Guía de Lectura: Ficciones y el Laberinto Borgesiano</span><span class="text-[11px] text-[#5C554E] mt-0.5">Taller Literario de Temperley · PDF (4.2 MB)</span></div></div><span class="text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2 py-0.5 rounded shrink-0">Listo</span></div><div class="flex items-center gap-2 pt-2 border-t border-[#F0EBE1]"><button class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#EFE8DC] text-ink border border-[#DACFBC] text-[11px] font-medium transition-colors" type="button"><span class="material-symbols-outlined text-xs">download</span> Descargar</button><button class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#EBF2FC] hover:bg-[#D9E6FA] text-[#1E3A8A] text-[11px] font-semibold transition-colors" type="button"><span class="material-symbols-outlined text-xs">send_to_mobile</span> A e-Reader</button></div></div><div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EBE4D5] hover:border-[#1E3A8A]/30 transition-all flex flex-col gap-2.5 group"><div class="flex items-start justify-between gap-2"><div class="flex items-start gap-2.5"><span class="material-symbols-outlined text-[#1E3A8A] text-lg mt-0.5">description</span><div class="flex flex-col"><span class="text-xs font-bold text-ink group-hover:text-[#1E3A8A] transition-colors leading-snug">El Principito: Análisis Filosófico y Claves de Lectura</span><span class="text-[11px] text-[#5C554E] mt-0.5">Cuaderno Pedagógico Comunitario · PDF (6.8 MB)</span></div></div><span class="text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2 py-0.5 rounded shrink-0">Listo</span></div><div class="flex items-center gap-2 pt-2 border-t border-[#F0EBE1]"><button class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#EFE8DC] text-ink border border-[#DACFBC] text-[11px] font-medium transition-colors" type="button"><span class="material-symbols-outlined text-xs">download</span> Descargar</button><button class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#EBF2FC] hover:bg-[#D9E6FA] text-[#1E3A8A] text-[11px] font-semibold transition-colors" type="button"><span class="material-symbols-outlined text-xs">send_to_mobile</span> A e-Reader</button></div></div><div class="p-3.5 rounded-xl bg-[#FAF7F2] border border-[#EBE4D5] hover:border-[#1E3A8A]/30 transition-all flex flex-col gap-2.5 group"><div class="flex items-start justify-between gap-2"><div class="flex items-start gap-2.5"><span class="material-symbols-outlined text-[#1E3A8A] text-lg mt-0.5">description</span><div class="flex flex-col"><span class="text-xs font-bold text-ink group-hover:text-[#1E3A8A] transition-colors leading-snug">Antología de Cuentos Rioplatenses y Universales</span><span class="text-[11px] text-[#5C554E] mt-0.5">Colección Abierta · PDF (14.1 MB)</span></div></div><span class="text-[11px] text-emerald-800 font-semibold bg-emerald-50 px-2 py-0.5 rounded shrink-0">Listo</span></div><div class="flex items-center gap-2 pt-2 border-t border-[#F0EBE1]"><button class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-white hover:bg-[#EFE8DC] text-ink border border-[#DACFBC] text-[11px] font-medium transition-colors" type="button"><span class="material-symbols-outlined text-xs">download</span> Descargar</button><button class="flex-1 inline-flex items-center justify-center gap-1 px-2.5 py-1.5 rounded-lg bg-[#EBF2FC] hover:bg-[#D9E6FA] text-[#1E3A8A] text-[11px] font-semibold transition-colors" type="button"><span class="material-symbols-outlined text-xs">send_to_mobile</span> A e-Reader</button></div></div></div><button class="w-full mt-1 py-2 rounded-lg bg-[#FAF7F2] hover:bg-[#EFE8DC] text-[#785600] font-semibold text-xs text-center border border-[#DACFBC] transition-colors" type="button">Ver los 14 documentos y guías descargables →</button></div>
+<!-- Parish Desk Hours & Study Room Request -->
+<div class="rounded-xl bg-white border border-[#E3DAC9] p-5 shadow-sm flex flex-col gap-4"><div class="flex items-center gap-2 text-[#785600]"><span class="material-symbols-outlined text-xl">access_time</span><h3 class="font-playfair text-lg text-ink font-bold tracking-tight">Horarios de Atención - Biblioteca Comunitaria</h3></div><div class="flex flex-col gap-2.5"><div class="flex flex-col gap-1 p-3 rounded-lg bg-[#FAF7F2] border border-[#E8E1D2]"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#B8860B]"></span><span class="text-xs text-ink font-bold">Lunes a Viernes</span></div><span class="text-[11px] text-[#785600] font-semibold">Sala &amp; Préstamos</span></div><span class="text-xs text-[#785600] font-mono font-bold pl-4">9:00 a 18:00 hs</span></div><div class="flex flex-col gap-1 p-3 rounded-lg bg-[#FAF7F2] border border-[#E8E1D2]"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#8A7E6B]"></span><span class="text-xs text-[#5C554E] font-semibold">Sábados</span></div><span class="text-[11px] text-[#5C554E]">Atención Matutina</span></div><span class="text-xs text-[#5C554E] font-mono pl-4">9:00 a 13:00 hs</span></div><div class="flex flex-col gap-1 p-3 rounded-lg bg-[#FAF7F2] border border-[#E8E1D2]"><div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-[#785600]"></span><span class="text-xs text-[#5C554E] font-semibold">Sede Central</span></div><span class="text-[11px] text-[#785600] font-mono">Temperley</span></div><span class="text-xs text-[#5C554E] pl-4 font-medium">Sigmund Freud 201, Temperley</span></div></div><div class="p-3.5 rounded-lg bg-[#FAF4E8] border border-[#ECD9B8] flex flex-col gap-1.5"><div class="flex items-center gap-2 text-[#785600]"><span class="material-symbols-outlined text-base">groups</span><span class="font-cinzel text-xs font-bold uppercase tracking-wider">Talleres de Lectura y Club del Libro</span></div><p class="text-xs text-[#5C554E] leading-relaxed">Para solicitar lotes para grupos de lectura barriales, escuelas o talleres comunitarios, consulte en recepción de la biblioteca.</p><a class="inline-flex items-center gap-1 text-[#785600] hover:text-[#523b00] text-xs font-semibold mt-1" href="#"><span class="text-xs">Consultar actividades comunitarias</span><span class="material-symbols-outlined text-sm">arrow_forward</span></a></div></div>
+</div>
+</div>
+<!-- 24/7 Drop Box Ribbon -->
+<div class="rounded-xl bg-[#F5F0E6] border border-[#DACFBC] p-4 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4"><div class="flex items-center gap-3.5"><div class="p-2.5 rounded-lg bg-[#FAF7F2] text-[#785600] border border-[#E0D7C5]"><span class="material-symbols-outlined text-2xl">markunread_mailbox</span></div><div class="flex flex-col"><span class="font-playfair text-sm text-ink font-bold">Buzón de Devoluciones 24 Horas</span><span class="text-xs text-[#5C554E]">Ubicado en el acceso de Sigmund Freud 201, Temperley. Registro de devoluciones al inicio de cada jornada a las 9:00 AM.</span></div></div><div class="flex items-center gap-2 shrink-0"><span class="text-xs font-mono text-[#8A7E6B] bg-[#FAF7F2] px-2 py-1 rounded border border-[#E3DAC9]">Buzón: TMP-LOURDES-2024</span><span class="material-symbols-outlined text-sm text-[#B8860B]">verified</span></div></div>
+<!-- Micro-interaction script -->
+<script>
+    document.getElementById('copy-code-btn')?.addEventListener('click', function() {
+      navigator.clipboard?.writeText('#RES-7829-DOM');
+      const icon = this.querySelector('.material-symbols-outlined');
+      if (icon) {
+        icon.textContent = 'check';
+        setTimeout(() => { icon.textContent = 'content_copy'; }, 2000);
+      }
+    });
+
+    document.getElementById('renew-btn')?.addEventListener('click', function() {
+      const originalText = this.innerHTML;
+      this.innerHTML = '<span class="material-symbols-outlined text-sm">check_circle</span> ¡Préstamo renovado hasta el 10 de Nov!';
+      this.classList.remove('bg-[#785600]', 'hover:bg-[#604400]');
+      this.classList.add('bg-emerald-700', 'text-white');
+      setTimeout(() => {
+        this.innerHTML = originalText;
+        this.classList.remove('bg-emerald-700');
+        this.classList.add('bg-[#785600]', 'hover:bg-[#604400]');
+      }, 3500);
+    });
+  </script>
+</div></main></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body></html>
