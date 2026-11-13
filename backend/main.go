@@ -28,12 +28,25 @@ func corsMiddleware(next http.Handler) http.Handler {
 }
 
 func main() {
-	dbPath := "biblioteca.db"
-	_, err := database.InitDB(dbPath)
-	if err != nil {
-		log.Fatalf("Error inicializando base de datos: %v", err)
+	databaseURL := os.Getenv("DATABASE_URL")
+	if databaseURL == "" {
+		databaseURL = os.Getenv("POSTGRES_URL")
 	}
-	fmt.Println("Base de datos SQLite inicializada en", dbPath)
+
+	if databaseURL != "" {
+		_, err := database.InitPostgres(databaseURL)
+		if err != nil {
+			log.Fatalf("Error inicializando base de datos PostgreSQL: %v", err)
+		}
+		fmt.Println("Base de datos PostgreSQL conectada e inicializada con éxito")
+	} else {
+		dbPath := "biblioteca.db"
+		_, err := database.InitDB(dbPath)
+		if err != nil {
+			log.Fatalf("Error inicializando base de datos SQLite local: %v", err)
+		}
+		fmt.Println("Base de datos SQLite local inicializada en", dbPath)
+	}
 
 	mux := http.NewServeMux()
 

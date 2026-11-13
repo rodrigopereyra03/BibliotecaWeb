@@ -1,0 +1,8 @@
+.git
+.agents
+stitch_assets
+node_modules
+frontend/node_modules
+backend/server.exe
+backend/biblioteca.db
+*.db

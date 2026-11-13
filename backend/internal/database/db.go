@@ -4,27 +4,34 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
+	_ "github.com/lib/pq"
 	_ "modernc.org/sqlite"
 )
 
-var DB *sql.DB
+var (
+	DB         *sql.DB
+	DriverName string = "sqlite" // "sqlite" or "postgres"
+)
 
+// InitDB initializes local SQLite
 func InitDB(dataSourceName string) (*sql.DB, error) {
+	DriverName = "sqlite"
 	db, err := sql.Open("sqlite", dataSourceName)
 	if err != nil {
-		return nil, fmt.Errorf("error opening db: %w", err)
+		return nil, fmt.Errorf("error opening sqlite db: %w", err)
 	}
 
 	if err := db.Ping(); err != nil {
-		return nil, fmt.Errorf("error connecting to db: %w", err)
+		return nil, fmt.Errorf("error connecting to sqlite db: %w", err)
 	}
 
 	DB = db
 
 	if err := createTables(db); err != nil {
-		return nil, fmt.Errorf("error creating tables: %w", err)
+		return nil, fmt.Errorf("error creating sqlite tables: %w", err)
 	}
 
 	if err := seedData(db); err != nil {
@@ -34,84 +41,225 @@ func InitDB(dataSourceName string) (*sql.DB, error) {
 	return db, nil
 }
 
+// InitPostgres initializes production PostgreSQL (Neon, Supabase, Render, Railway, etc.)
+func InitPostgres(connStr string) (*sql.DB, error) {
+	DriverName = "postgres"
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, fmt.Errorf("error opening postgres db: %w", err)
+	}
+
+	if err := db.Ping(); err != nil {
+		return nil, fmt.Errorf("error connecting to postgres db: %w", err)
+	}
+
+	DB = db
+
+	if err := createTables(db); err != nil {
+		return nil, fmt.Errorf("error creating postgres tables: %w", err)
+	}
+
+	if err := seedData(db); err != nil {
+		log.Printf("Warning: seed data skipped or failed: %v", err)
+	}
+
+	return db, nil
+}
+
+// Rebind translates SQL queries with '?' placeholders to PostgreSQL '$1, $2, ...' when connected to Postgres
+func Rebind(query string) string {
+	if DriverName != "postgres" {
+		return query
+	}
+	var b strings.Builder
+	argIndex := 1
+	for i := 0; i < len(query); i++ {
+		if query[i] == '?' {
+			b.WriteString(fmt.Sprintf("$%d", argIndex))
+			argIndex++
+		} else {
+			b.WriteByte(query[i])
+		}
+	}
+	return b.String()
+}
+
+// Helper methods that automatically rebind parameters
+func Exec(query string, args ...any) (sql.Result, error) {
+	return DB.Exec(Rebind(query), args...)
+}
+
+func Query(query string, args ...any) (*sql.Rows, error) {
+	return DB.Query(Rebind(query), args...)
+}
+
+func QueryRow(query string, args ...any) *sql.Row {
+	return DB.QueryRow(Rebind(query), args...)
+}
+
+// InsertWithReturnID abstracts LastInsertId (SQLite) vs RETURNING id (PostgreSQL)
+func InsertWithReturnID(query string, args ...any) (int64, error) {
+	if DriverName == "postgres" {
+		q := strings.TrimRight(query, " \t\r\n;") + " RETURNING id"
+		var id int64
+		err := DB.QueryRow(Rebind(q), args...).Scan(&id)
+		return id, err
+	}
+	res, err := DB.Exec(Rebind(query), args...)
+	if err != nil {
+		return 0, err
+	}
+	return res.LastInsertId()
+}
+
 func createTables(db *sql.DB) error {
-	schema := `
-	CREATE TABLE IF NOT EXISTS users (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		name TEXT NOT NULL,
-		email TEXT UNIQUE NOT NULL,
-		member_number TEXT UNIQUE NOT NULL,
-		phone TEXT,
-		avatar_url TEXT,
-		role TEXT DEFAULT 'lector',
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-	);
+	var schema string
+	if DriverName == "postgres" {
+		schema = `
+		CREATE TABLE IF NOT EXISTS users (
+			id SERIAL PRIMARY KEY,
+			name VARCHAR(255) NOT NULL,
+			email VARCHAR(255) UNIQUE NOT NULL,
+			member_number VARCHAR(100) UNIQUE NOT NULL,
+			phone VARCHAR(100),
+			avatar_url TEXT,
+			role VARCHAR(50) DEFAULT 'lector',
+			created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+		);
 
-	CREATE TABLE IF NOT EXISTS books (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL,
-		author TEXT NOT NULL,
-		genre TEXT NOT NULL,
-		isbn TEXT,
-		cover_url TEXT,
-		synopsis TEXT,
-		location TEXT,
-		format TEXT DEFAULT 'physical',
-		has_digital BOOLEAN DEFAULT 0,
-		digital_url TEXT,
-		total_copies INTEGER DEFAULT 1,
-		available_copies INTEGER DEFAULT 1,
-		rating REAL DEFAULT 5.0,
-		reviews_count INTEGER DEFAULT 0,
-		featured BOOLEAN DEFAULT 0
-	);
+		CREATE TABLE IF NOT EXISTS books (
+			id SERIAL PRIMARY KEY,
+			title VARCHAR(500) NOT NULL,
+			author VARCHAR(255) NOT NULL,
+			genre VARCHAR(255) NOT NULL,
+			isbn VARCHAR(100),
+			cover_url TEXT,
+			synopsis TEXT,
+			location VARCHAR(255),
+			format VARCHAR(50) DEFAULT 'physical',
+			has_digital BOOLEAN DEFAULT FALSE,
+			digital_url TEXT,
+			total_copies INTEGER DEFAULT 1,
+			available_copies INTEGER DEFAULT 1,
+			rating REAL DEFAULT 5.0,
+			reviews_count INTEGER DEFAULT 0,
+			featured BOOLEAN DEFAULT FALSE
+		);
 
-	CREATE TABLE IF NOT EXISTS reservations (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		user_id INTEGER NOT NULL,
-		book_id INTEGER NOT NULL,
-		pickup_slot TEXT NOT NULL,
-		pickup_location TEXT NOT NULL,
-		note TEXT,
-		reservation_code TEXT UNIQUE NOT NULL,
-		qr_token TEXT NOT NULL,
-		status TEXT DEFAULT 'ACTIVA',
-		created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-		expires_at DATETIME NOT NULL,
-		FOREIGN KEY (user_id) REFERENCES users(id),
-		FOREIGN KEY (book_id) REFERENCES books(id)
-	);
+		CREATE TABLE IF NOT EXISTS reservations (
+			id SERIAL PRIMARY KEY,
+			user_id INTEGER NOT NULL REFERENCES users(id),
+			book_id INTEGER NOT NULL REFERENCES books(id),
+			pickup_slot VARCHAR(255) NOT NULL,
+			pickup_location VARCHAR(255) NOT NULL,
+			note TEXT,
+			reservation_code VARCHAR(100) UNIQUE NOT NULL,
+			qr_token TEXT NOT NULL,
+			status VARCHAR(50) DEFAULT 'ACTIVA',
+			created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+			expires_at TIMESTAMP WITH TIME ZONE NOT NULL
+		);
 
-	CREATE TABLE IF NOT EXISTS loans (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		user_id INTEGER NOT NULL,
-		book_id INTEGER NOT NULL,
-		loan_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-		due_date DATETIME NOT NULL,
-		returned_date DATETIME,
-		renewals_count INTEGER DEFAULT 0,
-		status TEXT DEFAULT 'EN_CURSO',
-		FOREIGN KEY (user_id) REFERENCES users(id),
-		FOREIGN KEY (book_id) REFERENCES books(id)
-	);
+		CREATE TABLE IF NOT EXISTS loans (
+			id SERIAL PRIMARY KEY,
+			user_id INTEGER NOT NULL REFERENCES users(id),
+			book_id INTEGER NOT NULL REFERENCES books(id),
+			loan_date TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+			due_date TIMESTAMP WITH TIME ZONE NOT NULL,
+			returned_date TIMESTAMP WITH TIME ZONE,
+			renewals_count INTEGER DEFAULT 0,
+			status VARCHAR(50) DEFAULT 'EN_CURSO'
+		);
 
-	CREATE TABLE IF NOT EXISTS news (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		title TEXT NOT NULL,
-		category TEXT NOT NULL,
-		content TEXT NOT NULL,
-		image_url TEXT,
-		published DATETIME DEFAULT CURRENT_TIMESTAMP,
-		author TEXT NOT NULL
-	);
-	`
+		CREATE TABLE IF NOT EXISTS news (
+			id SERIAL PRIMARY KEY,
+			title VARCHAR(500) NOT NULL,
+			category VARCHAR(255) NOT NULL,
+			content TEXT NOT NULL,
+			image_url TEXT,
+			published TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+			author VARCHAR(255) NOT NULL
+		);
+		`
+	} else {
+		schema = `
+		CREATE TABLE IF NOT EXISTS users (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			email TEXT UNIQUE NOT NULL,
+			member_number TEXT UNIQUE NOT NULL,
+			phone TEXT,
+			avatar_url TEXT,
+			role TEXT DEFAULT 'lector',
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		);
+
+		CREATE TABLE IF NOT EXISTS books (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			title TEXT NOT NULL,
+			author TEXT NOT NULL,
+			genre TEXT NOT NULL,
+			isbn TEXT,
+			cover_url TEXT,
+			synopsis TEXT,
+			location TEXT,
+			format TEXT DEFAULT 'physical',
+			has_digital BOOLEAN DEFAULT 0,
+			digital_url TEXT,
+			total_copies INTEGER DEFAULT 1,
+			available_copies INTEGER DEFAULT 1,
+			rating REAL DEFAULT 5.0,
+			reviews_count INTEGER DEFAULT 0,
+			featured BOOLEAN DEFAULT 0
+		);
+
+		CREATE TABLE IF NOT EXISTS reservations (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			user_id INTEGER NOT NULL,
+			book_id INTEGER NOT NULL,
+			pickup_slot TEXT NOT NULL,
+			pickup_location TEXT NOT NULL,
+			note TEXT,
+			reservation_code TEXT UNIQUE NOT NULL,
+			qr_token TEXT NOT NULL,
+			status TEXT DEFAULT 'ACTIVA',
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			expires_at DATETIME NOT NULL,
+			FOREIGN KEY (user_id) REFERENCES users(id),
+			FOREIGN KEY (book_id) REFERENCES books(id)
+		);
+
+		CREATE TABLE IF NOT EXISTS loans (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			user_id INTEGER NOT NULL,
+			book_id INTEGER NOT NULL,
+			loan_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+			due_date DATETIME NOT NULL,
+			returned_date DATETIME,
+			renewals_count INTEGER DEFAULT 0,
+			status TEXT DEFAULT 'EN_CURSO',
+			FOREIGN KEY (user_id) REFERENCES users(id),
+			FOREIGN KEY (book_id) REFERENCES books(id)
+		);
+
+		CREATE TABLE IF NOT EXISTS news (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			title TEXT NOT NULL,
+			category TEXT NOT NULL,
+			content TEXT NOT NULL,
+			image_url TEXT,
+			published DATETIME DEFAULT CURRENT_TIMESTAMP,
+			author TEXT NOT NULL
+		);
+		`
+	}
 	_, err := db.Exec(schema)
 	return err
 }
 
 func seedData(db *sql.DB) error {
 	var count int
-	err := db.QueryRow("SELECT COUNT(*) FROM books").Scan(&count)
+	err := QueryRow("SELECT COUNT(*) FROM books").Scan(&count)
 	if err != nil {
 		return err
 	}
@@ -120,7 +268,7 @@ func seedData(db *sql.DB) error {
 	}
 
 	// 1. Usuario de prueba por defecto (David Miller / Vecino Lector)
-	_, err = db.Exec(`
+	_, err = Exec(`
 		INSERT INTO users (id, name, email, member_number, phone, avatar_url, role)
 		VALUES (1, 'David Miller', 'david.miller@vecinos.org', 'GT-4821', '+54 11 5555-1234', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80', 'lector')
 	`)
@@ -250,109 +398,109 @@ func seedData(db *sql.DB) error {
 			featured:    false,
 		},
 		{
-			title:       "Cuentos de Amor de Locura y de Muerte",
-			author:      "Horacio Quiroga",
-			genre:       "Cuentos & Fantasía",
-			isbn:        "978-8420662497",
+			title:       "Relatos de un Náufrago",
+			author:      "Gabriel García Márquez",
+			genre:       "Novelas & Ficción",
+			isbn:        "978-0307387349",
 			cover:       "https://images.unsplash.com/photo-1512820790803-83ca734da794?auto=format&fit=crop&w=600&q=80",
-			synopsis:    "Relatos intensos y sobrecogedores ambientados en la selva misionera, donde la naturaleza salvaje y la psicología humana se baten a duelo.",
-			location:    "Sector Narrativa Rioplatense · Estante 1C",
+			synopsis:    "La crónica verídica de Luis Alejandro Velasco, marinero que estuvo diez días a la deriva en una balsa sin comer ni beber en el mar Caribe.",
+			location:    "Sector Crónicas & Periodismo Narrativo · Estante 2B",
+			format:      "physical",
+			hasDigital:  false,
+			copies:      3,
+			available:   3,
+			rating:      4.7,
+			reviews:     42,
+			featured:    false,
+		},
+		{
+			title:       "El Aleph",
+			author:      "Jorge Luis Borges",
+			genre:       "Cuentos & Fantasía",
+			isbn:        "978-8420658513",
+			cover:       "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=600&q=80",
+			synopsis:    "Obra maestra del cuento fantástico. En el sótano de una vieja casa de la calle Garay se encuentra el Aleph, el punto que contiene todos los puntos del universo simultáneamente.",
+			location:    "Sector Clásicos Argentinos · Estante 1A",
 			format:      "both",
 			hasDigital:  true,
 			copies:      4,
 			available:   3,
-			rating:      4.8,
-			reviews:     57,
+			rating:      5.0,
+			reviews:     108,
 			featured:    false,
 		},
 		{
-			title:       "El Túnel",
-			author:      "Ernesto Sabato",
-			genre:       "Novelas & Ficción",
-			isbn:        "978-8432248238",
-			cover:       "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?auto=format&fit=crop&w=600&q=80",
-			synopsis:    "La célebre confesión del pintor Juan Pablo Castel desde su celda, narrando su obsesión ciega y trágica por María Iribarne en la Buenos Aires de los años cuarenta.",
-			location:    "Sector Literatura Argentina · Estante 1B",
+			title:       "It (Eso)",
+			author:      "Stephen King",
+			genre:       "Terror & Misterio",
+			isbn:        "978-1501142970",
+			cover:       "https://images.unsplash.com/photo-1514533450685-4493e01d1fdc?auto=format&fit=crop&w=600&q=80",
+			synopsis:    "En el pueblo de Derry, un grupo de niños marginados enfrenta a una entidad ancestral que despierta cada 27 años para alimentarse del miedo y adoptar la forma de sus peores pesadillas.",
+			location:    "Sector Terror & Suspense · Estante 5A",
 			format:      "physical",
 			hasDigital:  false,
 			copies:      4,
-			available:   2,
-			rating:      4.7,
-			reviews:     72,
+			available:   3,
+			rating:      4.9,
+			reviews:     156,
 			featured:    false,
 		},
 		{
-			title:       "El Principito",
-			author:      "Antoine de Saint-Exupéry",
-			genre:       "Cuentos & Infantil",
-			isbn:        "978-0156012195",
+			title:       "El Cuervo y Cuentos Extraordinarios",
+			author:      "Edgar Allan Poe",
+			genre:       "Cuentos & Fantasía",
+			isbn:        "978-8420674209",
 			cover:       "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80",
-			synopsis:    "Una fábula poética sobre el valor de la amistad, la inocencia, el amor y la mirada del corazón: 'Lo esencial es invisible a los ojos'.",
-			location:    "Sector Juvenil e Infantil · Estante 6A",
-			format:      "both",
-			hasDigital:  true,
-			copies:      5,
-			available:   5,
-			rating:      5.0,
-			reviews:     180,
-			featured:    false,
-		},
-		{
-			title:       "Drácula",
-			author:      "Bram Stoker",
-			genre:       "Terror & Misterio",
-			isbn:        "978-8491050223",
-			cover:       "https://images.unsplash.com/photo-1516979187457-637abb4f9353?auto=format&fit=crop&w=600&q=80",
-			synopsis:    "La novela epistolar gótica por excelencia. Desde los Cárpatos hasta las costas brumosas de Inglaterra, el conde transilvano despliega su sombra inmortal.",
-			location:    "Sector Terror & Clásicos Góticos · Estante 5C",
+			synopsis:    "Compendio insuperable de horror gótico y misterio deductivo. Incluye 'El corazón delator', 'El gato negro', 'La caída de la casa Usher' y 'Los crímenes de la calle Morgue'.",
+			location:    "Sector Clásicos Góticos · Estante 3A",
 			format:      "both",
 			hasDigital:  true,
 			copies:      3,
 			available:   2,
-			rating:      4.9,
-			reviews:     88,
+			rating:      4.8,
+			reviews:     98,
 			featured:    false,
 		},
 		{
-			title:       "Sapiens: De animales a dioses",
-			author:      "Yuval Noah Harari",
-			genre:       "Historia & Biografías",
-			isbn:        "978-8499926223",
-			cover:       "https://images.unsplash.com/photo-1461360370896-922624d12aa1?auto=format&fit=crop&w=600&q=80",
-			synopsis:    "Un recorrido audaz e iluminador por la historia de la humanidad, desde los primeros homínidos hasta las revoluciones cognitiva, agrícola y científica.",
-			location:    "Sector Historia & Divulgación · Estante 7B",
+			title:       "Sherlock Holmes: Estudio en Escarlata",
+			author:      "Arthur Conan Doyle",
+			genre:       "Suspenso & Policial",
+			isbn:        "978-8420674339",
+			cover:       "https://images.unsplash.com/photo-1474932430478-367dbb6832c1?auto=format&fit=crop&w=600&q=80",
+			synopsis:    "La primera aventura que unió al célebre detective consultor Sherlock Holmes con el Dr. John H. Watson para desentrañar un misterioso crimen con la palabra 'RACHE' escrita en sangre.",
+			location:    "Sector Policial Clásico · Estante 3B",
 			format:      "both",
 			hasDigital:  true,
 			copies:      4,
-			available:   4,
-			rating:      4.8,
-			reviews:     96,
+			available:   3,
+			rating:      4.9,
+			reviews:     120,
 			featured:    false,
 		},
 	}
 
 	for _, b := range books {
-		_, err := db.Exec(`
+		_, err := Exec(`
 			INSERT INTO books (title, author, genre, isbn, cover_url, synopsis, location, format, has_digital, total_copies, available_copies, rating, reviews_count, featured)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		`, b.title, b.author, b.genre, b.isbn, b.cover, b.synopsis, b.location, b.format, b.hasDigital, b.copies, b.available, b.rating, b.reviews, b.featured)
 		if err != nil {
-			log.Printf("Error seeding book %s: %v", b.title, err)
+			log.Printf("Book seed error: %v", err)
 		}
 	}
 
-	// 3. Reserva activa de prueba (para ver en "Mis Reservas" y "Pase QR")
+	// 3. Reservas de prueba activas (para Mis Reservas y Pase QR)
 	now := time.Now()
-	_, err = db.Exec(`
+	_, err = Exec(`
 		INSERT INTO reservations (user_id, book_id, pickup_slot, pickup_location, note, reservation_code, qr_token, status, created_at, expires_at)
-		VALUES (1, 1, 'Turno Mañana (10:00 a 13:00 hs)', 'Sigmund Freud 201, Temperley', 'Retiro con credencial parroquial', 'RES-LOURDES-8821', 'TOKEN-QR-GT4821-C100S', 'ACTIVA', ?, ?)
+		VALUES (1, 1, 'Turno Mañana (10:00 a 13:00 hs)', 'Atrio Central · Mostrador Principal', 'Retiro dominical tras la misa', 'RES-LOURDES-7829', 'QR-TOKEN-LOURDES-7829', 'ACTIVA', ?, ?)
 	`, now, now.Add(48*time.Hour))
 	if err != nil {
 		log.Printf("Reservation seed error: %v", err)
 	}
 
 	// 4. Préstamos de prueba (para el Historial de Préstamos)
-	_, err = db.Exec(`
+	_, err = Exec(`
 		INSERT INTO loans (user_id, book_id, loan_date, due_date, renewals_count, status)
 		VALUES (1, 4, ?, ?, 1, 'EN_CURSO')
 	`, now.Add(-10*24*time.Hour), now.Add(11*24*time.Hour))
@@ -361,7 +509,7 @@ func seedData(db *sql.DB) error {
 	}
 
 	retDate := now.Add(-30 * 24 * time.Hour)
-	_, err = db.Exec(`
+	_, err = Exec(`
 		INSERT INTO loans (user_id, book_id, loan_date, due_date, returned_date, renewals_count, status)
 		VALUES (1, 7, ?, ?, ?, 0, 'DEVUELTO')
 	`, now.Add(-55*24*time.Hour), now.Add(-34*24*time.Hour), retDate)
@@ -376,7 +524,7 @@ func seedData(db *sql.DB) error {
 		{
 			title:    "Llegaron más de 50 nuevas novelas y cuentos a la biblioteca",
 			category: "Comunidad",
-			content:  "Gracias a las generosas donaciones de vecinos y feligreses del barrio, incorporamos obras contemporáneas, misterio de Agatha Christie y grandes clásicos de la narrativa argentina e internacional.",
+			content:  "Gracias a las generosas donaciones de vecinos y amigos del barrio, incorporamos obras contemporáneas, misterio de Agatha Christie y grandes clásicos de la narrativa argentina e internacional.",
 			image:    "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=600&q=80",
 			author:   "Comisión de Biblioteca",
 		},
@@ -397,7 +545,7 @@ func seedData(db *sql.DB) error {
 	}
 
 	for _, n := range news {
-		_, err := db.Exec(`
+		_, err := Exec(`
 			INSERT INTO news (title, category, content, image_url, author)
 			VALUES (?, ?, ?, ?, ?)
 		`, n.title, n.category, n.content, n.image, n.author)
