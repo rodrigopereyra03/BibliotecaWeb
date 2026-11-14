@@ -84,7 +84,7 @@ export default function CatalogoView({
     if (isPaused) return;
     const interval = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 6500);
+    }, 5000);
     return () => clearInterval(interval);
   }, [isPaused, heroSlides.length]);
 
@@ -198,24 +198,6 @@ export default function CatalogoView({
               <span className="px-2.5 py-0.5 rounded-full bg-sepia-heading/80 backdrop-blur-md text-[10px] text-white font-semibold border border-white/20">
                 {heroSlides[currentSlide].badge}
               </span>
-              <div className="flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={handlePrevSlide}
-                  className="w-6 h-6 rounded-full bg-white/90 text-sepia-heading flex items-center justify-center text-sm font-bold shadow-xs active:scale-90 transition-transform"
-                  aria-label="Anterior"
-                >
-                  ‹
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNextSlide}
-                  className="w-6 h-6 rounded-full bg-white/90 text-sepia-heading flex items-center justify-center text-sm font-bold shadow-xs active:scale-90 transition-transform"
-                  aria-label="Siguiente"
-                >
-                  ›
-                </button>
-              </div>
             </div>
 
             <div className="absolute bottom-2.5 left-3 right-3 text-white z-10">
@@ -397,28 +379,6 @@ export default function CatalogoView({
         ></div>
         <div className="absolute right-1/3 -top-16 w-80 h-80 rounded-full bg-amber-500/10 blur-3xl pointer-events-none"></div>
 
-        {/* Carousel Prev & Next Controls */}
-        <div className="absolute top-6 right-6 z-20 flex items-center gap-2">
-          <button
-            type="button"
-            onClick={handlePrevSlide}
-            title="Banner anterior"
-            aria-label="Banner anterior"
-            className="w-8 h-8 rounded-full bg-white/85 hover:bg-white text-sepia-heading border border-marble-border shadow-xs flex items-center justify-center transition-all hover:scale-105 active:scale-95"
-          >
-            <span className="material-symbols-outlined text-lg">chevron_left</span>
-          </button>
-          <button
-            type="button"
-            onClick={handleNextSlide}
-            title="Siguiente banner"
-            aria-label="Siguiente banner"
-            className="w-8 h-8 rounded-full bg-white/85 hover:bg-white text-sepia-heading border border-marble-border shadow-xs flex items-center justify-center transition-all hover:scale-105 active:scale-95"
-          >
-            <span className="material-symbols-outlined text-lg">chevron_right</span>
-          </button>
-        </div>
-
         {/* Hero Image (Editorial fade blend) */}
         <div className="absolute right-0 top-0 bottom-0 w-[450px] pointer-events-none select-none overflow-hidden hidden xl:block">
           {heroSlides.map((slide, idx) => (
@@ -487,25 +447,6 @@ export default function CatalogoView({
                   </span>
                 </div>
               </div>
-            </div>
-
-            {/* Slide Navigation Indicator Pills */}
-            <div className="flex items-center gap-1.5 ml-auto bg-white/90 backdrop-blur-sm p-1 rounded-full border border-marble-border shadow-2xs">
-              {heroSlides.map((slide, idx) => (
-                <button
-                  key={slide.id}
-                  type="button"
-                  onClick={() => setCurrentSlide(idx)}
-                  className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                    idx === currentSlide
-                      ? slide.tabActiveClass
-                      : 'text-warm-charcoal hover:text-sepia-heading hover:bg-parchment-surface'
-                  }`}
-                >
-                  <span className="material-symbols-outlined text-sm">{slide.icon}</span>
-                  <span>{slide.shortTab}</span>
-                </button>
-              ))}
             </div>
           </div>
         </div>
