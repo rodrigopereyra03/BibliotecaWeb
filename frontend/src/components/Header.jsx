@@ -50,24 +50,24 @@ export default function Header({
         <div className="flex items-center gap-3 shrink-0">
           <button
             onClick={onOpenHours}
-            className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-parchment-surface border border-marble-border hover:bg-gold-light/40 transition-colors cursor-pointer"
+            className="hidden lg:flex items-center gap-2 px-3.5 py-2 rounded-full bg-parchment-surface border border-marble-border hover:bg-gold-light/40 transition-colors cursor-pointer"
           >
-            <span className="w-2 h-2 rounded-full bg-gold-burnished animate-pulse shrink-0"></span>
-            <span className="text-xs text-warm-charcoal whitespace-nowrap">
-              Atención Hoy: <strong className="text-sepia-heading">8:30 AM – 2:00 PM</strong>
+            <span className="w-2.5 h-2.5 rounded-full bg-gold-burnished animate-pulse shrink-0"></span>
+            <span className="text-sm text-warm-charcoal whitespace-nowrap font-medium">
+              Atención Hoy: <strong className="text-sepia-heading font-bold">8:30 AM – 2:00 PM</strong>
             </span>
           </button>
 
           <button
             onClick={onGoToLogin}
-            className="px-3 py-1.5 rounded-lg bg-parchment-surface border border-marble-border text-warm-charcoal hover:text-sepia-heading hover:bg-white transition-all text-xs font-semibold"
+            className="px-3.5 py-2 rounded-lg bg-parchment-surface border border-marble-border text-warm-charcoal hover:text-sepia-heading hover:bg-white transition-all text-sm font-bold"
           >
             Acceso
           </button>
 
           <button
             onClick={onGoToRegister}
-            className="px-3 py-1.5 rounded-lg bg-gold-light border border-gold-burnished/40 text-gold-burnished hover:bg-gold-burnished hover:text-white transition-all text-xs font-semibold cursor-pointer"
+            className="px-3.5 py-2 rounded-lg bg-gold-light border border-gold-burnished/40 text-gold-burnished hover:bg-gold-burnished hover:text-white transition-all text-sm font-bold cursor-pointer"
           >
             Inscribir Lector
           </button>
@@ -75,10 +75,10 @@ export default function Header({
           {onGoToBackoffice && (
             <button
               onClick={onGoToBackoffice}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white transition-all text-xs font-semibold shadow-xs cursor-pointer"
+              className="hidden md:flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white transition-all text-sm font-bold shadow-xs cursor-pointer"
               title="Panel de Administración y Control"
             >
-              <span className="material-symbols-outlined text-base">admin_panel_settings</span>
+              <span className="material-symbols-outlined text-lg">admin_panel_settings</span>
               <span>Backoffice</span>
             </button>
           )}
