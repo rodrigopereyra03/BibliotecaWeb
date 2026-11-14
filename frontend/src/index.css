@@ -20,6 +20,10 @@
     --terracotta-light: #FCE8E7;
   }
 
+  html {
+    font-size: 115%; /* Aumento uniforme y armónico del 15% */
+  }
+
   body {
     background-color: var(--parchment-base);
     color: var(--sepia-ink);
