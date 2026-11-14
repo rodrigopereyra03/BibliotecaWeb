@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"mime/multipart"
 	"net/url"
 	"os"
@@ -95,21 +96,23 @@ func UploadFile(fileHeader *multipart.FileHeader, folder string) (string, error)
 		}
 	}
 
-	// 1. If Neon S3 client is initialized, upload to Neon Object Storage
+	// 1. If Neon S3 client is initialized, attempt upload to Neon Object Storage
 	if minioClient != nil {
-		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 		defer cancel()
 
 		_, err = minioClient.PutObject(ctx, bucketName, uniqueName, file, fileHeader.Size, minio.PutObjectOptions{
 			ContentType: contentType,
 		})
-		if err != nil {
-			return "", fmt.Errorf("error subiendo a Neon Object Storage: %w", err)
+		if err == nil {
+			// Public URL for Neon bucket
+			publicURL := fmt.Sprintf("%s/%s/%s", strings.TrimRight(endpointURL, "/"), bucketName, uniqueName)
+			return publicURL, nil
 		}
-
-		// Public URL for Neon bucket
-		publicURL := fmt.Sprintf("%s/%s/%s", strings.TrimRight(endpointURL, "/"), bucketName, uniqueName)
-		return publicURL, nil
+		log.Printf("Aviso: No se pudo subir a Neon S3 (%v). Usando almacenamiento local como respaldo...\n", err)
+		if seeker, ok := file.(io.Seeker); ok {
+			_, _ = seeker.Seek(0, io.SeekStart)
+		}
 	}
 
 	// 2. Local fallback: Save to uploads/
