@@ -46,30 +46,6 @@ export default function Header({
           </div>
         </div>
 
-        {/* Global Search Bar */}
-        <div className="hidden xl:flex items-center gap-4 flex-1 max-w-md mx-4">
-          <div className="relative w-full">
-            <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-warm-charcoal text-lg">
-              search
-            </span>
-            <input
-              type="text"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Buscar novelas, terror, cuentos o autores..."
-              className="w-full bg-parchment-card hover:bg-white rounded-lg py-2 pl-10 pr-12 text-sm text-sepia-ink placeholder:text-outline border border-marble-border focus:outline-none focus:ring-1 focus:ring-gold-burnished focus:border-gold-burnished transition-all"
-            />
-            {searchTerm && (
-              <button
-                onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-warm-charcoal hover:text-sepia-ink text-xs p-1"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-        </div>
-
         {/* Right Actions & User Profile */}
         <div className="flex items-center gap-3 shrink-0">
           <button
