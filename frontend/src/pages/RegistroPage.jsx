@@ -66,21 +66,6 @@ export default function RegistroPage({ onRegisterSuccess, onGoToLogin, onGoToCat
         <div className="absolute inset-0 bg-gradient-to-t from-stone-950/95 via-stone-900/50 to-stone-900/35"></div>
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(30,58,95,0.35)_0%,transparent_60%)]"></div>
 
-        {/* Top Header inside Banner */}
-        <div className="relative z-10 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/20 shadow-sm text-white">
-            <span className="material-symbols-outlined text-gold-accent text-base">church</span>
-            <span className="text-xs font-semibold tracking-wide">
-              Capilla Ntra. Sra. de Lourdes
-            </span>
-          </div>
-
-          <div className="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-sepia-heading/75 backdrop-blur-md border border-gold-burnished/30 text-parchment-surface text-xs shadow-xs">
-            <span className="w-2 h-2 rounded-full bg-marian-blue animate-pulse"></span>
-            <span className="font-medium text-[11px]">Patrona Parroquial</span>
-          </div>
-        </div>
-
         {/* Center / Bottom Editorial Copy */}
         <div className="relative z-10 flex flex-col gap-4 max-w-xl my-auto pt-10 pb-6 lg:py-0">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-marian-blue/90 text-white w-max shadow-sm backdrop-blur-sm">
