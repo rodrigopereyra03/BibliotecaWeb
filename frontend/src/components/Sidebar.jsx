@@ -105,30 +105,30 @@ export default function Sidebar({
             onClick={() => setActiveTab('login')}
             title="Pantalla de Acceso / Login"
             className={`flex items-center ${
-              sidebarOpen ? 'gap-3 px-3.5 py-2.5 text-left' : 'justify-center p-2.5'
-            } rounded-lg text-sm transition-all ${
+              sidebarOpen ? 'gap-3 px-3.5 py-2 text-left' : 'justify-center p-2'
+            } rounded-lg text-xs transition-all ${
               activeTab === 'login'
                 ? 'bg-gold-light text-gold-burnished font-bold border border-gold-burnished/30'
                 : 'text-warm-charcoal hover:bg-parchment-card hover:text-sepia-ink'
             }`}
           >
-            <span className="material-symbols-outlined text-lg shrink-0">login</span>
-            {sidebarOpen && <span className="truncate font-semibold">Pantalla de Acceso / Login</span>}
+            <span className="material-symbols-outlined text-base shrink-0">login</span>
+            {sidebarOpen && <span className="truncate">Pantalla de Acceso / Login</span>}
           </button>
 
           <button
             onClick={() => setActiveTab('registro')}
             title="Pantalla de Registro"
             className={`flex items-center ${
-              sidebarOpen ? 'gap-3 px-3.5 py-2.5 text-left' : 'justify-center p-2.5'
-            } rounded-lg text-sm transition-all ${
+              sidebarOpen ? 'gap-3 px-3.5 py-2 text-left' : 'justify-center p-2'
+            } rounded-lg text-xs transition-all ${
               activeTab === 'registro'
                 ? 'bg-gold-light text-gold-burnished font-bold border border-gold-burnished/30'
                 : 'text-warm-charcoal hover:bg-parchment-card hover:text-sepia-ink'
             }`}
           >
-            <span className="material-symbols-outlined text-lg shrink-0">person_add</span>
-            {sidebarOpen && <span className="truncate font-semibold">Pantalla de Registro</span>}
+            <span className="material-symbols-outlined text-base shrink-0">person_add</span>
+            {sidebarOpen && <span className="truncate">Pantalla de Registro</span>}
           </button>
 
           <div className="my-1.5 border-t border-marble-border/70"></div>
@@ -139,13 +139,13 @@ export default function Sidebar({
               onClick={onGoToBackoffice}
               title="Modo Backoffice (Administración)"
               className={`flex items-center ${
-                sidebarOpen ? 'gap-3 px-3.5 py-3 text-left' : 'justify-center p-3'
-              } rounded-lg text-sm font-bold bg-gold-burnished hover:bg-gold-accent text-white transition-all shadow-xs cursor-pointer group`}
+                sidebarOpen ? 'gap-3 px-3.5 py-2.5 text-left' : 'justify-center p-2.5'
+              } rounded-lg text-xs font-bold bg-gold-burnished hover:bg-gold-accent text-white transition-all shadow-xs cursor-pointer group`}
             >
-              <span className="material-symbols-outlined text-xl shrink-0 group-hover:rotate-45 transition-transform">
+              <span className="material-symbols-outlined text-base shrink-0 group-hover:rotate-45 transition-transform">
                 admin_panel_settings
               </span>
-              {sidebarOpen && <span className="truncate font-bold">⚙️ Modo Backoffice</span>}
+              {sidebarOpen && <span className="truncate">⚙️ Modo Backoffice</span>}
             </button>
           )}
         </nav>

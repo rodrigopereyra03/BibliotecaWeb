@@ -413,36 +413,36 @@ export default function CatalogoView({
               </span>
             </div>
 
-            <h2 className="text-3xl sm:text-5xl font-bold font-display text-sepia-heading tracking-tight pt-1 leading-tight min-h-[72px] flex items-center">
+            <h2 className="text-3xl sm:text-4xl font-bold font-display text-sepia-heading tracking-tight pt-1 leading-tight min-h-[72px] flex items-center">
               {heroSlides[currentSlide].title}
             </h2>
 
-            <p className="text-sm sm:text-base text-sepia-heading/95 italic font-display border-l-3 border-gold-burnished pl-3.5 my-1.5 font-medium">
+            <p className="text-xs sm:text-sm text-sepia-heading/90 italic font-display border-l-2 border-gold-burnished pl-3 my-1">
               {heroSlides[currentSlide].quote}
             </p>
 
-            <p className="text-sm sm:text-base text-warm-charcoal leading-relaxed min-h-[44px]">
+            <p className="text-xs sm:text-sm text-warm-charcoal leading-relaxed min-h-[44px]">
               {heroSlides[currentSlide].description}
             </p>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-3.5 px-5 py-3 rounded-xl bg-white/95 backdrop-blur-sm border border-marble-border shadow-xs hover:border-gold-burnished/40 transition-colors">
-              <span className="material-symbols-outlined text-gold-burnished text-3xl">shelves</span>
+            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-xs hover:border-gold-burnished/40 transition-colors">
+              <span className="material-symbols-outlined text-gold-burnished text-2xl">shelves</span>
               <div className="flex flex-col">
-                <span className="text-xs uppercase text-warm-charcoal font-bold tracking-wider">Volúmenes Físicos</span>
-                <span className="text-base font-bold text-sepia-heading">
+                <span className="text-[10px] uppercase text-warm-charcoal font-semibold">Volúmenes Físicos</span>
+                <span className="text-sm font-bold text-sepia-heading">
                   {physicalBooksCount} {physicalBooksCount === 1 ? 'Título' : 'Títulos'}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3.5 px-5 py-3 rounded-xl bg-white/95 backdrop-blur-sm border border-marble-border shadow-xs hover:border-marian-blue/40 transition-colors">
-              <span className="material-symbols-outlined text-marian-blue text-3xl">cloud_done</span>
+            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-xs hover:border-marian-blue/40 transition-colors">
+              <span className="material-symbols-outlined text-marian-blue text-2xl">cloud_done</span>
               <div className="flex items-center gap-1.5">
                 <div className="flex flex-col">
-                  <span className="text-xs uppercase text-warm-charcoal font-bold tracking-wider">Depósito Digital</span>
-                  <span className="text-base font-bold text-sepia-heading">
+                  <span className="text-[10px] uppercase text-warm-charcoal font-semibold">Depósito Digital</span>
+                  <span className="text-sm font-bold text-sepia-heading">
                     {digitalBooksCount} {digitalBooksCount === 1 ? 'Documento' : 'Documentos'}
                   </span>
                 </div>
@@ -458,7 +458,7 @@ export default function CatalogoView({
         <div className="relative z-10 flex flex-col gap-4">
           <div className="flex flex-col md:flex-row items-center gap-3">
             <div className="relative w-full flex-1">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-burnished text-2xl">
+              <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gold-burnished text-xl">
                 search
               </span>
               <input
@@ -466,25 +466,25 @@ export default function CatalogoView({
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Buscar novelas, cuentos, terror, suspenso o autores..."
-                className="w-full bg-white hover:bg-parchment-base focus:bg-white text-sepia-ink placeholder:text-outline text-base font-medium rounded-xl pl-12 pr-28 py-3.5 border border-marble-border focus:outline-none focus:ring-2 focus:ring-gold-burnished/50 focus:border-gold-burnished shadow-xs transition-all"
+                className="w-full bg-white hover:bg-parchment-base focus:bg-white text-sepia-ink placeholder:text-outline text-sm rounded-lg pl-11 pr-24 py-2.5 border border-marble-border focus:outline-none focus:ring-2 focus:ring-gold-burnished/50 focus:border-gold-burnished shadow-xs transition-all"
               />
               {searchTerm && (
                 <button
                   onClick={() => setSearchTerm('')}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold px-2.5 py-1 rounded bg-parchment-surface border border-marble-border text-warm-charcoal hover:text-sepia-ink cursor-pointer"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs font-semibold px-2 py-0.5 rounded bg-parchment-surface border border-marble-border text-warm-charcoal hover:text-sepia-ink"
                 >
                   Limpiar
                 </button>
               )}
             </div>
 
-            <div className="flex items-center p-1.5 rounded-xl bg-white border border-marble-border shadow-xs w-full md:w-auto shrink-0 gap-1">
+            <div className="flex items-center p-1 rounded-lg bg-white border border-marble-border shadow-xs w-full md:w-auto shrink-0">
               <button
                 type="button"
                 onClick={() => setFormatFilter('all')}
-                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                className={`px-3 py-1.5 rounded text-xs transition-all ${
                   formatFilter === 'all'
-                    ? 'bg-gold-burnished text-white shadow-xs'
+                    ? 'bg-gold-burnished text-white font-semibold shadow-xs'
                     : 'text-warm-charcoal hover:text-sepia-ink'
                 }`}
               >
@@ -493,9 +493,9 @@ export default function CatalogoView({
               <button
                 type="button"
                 onClick={() => setFormatFilter('physical')}
-                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                className={`px-3 py-1.5 rounded text-xs transition-all ${
                   formatFilter === 'physical'
-                    ? 'bg-gold-burnished text-white shadow-xs'
+                    ? 'bg-gold-burnished text-white font-semibold shadow-xs'
                     : 'text-warm-charcoal hover:text-sepia-ink'
                 }`}
               >
@@ -504,9 +504,9 @@ export default function CatalogoView({
               <button
                 type="button"
                 onClick={() => setFormatFilter('digital')}
-                className={`px-4 py-2 rounded-lg text-sm font-bold transition-all ${
+                className={`px-3 py-1.5 rounded text-xs transition-all ${
                   formatFilter === 'digital'
-                    ? 'bg-gold-burnished text-white shadow-xs'
+                    ? 'bg-gold-burnished text-white font-semibold shadow-xs'
                     : 'text-warm-charcoal hover:text-sepia-ink'
                 }`}
               >
@@ -515,8 +515,8 @@ export default function CatalogoView({
             </div>
           </div>
 
-          <div className="flex items-center gap-2.5 overflow-x-auto py-1.5 scrollbar-none">
-            <span className="text-sm uppercase tracking-wider text-warm-charcoal font-bold shrink-0 pl-1">
+          <div className="flex items-center gap-2 overflow-x-auto py-1 scrollbar-none">
+            <span className="text-xs uppercase tracking-wider text-warm-charcoal font-semibold shrink-0 pl-1">
               Géneros:
             </span>
             {categories.map((cat) => (
@@ -524,9 +524,9 @@ export default function CatalogoView({
                 key={cat}
                 type="button"
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-3 py-1 rounded-full text-xs whitespace-nowrap transition-all ${
                   selectedCategory === cat
-                    ? 'bg-gold-burnished text-white shadow-xs'
+                    ? 'bg-gold-burnished text-white font-semibold shadow-xs'
                     : 'bg-white hover:bg-parchment-card text-warm-charcoal hover:text-sepia-heading border border-marble-border'
                 }`}
               >
@@ -879,31 +879,31 @@ export default function CatalogoView({
                       </div>
                     </div>
 
-                    <div className="flex flex-col gap-1.5">
+                    <div className="flex flex-col gap-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-gold-burnished text-xs uppercase tracking-wide font-bold truncate max-w-[150px]">
+                        <span className="text-gold-burnished text-[11px] uppercase tracking-wide font-semibold truncate max-w-[150px]">
                           {b.genre}
                         </span>
-                        <span className="flex items-center gap-0.5 text-gold-burnished text-sm font-bold">
-                          <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
+                        <span className="flex items-center gap-0.5 text-gold-burnished text-xs font-bold">
+                          <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>
                             star
                           </span>
                           {b.rating || 5.0}
                         </span>
                       </div>
 
-                      <h4 className="text-lg font-bold font-display text-sepia-heading leading-snug line-clamp-1">
+                      <h4 className="text-base font-bold font-display text-sepia-heading leading-snug line-clamp-1">
                         {b.title}
                       </h4>
-                      <p className="text-sm font-medium text-warm-charcoal truncate">{b.author}</p>
+                      <p className="text-xs text-warm-charcoal truncate">{b.author}</p>
                     </div>
 
-                    <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white border border-marble-border/60 text-xs">
-                      <span className={`w-2 h-2 rounded-full ${isAvailable ? 'bg-gold-burnished' : 'bg-terracotta'}`}></span>
-                      <span className="text-xs text-sepia-heading font-bold">
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-white border border-marble-border/60 text-xs">
+                      <span className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-gold-burnished' : 'bg-terracotta'}`}></span>
+                      <span className="text-xs text-sepia-heading font-medium">
                         {isAvailable ? `${b.available_copies} Disponibles` : 'Reservado'}
                       </span>
-                      <span className="text-xs text-warm-charcoal ml-auto truncate max-w-[120px]">
+                      <span className="text-[11px] text-warm-charcoal ml-auto truncate max-w-[110px]">
                         {b.location ? b.location.split('·')[0] : 'Atrio'}
                       </span>
                     </div>
@@ -913,9 +913,9 @@ export default function CatalogoView({
                     <button
                       type="button"
                       onClick={() => handleSelectBook(b)}
-                      className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-3.5 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white text-sm font-bold transition-all shadow-xs cursor-pointer"
+                      className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded bg-gold-burnished hover:bg-gold-accent text-white text-xs font-bold transition-all shadow-xs"
                     >
-                      <span className="material-symbols-outlined text-base">bookmark_add</span>
+                      <span className="material-symbols-outlined text-sm">bookmark_add</span>
                       Ver & Reservar
                     </button>
                   </div>
