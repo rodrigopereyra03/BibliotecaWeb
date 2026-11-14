@@ -16,7 +16,85 @@ export default function CatalogoView({
   const [note, setNote] = useState('Retiro en mostrador del atrio');
   const [reserving, setReserving] = useState(false);
   const [activeTabMode, setActiveTabMode] = useState('physical');
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
   const workbenchRef = useRef(null);
+
+  const heroSlides = [
+    {
+      id: 'lourdes',
+      kicker: 'Patrona & Identidad Parroquial • Sigmund Freud 201',
+      badge: 'Capilla Nuestra Señora de Lourdes',
+      title: 'Biblioteca Comunitaria de la Capilla Ntra. Sra. de Lourdes',
+      quote: '"Bajo el amparo de la Virgen, un espacio de encuentro, lectura y fe abierto a todo el barrio."',
+      description:
+        'Nuestra biblioteca parroquial abre sus puertas a toda la comunidad y familias de Temperley: literatura universal, espiritualidad, novelas, cuentos y divulgación para retiro a domicilio en Sigmund Freud 201.',
+      image: '/virgen-lourdes.jpg',
+      imageAlt: 'Nuestra Señora de Lourdes en la Capilla de Temperley',
+      imageCaption: 'Ntra. Sra. de Lourdes · Patrona Parroquial',
+      shortTab: 'Ntra. Sra. de Lourdes',
+      icon: 'church',
+      bgGradient: 'from-[#fbf8f2] via-[#f7f0e4] to-[#1e3a5f]/15',
+      glowColor: 'bg-marian-blue/10',
+      badgeClass: 'bg-marian-blue/10 text-marian-blue border-marian-blue/30',
+      tabActiveClass: 'bg-marian-blue text-white shadow-xs',
+      imagePosition: 'object-center',
+    },
+    {
+      id: 'tito',
+      kicker: 'Formación, Diálogo & Memoria • Préstamos a Domicilio: 21 Días',
+      badge: 'San Tito Brandsma · Carmelita',
+      title: 'El Saber, la Lectura y la Verdad como Faro Comunitario',
+      quote: '"La lectura, la reflexión y la verdad como faro abierto para toda nuestra comunidad."',
+      description:
+        'Consulte y retire libros para todo el barrio: novelas universales, literatura contemporánea, cuentos, terror, suspenso y documentos digitales con descarga libre y retiro en el atrio.',
+      image: '/hero-titus.jpg',
+      imageAlt: 'San Tito Brandsma',
+      imageCaption: 'San Tito Brandsma · Mártir & Académico Carmelita',
+      shortTab: 'San Tito Brandsma',
+      icon: 'auto_stories',
+      bgGradient: 'from-parchment-surface via-parchment-card to-[#d69838]/20',
+      glowColor: 'bg-gold-burnished/15',
+      badgeClass: 'bg-gold-light text-gold-burnished border-gold-burnished/30',
+      tabActiveClass: 'bg-gold-burnished text-white shadow-xs',
+      imagePosition: 'object-top',
+    },
+    {
+      id: 'capilla',
+      kicker: 'Sede Central & Encuentro Vecinal • Abierto a Familias',
+      badge: 'Sede Temperley · Sigmund Freud 201',
+      title: 'Retiro en el Atrio Parroquial y Préstamos Domiciliarios',
+      quote: '"Un templo y una biblioteca comunitaria donde cada vecino y familia encuentra su lugar."',
+      description:
+        'Vení a retirar y devolver tus libros los domingos tras la Santa Misa o en los días y horarios habituales de secretaría. Préstamos por 21 días renovables para toda la comunidad.',
+      image: '/capilla-fachada.jpg',
+      imageAlt: 'Fachada y campanario de la Capilla Nuestra Señora de Lourdes',
+      imageCaption: 'Capilla Ntra. Sra. de Lourdes · Sede Temperley',
+      shortTab: 'Nuestra Capilla',
+      icon: 'location_city',
+      bgGradient: 'from-[#fdf8f4] via-[#f7ede3] to-[#b45309]/15',
+      glowColor: 'bg-[#b45309]/15',
+      badgeClass: 'bg-amber-100 text-[#b45309] border-[#b45309]/30',
+      tabActiveClass: 'bg-[#b45309] text-white shadow-xs',
+      imagePosition: 'object-center',
+    },
+  ];
+
+  useEffect(() => {
+    if (isPaused) return;
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+    }, 6500);
+    return () => clearInterval(interval);
+  }, [isPaused, heroSlides.length]);
+
+  const handlePrevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + heroSlides.length) % heroSlides.length);
+  };
+
+  const handleNextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
+  };
 
   const categories = [
     'Todas las Categorías',
@@ -97,26 +175,82 @@ export default function CatalogoView({
           )}
         </div>
 
-        {/* Institutional Notice */}
-        <div className="w-full bg-parchment-surface rounded-xl p-3 flex items-center justify-between border border-marble-border shadow-xs">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-gold-light border border-gold-burnished/30 flex items-center justify-center shrink-0 text-gold-burnished">
-              <span className="material-symbols-outlined text-base">account_balance</span>
+        {/* Institutional Notice & Mobile Carousel Banner */}
+        <div
+          className="w-full relative overflow-hidden rounded-2xl border border-marble-border shadow-xs bg-parchment-card"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <div className="relative h-44 w-full overflow-hidden bg-warm-charcoal/10">
+            {heroSlides.map((slide, idx) => (
+              <img
+                key={slide.id}
+                src={slide.image}
+                alt={slide.imageAlt}
+                className={`absolute inset-0 w-full h-full object-cover ${slide.imagePosition} transition-opacity duration-500 ${
+                  idx === currentSlide ? 'opacity-90' : 'opacity-0'
+                }`}
+              />
+            ))}
+            <div className="absolute inset-0 bg-gradient-to-t from-sepia-heading via-sepia-heading/45 to-transparent"></div>
+
+            <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between z-10">
+              <span className="px-2.5 py-0.5 rounded-full bg-sepia-heading/80 backdrop-blur-md text-[10px] text-white font-semibold border border-white/20">
+                {heroSlides[currentSlide].badge}
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={handlePrevSlide}
+                  className="w-6 h-6 rounded-full bg-white/90 text-sepia-heading flex items-center justify-center text-sm font-bold shadow-xs active:scale-90 transition-transform"
+                  aria-label="Anterior"
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNextSlide}
+                  className="w-6 h-6 rounded-full bg-white/90 text-sepia-heading flex items-center justify-center text-sm font-bold shadow-xs active:scale-90 transition-transform"
+                  aria-label="Siguiente"
+                >
+                  ›
+                </button>
+              </div>
             </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-xs font-bold text-sepia-heading truncate">
-                Libros de la Biblioteca Comunitaria
+
+            <div className="absolute bottom-2.5 left-3 right-3 text-white z-10">
+              <span className="text-[10px] uppercase tracking-wider text-gold-accent font-bold">
+                {heroSlides[currentSlide].kicker}
               </span>
-              <span className="text-[10px] text-warm-charcoal truncate">
-                Préstamos a domicilio: 21 días renovables
-              </span>
+              <h3 className="text-sm font-bold font-display leading-tight line-clamp-1 drop-shadow-sm mt-0.5">
+                {heroSlides[currentSlide].title}
+              </h3>
+              <p className="text-[11px] text-white/90 line-clamp-1 italic mt-0.5">
+                {heroSlides[currentSlide].quote}
+              </p>
             </div>
           </div>
-          <div className="flex items-center gap-1 bg-white px-2 py-0.5 rounded-full border border-marble-border shrink-0">
-            <span className="material-symbols-outlined text-xs text-gold-burnished" style={{ fontVariationSettings: "'FILL' 1" }}>
-              verified
-            </span>
-            <span className="text-[10px] text-sepia-heading font-semibold">Regla Parroquial</span>
+
+          <div className="px-3.5 py-2.5 flex items-center justify-between bg-parchment-surface border-t border-marble-border">
+            <div className="flex items-center gap-1.5">
+              {heroSlides.map((slide, idx) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`h-2 rounded-full transition-all ${
+                    idx === currentSlide ? 'w-6 bg-gold-burnished' : 'w-2 bg-warm-charcoal/25 hover:bg-warm-charcoal/50'
+                  }`}
+                  aria-label={`Ir a slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+            <div className="text-[10px] text-sepia-heading font-medium flex items-center gap-1">
+              <span className="material-symbols-outlined text-xs text-gold-burnished" style={{ fontVariationSettings: "'FILL' 1" }}>
+                verified
+              </span>
+              <span>Sigmund Freud 201, Temperley</span>
+            </div>
           </div>
         </div>
 
@@ -236,58 +370,104 @@ export default function CatalogoView({
       </div>
 
       {/* ============================================================ */}
-      {/* DESKTOP HERO & FILTERS (hidden on mobile, visible on desktop) */}
+      {/* DESKTOP HERO CAROUSEL & FILTERS (hidden on mobile, visible on desktop) */}
       {/* ============================================================ */}
-      <div className="hidden lg:block relative w-full overflow-hidden rounded-3xl bg-gradient-to-r from-parchment-surface via-parchment-card to-[#d69838]/15 border border-gold-burnished/30 p-8 sm:p-10 shadow-sm mb-8">
+      <div
+        className="hidden lg:block relative w-full overflow-hidden rounded-3xl border shadow-sm mb-8 transition-all duration-700 p-8 sm:p-10"
+        style={{
+          background:
+            heroSlides[currentSlide].id === 'lourdes'
+              ? 'linear-gradient(105deg, #fbf8f2 0%, #f5eee2 55%, rgba(30, 58, 95, 0.12) 100%)'
+              : heroSlides[currentSlide].id === 'tito'
+              ? 'linear-gradient(105deg, #fcfaf6 0%, #f7efe2 55%, rgba(214, 152, 56, 0.18) 100%)'
+              : 'linear-gradient(105deg, #fdf8f4 0%, #f6ede3 55%, rgba(180, 83, 9, 0.16) 100%)',
+          borderColor:
+            heroSlides[currentSlide].id === 'lourdes'
+              ? 'rgba(30, 58, 95, 0.28)'
+              : heroSlides[currentSlide].id === 'tito'
+              ? 'rgba(184, 134, 11, 0.35)'
+              : 'rgba(180, 83, 9, 0.28)',
+        }}
+        onMouseEnter={() => setIsPaused(true)}
+        onMouseLeave={() => setIsPaused(false)}
+      >
         {/* Glow ambient effects */}
-        <div className="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-gold-burnished/10 blur-3xl pointer-events-none"></div>
+        <div
+          className={`absolute -left-12 -bottom-12 w-72 h-72 rounded-full ${heroSlides[currentSlide].glowColor} blur-3xl pointer-events-none transition-all duration-700`}
+        ></div>
         <div className="absolute right-1/3 -top-16 w-80 h-80 rounded-full bg-amber-500/10 blur-3xl pointer-events-none"></div>
 
-        {/* Hero Image: San Tito Brandsma (Editorial fade blend) */}
-        <div className="absolute right-0 top-0 bottom-0 w-[420px] pointer-events-none select-none overflow-hidden hidden xl:block">
-          <img
-            src="/hero-titus.jpg"
-            alt="San Tito Brandsma"
-            className="w-full h-full object-cover object-top opacity-90 transition-opacity duration-500"
-            style={{
-              maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 98%)',
-              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 98%)',
-            }}
-          />
-          <div className="absolute bottom-3 right-5 px-2.5 py-1 rounded-full bg-sepia-heading/75 backdrop-blur-md border border-gold-burnished/30 flex items-center gap-1.5 shadow-xs">
-            <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished animate-pulse"></span>
-            <span className="text-[10px] text-parchment-surface font-display font-medium tracking-wide">
-              San Tito Brandsma · Mártir & Académico
+        {/* Carousel Prev & Next Controls */}
+        <div className="absolute top-6 right-6 z-20 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handlePrevSlide}
+            title="Banner anterior"
+            aria-label="Banner anterior"
+            className="w-8 h-8 rounded-full bg-white/85 hover:bg-white text-sepia-heading border border-marble-border shadow-xs flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+          >
+            <span className="material-symbols-outlined text-lg">chevron_left</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleNextSlide}
+            title="Siguiente banner"
+            aria-label="Siguiente banner"
+            className="w-8 h-8 rounded-full bg-white/85 hover:bg-white text-sepia-heading border border-marble-border shadow-xs flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+          >
+            <span className="material-symbols-outlined text-lg">chevron_right</span>
+          </button>
+        </div>
+
+        {/* Hero Image (Editorial fade blend) */}
+        <div className="absolute right-0 top-0 bottom-0 w-[450px] pointer-events-none select-none overflow-hidden hidden xl:block">
+          {heroSlides.map((slide, idx) => (
+            <img
+              key={slide.id}
+              src={slide.image}
+              alt={slide.imageAlt}
+              className={`absolute inset-0 w-full h-full object-cover ${slide.imagePosition} transition-opacity duration-700 ${
+                idx === currentSlide ? 'opacity-90' : 'opacity-0'
+              }`}
+              style={{
+                maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 98%)',
+                WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 98%)',
+              }}
+            />
+          ))}
+          <div className="absolute bottom-3 right-5 px-3 py-1 rounded-full bg-sepia-heading/80 backdrop-blur-md border border-white/20 flex items-center gap-2 shadow-xs transition-all duration-500">
+            <span className="w-2 h-2 rounded-full bg-gold-burnished animate-pulse"></span>
+            <span className="text-[11px] text-parchment-surface font-display font-medium tracking-wide">
+              {heroSlides[currentSlide].imageCaption}
             </span>
           </div>
         </div>
 
-        <div className="relative z-10 flex flex-col gap-5 max-w-2xl xl:max-w-3xl mb-8">
+        {/* Slide Content */}
+        <div className="relative z-10 flex flex-col gap-4 max-w-2xl xl:max-w-3xl mb-6">
           <div className="flex flex-col gap-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/90 backdrop-blur-sm border border-gold-burnished/30 shadow-2xs w-max">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm border shadow-2xs w-max transition-all">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
-              <span className="text-xs uppercase tracking-wider text-gold-burnished font-bold">
-                Biblioteca Comunitaria Barrial
+              <span className="text-xs uppercase tracking-wider text-sepia-heading font-bold">
+                {heroSlides[currentSlide].kicker}
               </span>
-              <span className="text-outline text-xs">•</span>
-              <span className="text-xs text-warm-charcoal font-medium">Préstamos a Domicilio: 21 Días</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-bold font-display text-sepia-heading tracking-tight pt-1 leading-tight">
-              Biblioteca Comunitaria de la Capilla Ntra. Sra. de Lourdes
+            <h2 className="text-3xl sm:text-4xl font-bold font-display text-sepia-heading tracking-tight pt-1 leading-tight min-h-[72px] flex items-center">
+              {heroSlides[currentSlide].title}
             </h2>
 
-            <p className="text-xs sm:text-sm text-sepia-heading/85 italic font-display border-l-2 border-gold-burnished pl-3 my-1">
-              "La lectura, la reflexión y la verdad como faro abierto para toda nuestra comunidad."
+            <p className="text-xs sm:text-sm text-sepia-heading/90 italic font-display border-l-2 border-gold-burnished pl-3 my-1">
+              {heroSlides[currentSlide].quote}
             </p>
 
-            <p className="text-xs sm:text-sm text-warm-charcoal leading-relaxed">
-              Consulte y retire libros para todo el barrio: novelas universales, literatura contemporánea, cuentos, terror, suspenso y divulgación para retiro a domicilio en Sigmund Freud 201, Temperley.
+            <p className="text-xs sm:text-sm text-warm-charcoal leading-relaxed min-h-[44px]">
+              {heroSlides[currentSlide].description}
             </p>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-xs hover:border-gold-burnished/40 transition-colors">
+            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-xs hover:border-gold-burnished/40 transition-colors">
               <span className="material-symbols-outlined text-gold-burnished text-2xl">shelves</span>
               <div className="flex flex-col">
                 <span className="text-[10px] uppercase text-warm-charcoal font-semibold">Volúmenes Físicos</span>
@@ -297,17 +477,41 @@ export default function CatalogoView({
               </div>
             </div>
 
-            <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-xs hover:border-marian-blue/40 transition-colors">
+            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-xs hover:border-marian-blue/40 transition-colors">
               <span className="material-symbols-outlined text-marian-blue text-2xl">cloud_done</span>
-              <div className="flex flex-col">
-                <span className="text-[10px] uppercase text-warm-charcoal font-semibold">Depósito Digital</span>
-                <span className="text-sm font-bold text-sepia-heading">
-                  {digitalBooksCount} {digitalBooksCount === 1 ? 'Documento' : 'Documentos'}
-                </span>
+              <div className="flex items-center gap-1.5">
+                <div className="flex flex-col">
+                  <span className="text-[10px] uppercase text-warm-charcoal font-semibold">Depósito Digital</span>
+                  <span className="text-sm font-bold text-sepia-heading">
+                    {digitalBooksCount} {digitalBooksCount === 1 ? 'Documento' : 'Documentos'}
+                  </span>
+                </div>
               </div>
+            </div>
+
+            {/* Slide Navigation Indicator Pills */}
+            <div className="flex items-center gap-1.5 ml-auto bg-white/90 backdrop-blur-sm p-1 rounded-full border border-marble-border shadow-2xs">
+              {heroSlides.map((slide, idx) => (
+                <button
+                  key={slide.id}
+                  type="button"
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                    idx === currentSlide
+                      ? slide.tabActiveClass
+                      : 'text-warm-charcoal hover:text-sepia-heading hover:bg-parchment-surface'
+                  }`}
+                >
+                  <span className="material-symbols-outlined text-sm">{slide.icon}</span>
+                  <span>{slide.shortTab}</span>
+                </button>
+              ))}
             </div>
           </div>
         </div>
+
+        {/* Separator Line */}
+        <div className="relative z-10 w-full h-px bg-gold-burnished/20 mb-6"></div>
 
         {/* Desktop Search & Filter Controls */}
         <div className="relative z-10 flex flex-col gap-4">
