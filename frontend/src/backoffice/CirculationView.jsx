@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useToast } from '../context/ToastContext';
+import CameraQRScannerModal from '../components/CameraQRScannerModal';
 
 export default function CirculationView({
   reservations = [],
@@ -12,26 +13,33 @@ export default function CirculationView({
   const [searchCode, setSearchCode] = useState('RES-LOURDES-0001');
   const [selectedRes, setSelectedRes] = useState(reservations[0] || null);
   const [successMessage, setSuccessMessage] = useState('');
-  const [simulatingCamera, setSimulatingCamera] = useState(false);
+  const [scannerOpen, setScannerOpen] = useState(false);
 
   // Find reservation by code or ID
-  const handleLookup = (e) => {
+  const handleLookup = (e, codeToSearch) => {
     if (e) e.preventDefault();
-    const clean = searchCode.trim().toLowerCase();
+    const query = (codeToSearch !== undefined ? codeToSearch : searchCode).trim();
+    const clean = query.toLowerCase();
     const found = reservations.find((r) => {
       const codeMatches = r.reservation_code && r.reservation_code.toLowerCase().includes(clean);
       const idMatches = r.id && r.id.toString() === clean;
-      const titleMatches = r.book_title && r.book_title.toLowerCase().includes(clean);
-      const userMatches = r.user_name && r.user_name.toLowerCase().includes(clean);
-      return codeMatches || idMatches || titleMatches || userMatches;
+      const tokenMatches = r.qr_token && r.qr_token.toLowerCase().includes(clean);
+      const titleMatches = (r.book_title || r.book?.title) && (r.book_title || r.book?.title).toLowerCase().includes(clean);
+      const userMatches = (r.user_name || r.user?.name) && (r.user_name || r.user?.name).toLowerCase().includes(clean);
+      return codeMatches || idMatches || tokenMatches || titleMatches || userMatches;
     });
 
     if (found) {
       setSelectedRes(found);
-      toast.success(`Orden encontrada: ${found.reservation_code}`, 'Búsqueda Exitosa');
+      setSearchCode(found.reservation_code || query);
+      toast.success(`Orden validada: ${found.reservation_code} para ${found.user_name || 'Socio Lector'}`, 'Pase QR Verificado');
     } else {
-      toast.error(`No se encontró ninguna reserva pendiente con el criterio: "${searchCode}"`, 'Reserva No Encontrada');
+      toast.error(`No se encontró ninguna reserva pendiente con el criterio: "${query}"`, 'Reserva No Encontrada');
     }
+  };
+
+  const handleScanQR = (scannedCode) => {
+    handleLookup(null, scannedCode);
   };
 
   const handleDeliver = async (res) => {
@@ -92,11 +100,11 @@ export default function CirculationView({
         <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
-            onClick={() => setSimulatingCamera(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
+            onClick={() => setScannerOpen(true)}
+            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gold-burnished hover:bg-gold-accent text-white font-bold text-xs shadow-md hover:shadow-lg transition-all cursor-pointer group active:scale-[0.99]"
           >
-            <span className="material-symbols-outlined text-lg">photo_camera</span>
-            <span>Simular Escaneo de Cámara</span>
+            <span className="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">qr_code_scanner</span>
+            <span>Escanear Pase con Cámara</span>
           </button>
         </div>
       </section>
@@ -446,48 +454,13 @@ export default function CirculationView({
         </div>
       </section>
 
-      {/* Modal: Simular Escaneo de Cámara */}
-      {simulatingCamera && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-6 shadow-xl border border-marble-border text-center">
-            <h4 className="font-bold font-display text-base text-sepia-heading">
-              Escáner de Cámara Simulado
-            </h4>
-            <p className="text-xs text-warm-charcoal mt-1">
-              Apunte la cámara al pase QR del lector.
-            </p>
-            <div className="relative w-full h-48 bg-slate-900 rounded-xl my-4 overflow-hidden flex items-center justify-center text-white">
-              <span className="material-symbols-outlined text-6xl text-gold-burnished animate-pulse">
-                qr_code_scanner
-              </span>
-              <div className="absolute inset-4 border-2 border-gold-burnished/60 rounded-lg pointer-events-none"></div>
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setSimulatingCamera(false)}
-                className="flex-1 py-2 rounded-lg bg-parchment-base text-warm-charcoal font-bold text-xs"
-              >
-                Cancelar
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setSimulatingCamera(false);
-                  if (reservations.length > 0) {
-                    setSelectedRes(reservations[0]);
-                    setSearchCode(reservations[0].reservation_code || '');
-                    setSuccessMessage(`¡Pase escaneado correctamente: ${reservations[0].reservation_code}!`);
-                  }
-                }}
-                className="flex-1 py-2 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white font-bold text-xs"
-              >
-                Capturar Pase
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modal: Escáner de Cámara Real QR */}
+      <CameraQRScannerModal
+        isOpen={scannerOpen}
+        onClose={() => setScannerOpen(false)}
+        onScan={handleScanQR}
+        pendingReservations={reservations}
+      />
     </div>
   );
 }
