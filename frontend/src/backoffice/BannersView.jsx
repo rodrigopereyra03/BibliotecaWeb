@@ -7,11 +7,21 @@ const PRESET_IMAGES = [
   { label: 'San Tito Brandsma', url: '/hero-titus.jpg' },
 ];
 
+const SECTION_TABS = [
+  { id: 'carrusel', label: 'Carrusel de Portada', badge: '3 Slides Rotativos', icon: 'view_carousel' },
+  { id: 'noticias', label: 'Noticias & Cartelera', badge: '1 Foto Fija', icon: 'newspaper' },
+  { id: 'reservas', label: 'Mis Reservas', badge: '1 Foto Fija', icon: 'bookmark' },
+  { id: 'horarios', label: 'Horarios del Despacho', badge: '1 Foto Fija', icon: 'schedule' },
+  { id: 'sidebar', label: 'Barra Lateral (Tótem)', badge: '1 Foto Fija', icon: 'vertical_split' },
+  { id: 'auth', label: 'Login & Registro', badge: '1 Foto Fija c/u', icon: 'login' },
+];
+
 const BANNER_DEFINITIONS = [
+  // 1. Carrusel Portada (El único con 3 fotos/slides)
   {
     key: 'hero_slide_1',
     category: 'carrusel',
-    label: 'Slide 1 · Patrona de la Capilla',
+    label: 'Slide 1 · Nuestra Señora de Lourdes',
     location: 'Portada del Catálogo (Slide Inicial)',
     icon: 'flare',
   },
@@ -29,46 +39,56 @@ const BANNER_DEFINITIONS = [
     location: 'Portada del Catálogo (Slide Comunitario)',
     icon: 'church',
   },
-  {
-    key: 'sidebar_totem',
-    category: 'navegacion',
-    label: 'Barra Lateral · Tarjeta Tótem del Atrio',
-    location: 'Sidebar izquierdo inferior de la app',
-    icon: 'vertical_split',
-  },
+
+  // 2. Noticias & Cartelera (1 sola foto fija)
   {
     key: 'noticias_banner',
-    category: 'navegacion',
-    label: 'Noticias & Cartelera · Banner Editorial',
-    location: 'Encabezado superior de la Gaceta Comunitaria',
+    category: 'noticias',
+    label: 'Banner Editorial de Noticias & Cartelera',
+    location: 'Encabezado superior fijo en la sección Noticias',
     icon: 'newspaper',
   },
+
+  // 3. Mis Reservas (1 sola foto fija)
   {
     key: 'reservas_banner',
-    category: 'navegacion',
-    label: 'Mis Reservas · Banner Circuito en 3 Pasos',
-    location: 'Encabezado de Reservas y Retiro',
+    category: 'reservas',
+    label: 'Banner Guía de Retiro en 3 Pasos',
+    location: 'Encabezado superior fijo en Mis Reservas',
     icon: 'bookmark',
   },
+
+  // 4. Modal de Horarios (1 sola foto fija)
   {
     key: 'horarios_modal',
-    category: 'accesos',
-    label: 'Modal de Horarios · Cabecera Fotográfica',
-    location: 'Ventana emergente de Secretaría y Atrio',
+    category: 'horarios',
+    label: 'Cabecera Fotográfica del Despacho',
+    location: 'Ventana emergente fija de Horarios de Secretaría',
     icon: 'schedule',
   },
+
+  // 5. Barra Lateral / Tótem (1 sola foto fija)
+  {
+    key: 'sidebar_totem',
+    category: 'sidebar',
+    label: 'Tarjeta Tótem Inferior del Atrio',
+    location: 'Pie de la barra lateral izquierda fija',
+    icon: 'vertical_split',
+  },
+
+  // 6. Login y Registro (1 sola foto fija cada una)
   {
     key: 'login_screen',
-    category: 'accesos',
-    label: 'Pantalla de Acceso (Login) · Imagen Lateral',
-    location: 'Panel izquierdo 50/50 de inicio de sesión',
+    category: 'auth',
+    label: 'Pantalla de Acceso (Login)',
+    location: 'Columna izquierda 50/50 fija de inicio de sesión',
     icon: 'login',
   },
   {
     key: 'registro_screen',
-    category: 'accesos',
-    label: 'Pantalla de Registro · Imagen Lateral',
-    location: 'Panel izquierdo 50/50 de nuevo lector',
+    category: 'auth',
+    label: 'Pantalla de Registro de Lectores',
+    location: 'Columna izquierda 50/50 fija de nuevo lector',
     icon: 'person_add',
   },
 ];
@@ -132,7 +152,7 @@ export default function BannersView({ banners = {}, onUpdateBanners }) {
     try {
       setSavingKey(key);
       const dataToSave = getBannerData(key);
-      const res = await api.updateBanner(dataToSave);
+      await api.updateBanner(dataToSave);
       if (onUpdateBanners) {
         await onUpdateBanners();
       }
@@ -157,7 +177,7 @@ export default function BannersView({ banners = {}, onUpdateBanners }) {
     }
     try {
       setSavingKey(key);
-      const updated = await api.resetBanner(key);
+      await api.resetBanner(key);
       if (onUpdateBanners) {
         await onUpdateBanners();
       }
@@ -211,6 +231,8 @@ export default function BannersView({ banners = {}, onUpdateBanners }) {
     (def) => def.category === activeCategory
   );
 
+  const activeTabMeta = SECTION_TABS.find((t) => t.id === activeCategory);
+
   return (
     <div className="flex flex-col w-full pb-12 animate-fade-in">
       {/* Top Header */}
@@ -221,14 +243,14 @@ export default function BannersView({ banners = {}, onUpdateBanners }) {
               Identidad Visual & Contenido
             </span>
             <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
-            <span className="text-xs text-warm-charcoal">Gestión Centralizada</span>
+            <span className="text-xs text-warm-charcoal">Gestión por Sección</span>
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold font-display text-sepia-heading tracking-tight">
             Banners, Fotografías y Mensajes
           </h2>
           <p className="text-xs sm:text-sm text-warm-charcoal mt-0.5 max-w-3xl">
-            Modificá las imágenes, títulos y textos de cada banner de la biblioteca comunitaria en tiempo real.
-            Las imágenes que subas se guardan en la nube y se reflejan al instante en todo el sitio sin reiniciar nada.
+            Modificá las fotos y textos de cada sección. El único lugar con carrusel rotativo (3 fotos) es la <strong>Portada</strong>.
+            Las demás secciones (Noticias, Mis Reservas, Horarios, etc.) tienen una <strong>única foto fija</strong>.
           </p>
         </div>
 
@@ -269,46 +291,41 @@ export default function BannersView({ banners = {}, onUpdateBanners }) {
         </div>
       )}
 
-      {/* Category Tabs */}
-      <div className="flex items-center gap-2 p-1.5 bg-parchment-surface rounded-2xl border border-marble-border mb-8 max-w-max flex-wrap">
-        <button
-          type="button"
-          onClick={() => setActiveCategory('carrusel')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            activeCategory === 'carrusel'
-              ? 'bg-gold-burnished text-white shadow-xs'
-              : 'text-warm-charcoal hover:bg-white hover:text-sepia-heading'
-          }`}
-        >
-          <span className="material-symbols-outlined text-base">view_carousel</span>
-          <span>Carrusel de Portada (3 Slides)</span>
-        </button>
+      {/* Clear Specific Tabs Per Section */}
+      <div className="flex items-center gap-2 p-1.5 bg-parchment-surface rounded-2xl border border-marble-border mb-8 max-w-full flex-wrap">
+        {SECTION_TABS.map((tab) => {
+          const isActive = activeCategory === tab.id;
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setActiveCategory(tab.id)}
+              className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                isActive
+                  ? 'bg-gold-burnished text-white shadow-xs'
+                  : 'text-warm-charcoal hover:bg-white hover:text-sepia-heading'
+              }`}
+            >
+              <span className="material-symbols-outlined text-base">{tab.icon}</span>
+              <span>{tab.label}</span>
+              <span
+                className={`text-[10px] font-mono px-1.5 py-0.2 rounded-md ${
+                  isActive ? 'bg-white/20 text-white' : 'bg-parchment-card text-warm-charcoal'
+                }`}
+              >
+                {tab.badge}
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
-        <button
-          type="button"
-          onClick={() => setActiveCategory('navegacion')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            activeCategory === 'navegacion'
-              ? 'bg-gold-burnished text-white shadow-xs'
-              : 'text-warm-charcoal hover:bg-white hover:text-sepia-heading'
-          }`}
-        >
-          <span className="material-symbols-outlined text-base">web</span>
-          <span>Navegación & Carteleras (3 Banners)</span>
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setActiveCategory('accesos')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-            activeCategory === 'accesos'
-              ? 'bg-gold-burnished text-white shadow-xs'
-              : 'text-warm-charcoal hover:bg-white hover:text-sepia-heading'
-          }`}
-        >
-          <span className="material-symbols-outlined text-base">photo_camera_front</span>
-          <span>Modal & Pantallas de Acceso (3 Vistas)</span>
-        </button>
+      {/* Section Explanatory Pill */}
+      <div className="mb-6 flex items-center gap-2 px-4 py-2 rounded-xl bg-white border border-marble-border shadow-2xs max-w-max">
+        <span className="material-symbols-outlined text-gold-burnished text-base">info</span>
+        <span className="text-xs text-warm-charcoal">
+          Sección activa: <strong className="text-sepia-heading">{activeTabMeta?.label}</strong> · {activeTabMeta?.badge}
+        </span>
       </div>
 
       {/* Banner Cards Grid */}
