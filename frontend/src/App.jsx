@@ -10,6 +10,7 @@ import HistorialView from './components/HistorialView';
 import NoticiasView from './components/NoticiasView';
 import PaseQRModal from './components/PaseQRModal';
 import HorariosModal from './components/HorariosModal';
+import BienvenidaModal from './components/BienvenidaModal';
 import LoginPage from './pages/LoginPage';
 import RegistroPage from './pages/RegistroPage';
 
@@ -58,6 +59,7 @@ export default function App() {
   // Modals
   const [activePassModal, setActivePassModal] = useState(null);
   const [showHoursModal, setShowHoursModal] = useState(false);
+  const [welcomeModalUser, setWelcomeModalUser] = useState(null);
 
   // Scroll to top on tab or view switch
   useEffect(() => {
@@ -233,8 +235,8 @@ export default function App() {
   const handleRegisterSuccess = async (userData) => {
     const newUser = await api.registerUser(userData);
     setUser(newUser);
-    alert(`¡Bienvenido, ${newUser.name}! Su número de credencial es #${newUser.member_number}. Ya puede reservar ejemplares.`);
     setActiveTab('catalogo');
+    setWelcomeModalUser(newUser);
   };
 
   const handleLoginSuccess = (userData) => {
@@ -482,6 +484,17 @@ export default function App() {
         <HorariosModal
           onClose={() => setShowHoursModal(false)}
           banner={banners?.horarios_modal}
+        />
+      )}
+
+      {welcomeModalUser && (
+        <BienvenidaModal
+          user={welcomeModalUser}
+          onClose={() => setWelcomeModalUser(null)}
+          onGoToCatalog={() => {
+            setWelcomeModalUser(null);
+            setActiveTab('catalogo');
+          }}
         />
       )}
     </div>
