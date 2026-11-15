@@ -191,6 +191,52 @@ export const api = {
     return res.json();
   },
 
+  // Banners API
+  async getBanners() {
+    const res = await fetch(`${API_BASE}/banners`);
+    if (!res.ok) throw new Error('Error al obtener banners');
+    const data = await res.json();
+    const normalized = {};
+    for (const [k, v] of Object.entries(data || {})) {
+      normalized[k] = {
+        ...v,
+        image_url: resolveMediaUrl(v.image_url),
+      };
+    }
+    return normalized;
+  },
+
+  async updateBanner(bannerData) {
+    const res = await fetch(`${API_BASE}/banners`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bannerData),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Error al actualizar banner');
+    }
+    return res.json();
+  },
+
+  async resetBanner(key) {
+    const res = await fetch(`${API_BASE}/banners/reset`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key }),
+    });
+    if (!res.ok) throw new Error('Error al resetear banner');
+    const data = await res.json();
+    const normalized = {};
+    for (const [k, v] of Object.entries(data || {})) {
+      normalized[k] = {
+        ...v,
+        image_url: resolveMediaUrl(v.image_url),
+      };
+    }
+    return normalized;
+  },
+
   // Backoffice Analytics
   async getStats() {
     const res = await fetch(`${API_BASE}/stats`);

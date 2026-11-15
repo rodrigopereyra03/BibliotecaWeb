@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function HorariosModal({ onClose }) {
+export default function HorariosModal({ onClose, banner }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <div className="relative w-full max-w-md rounded-2xl bg-white border border-marble-border shadow-2xl flex flex-col text-left overflow-hidden">
@@ -10,7 +10,7 @@ export default function HorariosModal({ onClose }) {
         {/* ============================================================ */}
         <div className="relative h-36 w-full overflow-hidden select-none">
           <img
-            src="/capilla-fachada.jpg"
+            src={banner?.image_url || '/capilla-fachada.jpg'}
             alt="Capilla Nuestra Señora de Lourdes"
             className="w-full h-full object-cover object-center"
           />
@@ -29,13 +29,13 @@ export default function HorariosModal({ onClose }) {
           <div className="absolute bottom-3 left-4 right-4 flex flex-col gap-0.5 text-white">
             <div className="flex items-center gap-1.5 text-gold-light text-[11px] font-bold uppercase tracking-wider">
               <span className="material-symbols-outlined text-sm text-gold-burnished">church</span>
-              <span>Despacho Parroquial & Atrio</span>
+              <span>{banner?.tagline || 'Despacho Parroquial & Atrio'}</span>
             </div>
             <h3 className="text-xl font-bold font-display text-white leading-tight">
-              Horarios de Retiro y Atención
+              {banner?.title || 'Horarios de Retiro y Atención'}
             </h3>
             <p className="text-[11px] text-parchment-surface/85 truncate">
-              Sigmund Freud 201 · Temperley
+              {banner?.description || 'Sigmund Freud 201 · Temperley'}
             </p>
           </div>
         </div>

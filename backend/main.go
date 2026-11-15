@@ -217,6 +217,25 @@ func main() {
 	// Servir archivos autenticados desde Neon Object Storage / local (evita 403 S3 en el navegador)
 	mux.HandleFunc("/api/storage/", handlers.ServeStorage)
 
+	// Gestión dinámica de banners y fotos
+	mux.HandleFunc("/api/banners", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodGet {
+			handlers.GetBanners(w, r)
+		} else if r.Method == http.MethodPost || r.Method == http.MethodPut {
+			handlers.UpdateBanner(w, r)
+		} else {
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+
+	mux.HandleFunc("/api/banners/reset", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost {
+			handlers.ResetBanner(w, r)
+		} else {
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+
 	// Reset de base de datos a 0 registros (para iniciar limpia)
 	mux.HandleFunc("/api/admin/reset-db", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {

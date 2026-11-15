@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalog }) {
+export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalog, banner }) {
   const [identificador, setIdentificador] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(true);
@@ -28,7 +28,7 @@ export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalo
       <div className="relative w-full lg:w-1/2 min-h-[380px] lg:min-h-screen flex flex-col justify-between p-6 sm:p-10 lg:p-14 overflow-hidden order-1 lg:order-1">
         {/* Full-bleed background photo of the chapel */}
         <img
-          src="/capilla-fachada.jpg"
+          src={banner?.image_url || '/capilla-fachada.jpg'}
           alt="Capilla Nuestra Señora de Lourdes - Temperley"
           className="absolute inset-0 w-full h-full object-cover object-center scale-105 transition-transform duration-1000 ease-out"
         />
@@ -42,16 +42,16 @@ export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalo
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-burnished/90 text-white w-max shadow-sm backdrop-blur-sm">
             <span className="material-symbols-outlined text-sm">auto_stories</span>
             <span className="text-[11px] font-bold uppercase tracking-wider">
-              Biblioteca Parroquial Comunitaria
+              {banner?.badge_text || 'Biblioteca Parroquial Comunitaria'}
             </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl xl:text-5xl font-bold font-display text-white tracking-tight leading-tight drop-shadow-md">
-            Un espacio de encuentro, lectura y fe para todo el barrio.
+            {banner?.title || 'Un espacio de encuentro, lectura y fe para todo el barrio.'}
           </h1>
 
           <p className="text-xs sm:text-sm text-stone-200/95 italic font-display border-l-2 border-gold-accent pl-3.5 leading-relaxed">
-            "La lectura, la reflexión y la verdad como faro abierto para toda nuestra comunidad y familias de Temperley."
+            "{banner?.quote ? banner.quote.replace(/^"|"$/g, '') : 'La lectura, la reflexión y la verdad como faro abierto para toda nuestra comunidad y familias de Temperley.'}"
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">

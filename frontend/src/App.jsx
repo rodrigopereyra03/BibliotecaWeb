@@ -21,6 +21,7 @@ import CirculationView from './backoffice/CirculationView';
 import MembersView from './backoffice/MembersView';
 import CommunicationsView from './backoffice/CommunicationsView';
 import SettingsView from './backoffice/SettingsView';
+import BannersView from './backoffice/BannersView';
 
 export default function App() {
   // Public Portal State
@@ -39,6 +40,9 @@ export default function App() {
 
   // Sidebar toggle state (Desktop & Web)
   const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  // Dynamic Banners State
+  const [banners, setBanners] = useState({});
 
   // Filters
   const [searchTerm, setSearchTerm] = useState('');
@@ -60,7 +64,7 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [activeTab, backofficeView, isBackoffice]);
 
-  // Load User, Reservations, Loans, News, Stats, Users on Mount
+  // Load User, Reservations, Loans, News, Stats, Users, Banners on Mount
   useEffect(() => {
     loadUser();
     loadReservations();
@@ -68,6 +72,7 @@ export default function App() {
     loadNews();
     loadStats();
     loadUsers();
+    loadBanners();
   }, []);
 
   // Fetch books when filters change
@@ -133,6 +138,17 @@ export default function App() {
       console.error(e);
     } finally {
       setLoadingNews(false);
+    }
+  };
+
+  const loadBanners = async () => {
+    try {
+      const data = await api.getBanners();
+      if (data && Object.keys(data).length > 0) {
+        setBanners(data);
+      }
+    } catch (e) {
+      console.warn('Could not load banners:', e);
     }
   };
 
@@ -286,6 +302,13 @@ export default function App() {
           />
         )}
 
+        {backofficeView === 'banners' && (
+          <BannersView
+            banners={banners}
+            onUpdateBanners={loadBanners}
+          />
+        )}
+
         {backofficeView === 'settings' && (
           <SettingsView />
         )}
@@ -304,6 +327,7 @@ export default function App() {
         onLoginSuccess={handleLoginSuccess}
         onGoToRegister={() => setActiveTab('registro')}
         onGoToCatalog={() => setActiveTab('catalogo')}
+        banner={banners?.login_screen}
       />
     );
   }
@@ -315,6 +339,7 @@ export default function App() {
         onRegisterSuccess={handleRegisterSuccess}
         onGoToLogin={() => setActiveTab('login')}
         onGoToCatalog={() => setActiveTab('catalogo')}
+        banner={banners?.registro_screen}
       />
     );
   }
@@ -334,6 +359,7 @@ export default function App() {
           sidebarOpen={sidebarOpen}
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
           onGoToBackoffice={() => setIsBackoffice(true)}
+          banner={banners?.sidebar_totem}
         />
       </div>
 
@@ -386,6 +412,7 @@ export default function App() {
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
               onReserveSuccess={handleReserveSuccess}
+              banners={banners}
             />
           )}
 
@@ -396,6 +423,7 @@ export default function App() {
               onCancelReservation={handleCancelReservation}
               onViewPass={(res) => setActivePassModal(res)}
               onGoToCatalog={() => setActiveTab('catalogo')}
+              banner={banners?.reservas_banner}
             />
           )}
 
@@ -413,6 +441,7 @@ export default function App() {
               news={news}
               loading={loadingNews}
               onGoToCatalog={() => setActiveTab('catalogo')}
+              banner={banners?.noticias_banner}
             />
           )}
         </main>
@@ -433,6 +462,7 @@ export default function App() {
       {showHoursModal && (
         <HorariosModal
           onClose={() => setShowHoursModal(false)}
+          banner={banners?.horarios_modal}
         />
       )}
     </div>

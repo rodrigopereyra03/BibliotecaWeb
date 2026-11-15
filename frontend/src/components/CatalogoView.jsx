@@ -10,6 +10,7 @@ export default function CatalogoView({
   searchTerm,
   setSearchTerm,
   onReserveSuccess,
+  banners,
 }) {
   const [selectedBook, setSelectedBook] = useState(null);
   const [pickupSlot, setPickupSlot] = useState('Turno Mañana (10:00 a 13:00 hs)');
@@ -23,15 +24,16 @@ export default function CatalogoView({
   const heroSlides = [
     {
       id: 'lourdes',
-      kicker: 'Patrona & Identidad Parroquial • Sigmund Freud 201',
-      badge: 'Capilla Nuestra Señora de Lourdes',
-      title: 'Biblioteca Comunitaria de la Capilla Ntra. Sra. de Lourdes',
-      quote: '"Bajo el amparo de la Virgen, un espacio de encuentro, lectura y fe abierto a todo el barrio."',
+      kicker: banners?.hero_slide_1?.tagline || 'Patrona & Identidad Parroquial • Sigmund Freud 201',
+      badge: banners?.hero_slide_1?.badge_text || 'Capilla Nuestra Señora de Lourdes',
+      title: banners?.hero_slide_1?.title || 'Biblioteca Comunitaria de la Capilla Ntra. Sra. de Lourdes',
+      quote: banners?.hero_slide_1?.quote ? `"${banners.hero_slide_1.quote.replace(/^"|"$/g, '')}"` : '"Bajo el amparo de la Virgen, un espacio de encuentro, lectura y fe abierto a todo el barrio."',
       description:
+        banners?.hero_slide_1?.description ||
         'Nuestra biblioteca parroquial abre sus puertas a toda la comunidad y familias de Temperley: literatura universal, espiritualidad, novelas, cuentos y divulgación para retiro a domicilio en Sigmund Freud 201.',
-      image: '/virgen-lourdes.jpg',
+      image: banners?.hero_slide_1?.image_url || '/virgen-lourdes.jpg',
       imageAlt: 'Nuestra Señora de Lourdes en la Capilla de Temperley',
-      imageCaption: 'Ntra. Sra. de Lourdes · Patrona Parroquial',
+      imageCaption: banners?.hero_slide_1?.subtitle || 'Ntra. Sra. de Lourdes · Patrona Parroquial',
       shortTab: 'Ntra. Sra. de Lourdes',
       icon: 'church',
       bgGradient: 'from-[#fbf8f2] via-[#f7f0e4] to-[#1e3a5f]/15',
@@ -42,15 +44,16 @@ export default function CatalogoView({
     },
     {
       id: 'tito',
-      kicker: 'Formación, Diálogo & Memoria • Préstamos a Domicilio: 21 Días',
-      badge: 'San Tito Brandsma · Carmelita',
-      title: 'El Saber, la Lectura y la Verdad como Faro Comunitario',
-      quote: '"La lectura, la reflexión y la verdad como faro abierto para toda nuestra comunidad."',
+      kicker: banners?.hero_slide_2?.tagline || 'Formación, Diálogo & Memoria • Préstamos a Domicilio: 21 Días',
+      badge: banners?.hero_slide_2?.badge_text || 'San Tito Brandsma · Carmelita',
+      title: banners?.hero_slide_2?.title || 'El Saber, la Lectura y la Verdad como Faro Comunitario',
+      quote: banners?.hero_slide_2?.quote ? `"${banners.hero_slide_2.quote.replace(/^"|"$/g, '')}"` : '"La lectura, la reflexión y la verdad como faro abierto para toda nuestra comunidad."',
       description:
+        banners?.hero_slide_2?.description ||
         'Consulte y retire libros para todo el barrio: novelas universales, literatura contemporánea, cuentos, terror, suspenso y documentos digitales con descarga libre y retiro en el atrio.',
-      image: '/hero-titus.jpg',
+      image: banners?.hero_slide_2?.image_url || '/hero-titus.jpg',
       imageAlt: 'San Tito Brandsma',
-      imageCaption: 'San Tito Brandsma · Mártir & Académico Carmelita',
+      imageCaption: banners?.hero_slide_2?.subtitle || 'San Tito Brandsma · Mártir & Académico Carmelita',
       shortTab: 'San Tito Brandsma',
       icon: 'auto_stories',
       bgGradient: 'from-parchment-surface via-parchment-card to-[#d69838]/20',
@@ -61,15 +64,16 @@ export default function CatalogoView({
     },
     {
       id: 'capilla',
-      kicker: 'Sede Central & Encuentro Vecinal • Abierto a Familias',
-      badge: 'Sede Temperley · Sigmund Freud 201',
-      title: 'Retiro en el Atrio Parroquial y Préstamos Domiciliarios',
-      quote: '"Un templo y una biblioteca comunitaria donde cada vecino y familia encuentra su lugar."',
+      kicker: banners?.hero_slide_3?.tagline || 'Sede Central & Encuentro Vecinal • Abierto a Familias',
+      badge: banners?.hero_slide_3?.badge_text || 'Sede Temperley · Sigmund Freud 201',
+      title: banners?.hero_slide_3?.title || 'Retiro en el Atrio Parroquial y Préstamos Domiciliarios',
+      quote: banners?.hero_slide_3?.quote ? `"${banners.hero_slide_3.quote.replace(/^"|"$/g, '')}"` : '"Un templo y una biblioteca comunitaria donde cada vecino y familia encuentra su lugar."',
       description:
-        'Vení a retirar y devolver tus libros los domingos tras la Santa Misa o en los días y horarios habituales de secretaría. Préstamos por 21 días renovables para toda la comunidad.',
-      image: '/capilla-fachada.jpg',
+        banners?.hero_slide_3?.description ||
+        'Vení a retirar y devolver tus libros los domingos tras la jornada comunitaria o en los días y horarios habituales de secretaría. Préstamos por 21 días renovables para toda la comunidad.',
+      image: banners?.hero_slide_3?.image_url || '/capilla-fachada.jpg',
       imageAlt: 'Fachada y campanario de la Capilla Nuestra Señora de Lourdes',
-      imageCaption: 'Capilla Ntra. Sra. de Lourdes · Sede Temperley',
+      imageCaption: banners?.hero_slide_3?.subtitle || 'Capilla Ntra. Sra. de Lourdes · Sede Temperley',
       shortTab: 'Nuestra Capilla',
       icon: 'location_city',
       bgGradient: 'from-[#fdf8f4] via-[#f7ede3] to-[#b45309]/15',

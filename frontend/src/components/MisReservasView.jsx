@@ -6,6 +6,7 @@ export default function MisReservasView({
   onCancelReservation,
   onViewPass,
   onGoToCatalog,
+  banner,
 }) {
   const activeReservation = reservations[0];
 
@@ -75,10 +76,10 @@ export default function MisReservasView({
         <div className="absolute -left-10 -bottom-10 w-60 h-60 rounded-full bg-gold-burnished/10 blur-3xl pointer-events-none"></div>
         <div className="absolute right-1/4 -top-12 w-72 h-72 rounded-full bg-marian-blue/10 blur-3xl pointer-events-none"></div>
 
-        {/* Right side masked image of Capilla Fachada */}
+        {/* Right side masked image */}
         <div className="absolute right-0 top-0 bottom-0 w-[380px] pointer-events-none select-none overflow-hidden hidden xl:block">
           <img
-            src="/capilla-fachada.jpg"
+            src={banner?.image_url || '/capilla-fachada.jpg'}
             alt="Capilla Nuestra Señora de Lourdes"
             className="w-full h-full object-cover object-center opacity-80"
             style={{
@@ -89,7 +90,7 @@ export default function MisReservasView({
           <div className="absolute bottom-3 right-5 px-3 py-1 rounded-full bg-sepia-heading/85 backdrop-blur-md border border-white/20 flex items-center gap-1.5 shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
             <span className="text-[11px] text-parchment-surface font-display font-medium">
-              Atrio Parroquial · Sigmund Freud 201
+              {banner?.subtitle || 'Atrio Parroquial · Sigmund Freud 201'}
             </span>
           </div>
         </div>
@@ -100,7 +101,7 @@ export default function MisReservasView({
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm border border-marble-border shadow-2xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
                 <span className="text-xs uppercase tracking-wider text-sepia-heading font-bold">
-                  Pase Digital & Retiro en Sede • Temperley
+                  {banner?.tagline || 'Pase Digital & Retiro en Sede • Temperley'}
                 </span>
               </div>
               <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-light/60 border border-gold-burnished/30 text-gold-burnished text-xs font-semibold">
@@ -110,10 +111,10 @@ export default function MisReservasView({
             </div>
 
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-display text-sepia-heading tracking-tight leading-tight">
-              Mis Reservas & Retiro de Libros
+              {banner?.title || 'Mis Reservas & Retiro de Libros'}
             </h1>
             <p className="text-sm text-warm-charcoal max-w-xl leading-relaxed">
-              Tus ejemplares reservados te esperan preparados en el atrio parroquial. Presentá tu nombre o carnet en secretaría para retirarlos.
+              {banner?.description || 'Tus ejemplares reservados te esperan preparados en el atrio parroquial. Presentá tu nombre o carnet en secretaría para retirarlos.'}
             </p>
           </div>
 

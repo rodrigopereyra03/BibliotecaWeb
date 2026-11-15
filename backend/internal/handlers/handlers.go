@@ -844,3 +844,98 @@ func ResetDatabaseHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	jsonResponse(w, http.StatusOK, map[string]string{"message": "Base de datos reseteada con éxito a 0 registros"})
 }
+
+// GET /api/banners
+func GetBanners(w http.ResponseWriter, r *http.Request) {
+	rows, err := database.Query("SELECT key, title, tagline, subtitle, quote, description, image_url, badge_text, button_text, updated_at FROM site_banners")
+	if err != nil {
+		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+	defer rows.Close()
+
+	banners := make(map[string]models.Banner)
+	for rows.Next() {
+		var b models.Banner
+		var updatedAt sql.NullTime
+		if err := rows.Scan(&b.Key, &b.Title, &b.Tagline, &b.Subtitle, &b.Quote, &b.Description, &b.ImageURL, &b.BadgeText, &b.ButtonText, &updatedAt); err != nil {
+			continue
+		}
+		if updatedAt.Valid {
+			b.UpdatedAt = updatedAt.Time.Format(time.RFC3339)
+		}
+		banners[b.Key] = b
+	}
+
+	jsonResponse(w, http.StatusOK, banners)
+}
+
+// PUT /api/banners or POST /api/banners
+func UpdateBanner(w http.ResponseWriter, r *http.Request) {
+	var b models.Banner
+	if err := json.NewDecoder(r.Body).Decode(&b); err != nil {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "JSON inválido"})
+		return
+	}
+
+	if b.Key == "" {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "La clave 'key' del banner es obligatoria"})
+		return
+	}
+
+	q := `INSERT INTO site_banners (key, title, tagline, subtitle, quote, description, image_url, badge_text, button_text, updated_at)
+	      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+	      ON CONFLICT (key) DO UPDATE SET
+	        title = EXCLUDED.title,
+	        tagline = EXCLUDED.tagline,
+	        subtitle = EXCLUDED.subtitle,
+	        quote = EXCLUDED.quote,
+	        description = EXCLUDED.description,
+	        image_url = EXCLUDED.image_url,
+	        badge_text = EXCLUDED.badge_text,
+	        button_text = EXCLUDED.button_text,
+	        updated_at = CURRENT_TIMESTAMP`
+
+	if database.DriverName != "postgres" {
+		q = `INSERT INTO site_banners (key, title, tagline, subtitle, quote, description, image_url, badge_text, button_text, updated_at)
+		      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+		      ON CONFLICT (key) DO UPDATE SET
+		        title = excluded.title,
+		        tagline = excluded.tagline,
+		        subtitle = excluded.subtitle,
+		        quote = excluded.quote,
+		        description = excluded.description,
+		        image_url = excluded.image_url,
+		        badge_text = excluded.badge_text,
+		        button_text = excluded.button_text,
+		        updated_at = CURRENT_TIMESTAMP`
+	}
+
+	_, err := database.Exec(q, b.Key, b.Title, b.Tagline, b.Subtitle, b.Quote, b.Description, b.ImageURL, b.BadgeText, b.ButtonText)
+	if err != nil {
+		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": fmt.Sprintf("Error al actualizar banner: %v", err)})
+		return
+	}
+
+	jsonResponse(w, http.StatusOK, map[string]any{
+		"message": "Banner actualizado con éxito",
+		"banner":  b,
+	})
+}
+
+// POST /api/banners/reset
+func ResetBanner(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Key string `json:"key"`
+	}
+	_ = json.NewDecoder(r.Body).Decode(&body)
+
+	if body.Key != "" {
+		_, _ = database.Exec("DELETE FROM site_banners WHERE key = ?", body.Key)
+	} else {
+		_, _ = database.Exec("DELETE FROM site_banners")
+	}
+
+	_ = database.SeedDefaultBanners(database.DB)
+	GetBanners(w, r)
+}

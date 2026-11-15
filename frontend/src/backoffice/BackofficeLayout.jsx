@@ -28,6 +28,7 @@ export default function BackofficeLayout({
     },
     { id: 'members', label: 'Miembros y Perfiles', icon: 'group' },
     { id: 'communications', label: 'Comunicaciones y Anuncios', icon: 'campaign' },
+    { id: 'banners', label: 'Banners y Fotos del Sitio', icon: 'photo_library' },
     { id: 'settings', label: 'Configuración y Despacho', icon: 'settings' },
   ];
 

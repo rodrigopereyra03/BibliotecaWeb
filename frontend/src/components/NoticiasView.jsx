@@ -1,7 +1,7 @@
 import React from 'react';
 import { resolveMediaUrl } from '../api';
 
-export default function NoticiasView({ news, loading, onGoToCatalog }) {
+export default function NoticiasView({ news, loading, onGoToCatalog, banner }) {
   return (
     <div className="flex flex-col w-full pb-8">
       {/* ============================================================ */}
@@ -44,11 +44,11 @@ export default function NoticiasView({ news, loading, onGoToCatalog }) {
         <div className="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-gold-burnished/10 blur-3xl pointer-events-none"></div>
         <div className="absolute right-1/3 -top-16 w-80 h-80 rounded-full bg-marian-blue/10 blur-3xl pointer-events-none"></div>
 
-        {/* Right side masked image of San Tito Brandsma */}
+        {/* Right side masked image */}
         <div className="absolute right-0 top-0 bottom-0 w-[420px] pointer-events-none select-none overflow-hidden hidden xl:block">
           <img
-            src="/hero-titus.jpg"
-            alt="San Tito Brandsma - Comunicador y Académico"
+            src={banner?.image_url || '/hero-titus.jpg'}
+            alt="Patrono del Saber y la Comunicación"
             className="w-full h-full object-cover object-top opacity-85 transition-opacity"
             style={{
               maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 96%)',
@@ -58,7 +58,7 @@ export default function NoticiasView({ news, loading, onGoToCatalog }) {
           <div className="absolute bottom-3 right-5 px-3 py-1 rounded-full bg-sepia-heading/80 backdrop-blur-md border border-white/20 flex items-center gap-1.5 shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
             <span className="text-[11px] text-parchment-surface font-display font-medium">
-              San Tito Brandsma · Patrono del Saber y la Comunicación
+              {banner?.subtitle || 'San Tito Brandsma · Patrono del Saber y la Comunicación'}
             </span>
           </div>
         </div>
@@ -68,17 +68,19 @@ export default function NoticiasView({ news, loading, onGoToCatalog }) {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm border border-marble-border shadow-2xs w-max">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
               <span className="text-xs uppercase tracking-wider text-sepia-heading font-bold">
-                Gaceta Parroquial & Cartelera Barrial • Temperley
+                {banner?.tagline || 'Gaceta Parroquial & Cartelera Barrial • Temperley'}
               </span>
             </div>
 
             <h1 className="text-2xl sm:text-4xl font-bold font-display text-sepia-heading tracking-tight leading-tight">
-              La Vida en Comunidad y la Cultura del Encuentro
+              {banner?.title || 'La Vida en Comunidad y la Cultura del Encuentro'}
             </h1>
 
-            <p className="text-sm text-sepia-heading/90 italic font-display border-l-2 border-gold-burnished pl-3 my-1">
-              "Un espacio abierto a todos los vecinos para compartir lecturas, sumar libros al barrio y enterarse de las actividades del atrio."
-            </p>
+            {banner?.quote && (
+              <p className="text-sm text-sepia-heading/90 italic font-display border-l-2 border-gold-burnished pl-3 my-1">
+                "{banner.quote.replace(/^"|"$/g, '')}"
+              </p>
+            )}
 
             <p className="text-xs sm:text-sm text-warm-charcoal leading-relaxed">
               Consulte aquí los anuncios oficiales, convocatorias al club de lectura, campañas de donación de obras y actividades culturales de la Capilla Nuestra Señora de Lourdes en Sigmund Freud 201.

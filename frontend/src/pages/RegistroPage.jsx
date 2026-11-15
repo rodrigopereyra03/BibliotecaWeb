@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function RegistroPage({ onRegisterSuccess, onGoToLogin, onGoToCatalog }) {
+export default function RegistroPage({ onRegisterSuccess, onGoToLogin, onGoToCatalog, banner }) {
   const [fullname, setFullname] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
@@ -57,7 +57,7 @@ export default function RegistroPage({ onRegisterSuccess, onGoToLogin, onGoToCat
       <div className="relative w-full lg:w-1/2 min-h-[380px] lg:min-h-screen flex flex-col justify-between p-6 sm:p-10 lg:p-14 overflow-hidden order-1 lg:order-1">
         {/* Full-bleed background photo of Our Lady of Lourdes */}
         <img
-          src="/virgen-lourdes.jpg"
+          src={banner?.image_url || '/virgen-lourdes.jpg'}
           alt="Nuestra Señora de Lourdes - Capilla de Temperley"
           className="absolute inset-0 w-full h-full object-cover object-top scale-105 transition-transform duration-1000 ease-out"
         />
@@ -71,16 +71,16 @@ export default function RegistroPage({ onRegisterSuccess, onGoToLogin, onGoToCat
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-marian-blue/90 text-white w-max shadow-sm backdrop-blur-sm">
             <span className="material-symbols-outlined text-sm">how_to_reg</span>
             <span className="text-[11px] font-bold uppercase tracking-wider">
-              Inscripción de Nuevos Lectores
+              {banner?.badge_text || 'Inscripción de Nuevos Lectores'}
             </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl xl:text-5xl font-bold font-display text-white tracking-tight leading-tight drop-shadow-md">
-            Bajo el amparo de la Virgen, sumate a nuestra biblioteca.
+            {banner?.title || 'Bajo el amparo de la Virgen, sumate a nuestra biblioteca.'}
           </h1>
 
           <p className="text-xs sm:text-sm text-stone-200/95 italic font-display border-l-2 border-gold-accent pl-3.5 leading-relaxed">
-            "Yo soy la Inmaculada Concepción — Un espacio de fe, encuentro comunitario y lectura para todo Temperley."
+            "{banner?.quote ? banner.quote.replace(/^"|"$/g, '') : 'Yo soy la Inmaculada Concepción — Un espacio de fe, encuentro comunitario y lectura para todo Temperley.'}"
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">

@@ -8,6 +8,7 @@ export default function Sidebar({
   sidebarOpen = true,
   onToggleSidebar,
   onGoToBackoffice,
+  banner,
 }) {
   const navItems = [
     { id: 'catalogo', label: 'Catálogo General', icon: 'auto_stories' },
@@ -162,7 +163,7 @@ export default function Sidebar({
             {/* Background photo of chapel */}
             <div className="relative h-44 w-full overflow-hidden bg-stone-900">
               <img
-                src="/capilla-fachada.jpg"
+                src={banner?.image_url || '/capilla-fachada.jpg'}
                 alt="Capilla Ntra. Sra. de Lourdes"
                 className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-90"
               />
@@ -171,13 +172,13 @@ export default function Sidebar({
               {/* Banner Text Content */}
               <div className="absolute bottom-2.5 left-3 right-3 text-white z-10 flex flex-col gap-0.5">
                 <span className="text-[10px] uppercase tracking-wider text-gold-accent font-bold">
-                  Atrio Parroquial
+                  {banner?.tagline || 'Atrio Parroquial'}
                 </span>
                 <h4 className="text-sm font-bold font-display text-white leading-tight">
-                  Retiro y Devolución de Libros
+                  {banner?.title || 'Retiro y Devolución de Libros'}
                 </h4>
                 <p className="text-[11px] text-stone-200 line-clamp-2 leading-snug mt-0.5">
-                  Vení a buscar tus ejemplares los domingos tras la misa o en secretaría.
+                  {banner?.description || 'Vení a buscar tus ejemplares tras la jornada comunitaria o en secretaría.'}
                 </p>
               </div>
             </div>
@@ -186,7 +187,7 @@ export default function Sidebar({
             <div className="p-2.5 bg-white flex items-center justify-between border-t border-marble-border/60 text-xs">
               <div className="flex items-center gap-1.5 text-gold-burnished font-semibold">
                 <span className="material-symbols-outlined text-sm">schedule</span>
-                <span>Ver Horarios de Despacho</span>
+                <span>{banner?.button_text || 'Ver Horarios de Despacho'}</span>
               </div>
               <span className="material-symbols-outlined text-sm text-warm-charcoal group-hover:translate-x-1 transition-transform">
                 arrow_forward

@@ -60,6 +60,7 @@ func InitPostgres(connStr string) (*sql.DB, error) {
 func ResetCleanDatabase() error {
 	if DriverName == "postgres" {
 		dropSchema := `
+		DROP TABLE IF EXISTS site_banners CASCADE;
 		DROP TABLE IF EXISTS loans CASCADE;
 		DROP TABLE IF EXISTS reservations CASCADE;
 		DROP TABLE IF EXISTS news CASCADE;
@@ -71,6 +72,7 @@ func ResetCleanDatabase() error {
 		}
 	} else {
 		dropSchema := `
+		DROP TABLE IF EXISTS site_banners;
 		DROP TABLE IF EXISTS loans;
 		DROP TABLE IF EXISTS reservations;
 		DROP TABLE IF EXISTS news;
@@ -213,6 +215,19 @@ func createTables(db *sql.DB) error {
 			published TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
 			author VARCHAR(255) NOT NULL
 		);
+
+		CREATE TABLE IF NOT EXISTS site_banners (
+			key VARCHAR(100) PRIMARY KEY,
+			title VARCHAR(500) NOT NULL,
+			tagline VARCHAR(255),
+			subtitle TEXT,
+			quote TEXT,
+			description TEXT,
+			image_url TEXT NOT NULL,
+			badge_text VARCHAR(100),
+			button_text VARCHAR(100),
+			updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+		);
 		`
 	} else {
 		schema = `
@@ -284,8 +299,143 @@ func createTables(db *sql.DB) error {
 			published DATETIME DEFAULT CURRENT_TIMESTAMP,
 			author TEXT NOT NULL
 		);
+
+		CREATE TABLE IF NOT EXISTS site_banners (
+			key TEXT PRIMARY KEY,
+			title TEXT NOT NULL,
+			tagline TEXT,
+			subtitle TEXT,
+			quote TEXT,
+			description TEXT,
+			image_url TEXT NOT NULL,
+			badge_text TEXT,
+			button_text TEXT,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		);
 		`
 	}
-	_, err := db.Exec(schema)
-	return err
+	if _, err := db.Exec(schema); err != nil {
+		return err
+	}
+	return SeedDefaultBanners(db)
+}
+
+// SeedDefaultBanners populates default banner rows if none exist
+func SeedDefaultBanners(db *sql.DB) error {
+	var count int
+	err := db.QueryRow("SELECT COUNT(*) FROM site_banners").Scan(&count)
+	if err != nil || count > 0 {
+		return nil // already seeded or error
+	}
+
+	defaults := []struct {
+		Key, Title, Tagline, Subtitle, Quote, Description, ImageURL, BadgeText, ButtonText string
+	}{
+		{
+			Key:         "hero_slide_1",
+			Title:       "Biblioteca Comunitaria de la Capilla Ntra. Sra. de Lourdes",
+			Tagline:     "Patrona & Identidad Parroquial • Sigmund Freud 201",
+			Subtitle:    "Lectura y comunidad abierta a todo el barrio",
+			Quote:       "Bajo el amparo de la Virgen, un espacio de encuentro, lectura y fe abierto a todo el barrio.",
+			Description: "Nuestra biblioteca parroquial abre sus puertas a toda la comunidad y familias de Temperley: literatura universal, espiritualidad, novelas, cuentos y divulgación para retiro a domicilio en Sigmund Freud 201.",
+			ImageURL:    "/virgen-lourdes.jpg",
+			BadgeText:   "Patrona & Identidad Parroquial",
+			ButtonText:  "Explorar Catálogo",
+		},
+		{
+			Key:         "hero_slide_2",
+			Title:       "San Tito Brandsma: Patrono del Saber y los Periodistas",
+			Tagline:     "Cultura del Encuentro • Formación y Comunidad",
+			Subtitle:    "Inspirados en su testimonio de búsqueda incansable de la verdad",
+			Quote:       "Quien quiera ganar al mundo para Cristo debe tener el valor de salir a su encuentro con amor y libros en la mano.",
+			Description: "Inspirados en su testimonio de búsqueda incansable de la verdad y pasión por las letras, promovemos un espacio de pensamiento crítico, fe y cultura abierto a jóvenes y adultos.",
+			ImageURL:    "/hero-titus.jpg",
+			BadgeText:   "Cultura del Encuentro",
+			ButtonText:  "Ver Gaceta Cultural",
+		},
+		{
+			Key:         "hero_slide_3",
+			Title:       "Atrio Abierto: Literatura Universal y Espiritualidad",
+			Tagline:     "Retiro Libre y Gratuito • Temperley",
+			Subtitle:    "Más de 12 géneros seleccionados para retiro en el atrio",
+			Quote:       "Un libro es un puente entre corazones y una ventana abierta a la esperanza de nuestra comunidad parroquial.",
+			Description: "Te esperamos con más de 12 géneros seleccionados: novelas, cuentos, teología, clásicos y literatura infantil con préstamo a domicilio por 21 días renovables.",
+			ImageURL:    "/capilla-fachada.jpg",
+			BadgeText:   "Retiro Libre y Gratuito",
+			ButtonText:  "Consultar Horarios",
+		},
+		{
+			Key:         "sidebar_totem",
+			Title:       "Retiro y Devolución de Libros",
+			Tagline:     "Atrio Parroquial",
+			Subtitle:    "Mostrador de Biblioteca del Atrio",
+			Quote:       "",
+			Description: "Vení a buscar tus ejemplares tras la jornada comunitaria o en secretaría.",
+			ImageURL:    "/capilla-fachada.jpg",
+			BadgeText:   "Atrio Parroquial",
+			ButtonText:  "Ver Horarios de Despacho",
+		},
+		{
+			Key:         "noticias_banner",
+			Title:       "La Vida en Comunidad y la Cultura del Encuentro",
+			Tagline:     "Gaceta Parroquial & Cartelera Barrial • Temperley",
+			Subtitle:    "San Tito Brandsma · Patrono del Saber y la Comunicación",
+			Quote:       "",
+			Description: "Noticias, talleres formativos, colectas y actividades culturales abiertas a todas las familias de Temperley.",
+			ImageURL:    "/hero-titus.jpg",
+			BadgeText:   "Gaceta Parroquial & Cartelera Barrial",
+			ButtonText:  "Explorar Catálogo",
+		},
+		{
+			Key:         "reservas_banner",
+			Title:       "Mis Reservas & Retiro de Libros",
+			Tagline:     "Pase Digital & Retiro en Sede • Temperley",
+			Subtitle:    "Atrio Parroquial · Sigmund Freud 201",
+			Quote:       "",
+			Description: "Tus ejemplares reservados te esperan preparados en el atrio parroquial. Presentá tu nombre o carnet en secretaría para retirarlos.",
+			ImageURL:    "/capilla-fachada.jpg",
+			BadgeText:   "Pase Digital & Retiro en Sede",
+			ButtonText:  "Explorar Más Libros",
+		},
+		{
+			Key:         "horarios_modal",
+			Title:       "Horarios de Retiro y Atención",
+			Tagline:     "Despacho Parroquial & Atrio",
+			Subtitle:    "Sigmund Freud 201 · Temperley",
+			Quote:       "",
+			Description: "Sigmund Freud 201 · Temperley",
+			ImageURL:    "/capilla-fachada.jpg",
+			BadgeText:   "Despacho Parroquial & Atrio",
+			ButtonText:  "Entendido",
+		},
+		{
+			Key:         "login_screen",
+			Title:       "Biblioteca Parroquial de Lourdes",
+			Tagline:     "Espacio de Encuentro y Lectura Comunitaria",
+			Subtitle:    "Sigmund Freud 201 · Temperley",
+			Quote:       "Un espacio de encuentro, lectura y fe abierto a todo el barrio de Temperley.",
+			Description: "Acceso exclusivo a socios y lectores comunitarios.",
+			ImageURL:    "/capilla-fachada.jpg",
+			BadgeText:   "Comunidad & Lectura",
+			ButtonText:  "Ingresar",
+		},
+		{
+			Key:         "registro_screen",
+			Title:       "Inscripción Libre y Gratuita",
+			Tagline:     "Capilla Nuestra Señora de Lourdes",
+			Subtitle:    "Sigmund Freud 201 · Temperley",
+			Quote:       "Bajo el amparo de la Virgen, cultivamos el saber y la lectura compartida.",
+			Description: "Sumate a nuestra red comunitaria de lectores. Préstamos a domicilio por 21 días.",
+			ImageURL:    "/virgen-lourdes.jpg",
+			BadgeText:   "Comunidad & Lectura",
+			ButtonText:  "Completar Registro",
+		},
+	}
+
+	for _, d := range defaults {
+		q := `INSERT INTO site_banners (key, title, tagline, subtitle, quote, description, image_url, badge_text, button_text)
+		      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+		_, _ = db.Exec(Rebind(q), d.Key, d.Title, d.Tagline, d.Subtitle, d.Quote, d.Description, d.ImageURL, d.BadgeText, d.ButtonText)
+	}
+	return nil
 }

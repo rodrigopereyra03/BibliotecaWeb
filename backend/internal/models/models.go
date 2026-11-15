@@ -69,3 +69,16 @@ type News struct {
 	Published time.Time `json:"published"`
 	Author    string    `json:"author"`
 }
+
+type Banner struct {
+	Key         string `json:"key"`
+	Title       string `json:"title"`
+	Tagline     string `json:"tagline"`
+	Subtitle    string `json:"subtitle"`
+	Quote       string `json:"quote"`
+	Description string `json:"description"`
+	ImageURL    string `json:"image_url"`
+	BadgeText   string `json:"badge_text"`
+	ButtonText  string `json:"button_text"`
+	UpdatedAt   string `json:"updated_at,omitempty"`
+}
