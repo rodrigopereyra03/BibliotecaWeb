@@ -42,12 +42,12 @@ export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalo
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-burnished/90 text-white w-max shadow-sm backdrop-blur-sm">
             <span className="material-symbols-outlined text-sm">auto_stories</span>
             <span className="text-[11px] font-bold uppercase tracking-wider">
-              {banner?.badge_text || 'Biblioteca Parroquial Comunitaria'}
+              {banner?.badge_text || 'Biblioteca Popular San Tito Brandsma'}
             </span>
           </div>
 
           <h1 className="text-3xl sm:text-4xl xl:text-5xl font-bold font-display text-white tracking-tight leading-tight drop-shadow-md">
-            {banner?.title || 'Un espacio de encuentro, lectura y fe para todo el barrio.'}
+            {banner?.title || 'Biblioteca Popular San Tito Brandsma'}
           </h1>
 
           <p className="text-xs sm:text-sm text-stone-200/95 italic font-display border-l-2 border-gold-accent pl-3.5 leading-relaxed">

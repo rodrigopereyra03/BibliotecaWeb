@@ -52,7 +52,7 @@ export default function BackofficeLayout({
                   Centro de Gestión
                 </h2>
                 <span className="text-[10px] uppercase tracking-wider text-gold-burnished font-bold truncate">
-                  Biblioteca & Archivo Parroquial
+                  Bibl. Popular San Tito Brandsma
                 </span>
               </div>
             )}
@@ -168,7 +168,7 @@ export default function BackofficeLayout({
                 Sistema de Gestión Bibliotecaria
               </h1>
               <span className="text-[10px] sm:text-[11px] text-warm-charcoal truncate">
-                Capilla Ntra. Sra. de Lourdes • Backoffice Administrativo
+                Biblioteca Popular San Tito Brandsma • Capilla Ntra. Sra. de Lourdes
               </span>
             </div>
           </div>

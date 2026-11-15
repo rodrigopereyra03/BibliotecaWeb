@@ -333,13 +333,13 @@ func SeedDefaultBanners(db *sql.DB) error {
 	}{
 		{
 			Key:         "hero_slide_1",
-			Title:       "Biblioteca Comunitaria de la Capilla Ntra. Sra. de Lourdes",
-			Tagline:     "Patrona & Identidad Parroquial • Sigmund Freud 201",
+			Title:       "Biblioteca Popular San Tito Brandsma",
+			Tagline:     "Capilla Ntra. Sra. de Lourdes • Sigmund Freud 201",
 			Subtitle:    "Lectura y comunidad abierta a todo el barrio",
 			Quote:       "Bajo el amparo de la Virgen, un espacio de encuentro, lectura y fe abierto a todo el barrio.",
-			Description: "Nuestra biblioteca parroquial abre sus puertas a toda la comunidad y familias de Temperley: literatura universal, espiritualidad, novelas, cuentos y divulgación para retiro a domicilio en Sigmund Freud 201.",
+			Description: "Nuestra biblioteca popular abre sus puertas a toda la comunidad y familias de Temperley: literatura universal, espiritualidad, novelas, cuentos y divulgación para retiro a domicilio en Sigmund Freud 201.",
 			ImageURL:    "/virgen-lourdes.jpg",
-			BadgeText:   "Patrona & Identidad Parroquial",
+			BadgeText:   "Capilla Ntra. Sra. de Lourdes",
 			ButtonText:  "Explorar Catálogo",
 		},
 		{
@@ -410,8 +410,8 @@ func SeedDefaultBanners(db *sql.DB) error {
 		},
 		{
 			Key:         "login_screen",
-			Title:       "Biblioteca Parroquial de Lourdes",
-			Tagline:     "Espacio de Encuentro y Lectura Comunitaria",
+			Title:       "Biblioteca Popular San Tito Brandsma",
+			Tagline:     "Capilla Nuestra Señora de Lourdes",
 			Subtitle:    "Sigmund Freud 201 · Temperley",
 			Quote:       "Un espacio de encuentro, lectura y fe abierto a todo el barrio de Temperley.",
 			Description: "Acceso exclusivo a socios y lectores comunitarios.",
@@ -421,8 +421,8 @@ func SeedDefaultBanners(db *sql.DB) error {
 		},
 		{
 			Key:         "registro_screen",
-			Title:       "Inscripción Libre y Gratuita",
-			Tagline:     "Capilla Nuestra Señora de Lourdes",
+			Title:       "Inscripción de Nuevos Lectores",
+			Tagline:     "Biblioteca Popular San Tito Brandsma · Capilla de Lourdes",
 			Subtitle:    "Sigmund Freud 201 · Temperley",
 			Quote:       "Bajo el amparo de la Virgen, cultivamos el saber y la lectura compartida.",
 			Description: "Sumate a nuestra red comunitaria de lectores. Préstamos a domicilio por 21 días.",

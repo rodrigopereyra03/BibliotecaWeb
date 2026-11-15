@@ -24,13 +24,13 @@ export default function CatalogoView({
   const heroSlides = [
     {
       id: 'lourdes',
-      kicker: banners?.hero_slide_1?.tagline || 'Patrona & Identidad Parroquial • Sigmund Freud 201',
+      kicker: banners?.hero_slide_1?.tagline || 'Capilla Ntra. Sra. de Lourdes • Sigmund Freud 201',
       badge: banners?.hero_slide_1?.badge_text || 'Capilla Nuestra Señora de Lourdes',
-      title: banners?.hero_slide_1?.title || 'Biblioteca Comunitaria de la Capilla Ntra. Sra. de Lourdes',
+      title: banners?.hero_slide_1?.title || 'Biblioteca Popular San Tito Brandsma',
       quote: banners?.hero_slide_1?.quote ? `"${banners.hero_slide_1.quote.replace(/^"|"$/g, '')}"` : '"Bajo el amparo de la Virgen, un espacio de encuentro, lectura y fe abierto a todo el barrio."',
       description:
         banners?.hero_slide_1?.description ||
-        'Nuestra biblioteca parroquial abre sus puertas a toda la comunidad y familias de Temperley: literatura universal, espiritualidad, novelas, cuentos y divulgación para retiro a domicilio en Sigmund Freud 201.',
+        'Nuestra biblioteca popular abre sus puertas a toda la comunidad y familias de Temperley: literatura universal, espiritualidad, novelas, cuentos y divulgación para retiro a domicilio en Sigmund Freud 201.',
       image: banners?.hero_slide_1?.image_url || '/virgen-lourdes.jpg',
       imageAlt: 'Nuestra Señora de Lourdes en la Capilla de Temperley',
       imageCaption: banners?.hero_slide_1?.subtitle || 'Ntra. Sra. de Lourdes · Patrona Parroquial',

@@ -527,7 +527,7 @@ export default function InventoryView({
                     Registrar Nuevo Título
                   </h3>
                   <p className="text-[11px] text-warm-charcoal">
-                    Biblioteca Parroquial Ntra. Sra. de Lourdes
+                    Biblioteca Popular San Tito Brandsma · Capilla de Lourdes
                   </p>
                 </div>
               </div>

@@ -11,10 +11,10 @@ export default function MobileHeader({ user, onGoToLogin, onOpenHours, onGoToBac
           </div>
           <div className="flex flex-col min-w-0">
             <h1 className="text-sm font-bold font-display text-sepia-heading truncate leading-tight">
-              Capilla Ntra. Sra. de Lourdes
+              Bibl. San Tito Brandsma
             </h1>
             <p className="text-[10px] uppercase tracking-wider text-warm-charcoal truncate font-semibold">
-              Biblioteca Comunitaria · Temperley
+              Capilla Ntra. Sra. de Lourdes · Temperley
             </p>
           </div>
         </div>

@@ -38,10 +38,10 @@ export default function Header({
 
           <div className="flex flex-col">
             <h1 className="text-lg sm:text-xl font-bold font-display text-sepia-heading tracking-tight leading-tight">
-              Capilla Ntra. Sra. de Lourdes
+              Biblioteca Popular San Tito Brandsma
             </h1>
             <span className="text-[11px] text-warm-charcoal tracking-wide font-medium">
-              Biblioteca Comunitaria · Sigmund Freud 201, Temperley
+              Capilla Ntra. Sra. de Lourdes · Sigmund Freud 201, Temperley
             </span>
           </div>
         </div>

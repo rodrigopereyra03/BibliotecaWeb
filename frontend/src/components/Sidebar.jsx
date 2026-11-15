@@ -31,14 +31,14 @@ export default function Sidebar({
       <div className="flex flex-col gap-5">
         {/* Brand Header */}
         <div className={`px-2 pt-1 flex items-center ${sidebarOpen ? 'gap-3' : 'justify-center'}`}>
-          <div className="w-2.5 h-2.5 rounded-full bg-gold-burnished shadow-[0_0_8px_rgba(184,134,11,0.6)] shrink-0" title="Capilla Ntra. Sra. de Lourdes"></div>
+          <div className="w-2.5 h-2.5 rounded-full bg-gold-burnished shadow-[0_0_8px_rgba(184,134,11,0.6)] shrink-0" title="Biblioteca Popular San Tito Brandsma"></div>
           {sidebarOpen && (
             <div className="flex flex-col min-w-0 overflow-hidden">
-              <span className="text-xs uppercase tracking-wider text-warm-charcoal font-bold leading-tight truncate">
-                Capilla Ntra. Sra. de Lourdes
+              <span className="text-xs uppercase tracking-wider text-sepia-heading font-bold leading-tight truncate">
+                Bibl. San Tito Brandsma
               </span>
-              <span className="text-[11px] uppercase tracking-wider text-gold-burnished font-semibold leading-tight truncate">
-                Biblioteca Comunitaria
+              <span className="text-[10px] uppercase tracking-wider text-gold-burnished font-semibold leading-tight truncate">
+                Capilla Ntra. Sra. de Lourdes
               </span>
             </div>
           )}
