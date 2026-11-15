@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"biblioteca-web/internal/database"
+	"biblioteca-web/internal/email"
 	"biblioteca-web/internal/models"
 	"biblioteca-web/internal/storage"
 )
@@ -468,6 +469,17 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 		ExpiresAt:       expiresAt,
 	}
 
+	// Notificar al administrador y al lector por email vía Resend
+	var userName, userEmail string
+	database.QueryRow("SELECT name, email FROM users WHERE user_id = ?", req.UserID).Scan(&userName, &userEmail)
+	if userName == "" {
+		userName = "Socio Lector"
+	}
+	email.SendReservationAdminEmail(email.GetAdminEmail(), userName, userEmail, book.Title, book.Author, code, req.PickupSlot)
+	if userEmail != "" {
+		email.SendReservationReaderEmail(userName, userEmail, book.Title, book.Author, code, req.PickupSlot)
+	}
+
 	jsonResponse(w, http.StatusCreated, reservation)
 }
 
@@ -614,6 +626,20 @@ func DeliverReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Notificar retiro del libro al lector y al administrador por email
+	var bookTitle, bookAuthor string
+	database.QueryRow("SELECT title, author FROM books WHERE id = ?", bookID).Scan(&bookTitle, &bookAuthor)
+	var userName, userEmail string
+	database.QueryRow("SELECT name, email FROM users WHERE user_id = ?", userID).Scan(&userName, &userEmail)
+	if userName == "" {
+		userName = "Socio Lector"
+	}
+	dueDateStr := dueDate.Format("02/01/2006")
+	if userEmail != "" {
+		email.SendLoanDeliveredReaderEmail(userName, userEmail, bookTitle, bookAuthor, dueDateStr)
+	}
+	email.SendLoanDeliveredAdminEmail(email.GetAdminEmail(), userName, userEmail, bookTitle, dueDateStr)
+
 	jsonResponse(w, http.StatusOK, map[string]interface{}{
 		"message":  "¡Ejemplar entregado con éxito! Se ha registrado el préstamo por 21 días.",
 		"due_date": dueDate,
@@ -730,9 +756,9 @@ func ReturnLoan(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var bookID int64
+	var bookID, userID int64
 	var status string
-	err := database.QueryRow("SELECT book_id, status FROM loans WHERE id = ?", body.ID).Scan(&bookID, &status)
+	err := database.QueryRow("SELECT book_id, user_id, status FROM loans WHERE id = ?", body.ID).Scan(&bookID, &userID, &status)
 	if err != nil {
 		jsonResponse(w, http.StatusNotFound, map[string]string{"error": "Préstamo no encontrado"})
 		return
@@ -752,6 +778,19 @@ func ReturnLoan(w http.ResponseWriter, r *http.Request) {
 
 	// Restaurar copia disponible en el catálogo
 	database.Exec("UPDATE books SET available_copies = available_copies + 1 WHERE id = ?", bookID)
+
+	// Notificar devolución al lector y al administrador por email
+	var bookTitle string
+	database.QueryRow("SELECT title FROM books WHERE id = ?", bookID).Scan(&bookTitle)
+	var userName, userEmail string
+	database.QueryRow("SELECT name, email FROM users WHERE user_id = ?", userID).Scan(&userName, &userEmail)
+	if userName == "" {
+		userName = "Socio Lector"
+	}
+	if userEmail != "" {
+		email.SendLoanReturnedReaderEmail(userName, userEmail, bookTitle)
+	}
+	email.SendLoanReturnedAdminEmail(email.GetAdminEmail(), userName, userEmail, bookTitle)
 
 	jsonResponse(w, http.StatusOK, map[string]string{"message": "Devolución registrada con éxito"})
 }
@@ -1064,18 +1103,18 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	name := strings.TrimSpace(body.Name)
-	email := strings.TrimSpace(body.Email)
+	userEmail := strings.TrimSpace(body.Email)
 	address := strings.TrimSpace(body.Address)
 	if address == "" {
 		address = "Sigmund Freud 201, Temperley"
 	}
-	if name == "" || email == "" {
+	if name == "" || userEmail == "" {
 		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Nombre y correo son obligatorios"})
 		return
 	}
 
 	// Prohibir que se intente registrar el correo de administración
-	if strings.ToLower(email) == "biblioteca@admin.com" {
+	if strings.ToLower(userEmail) == "biblioteca@admin.com" {
 		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "El correo ingresado está reservado para el administrador"})
 		return
 	}
@@ -1093,7 +1132,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	newID, err := database.InsertUserWithReturnID(`
 		INSERT INTO users (name, email, member_number, phone, address, avatar_url, role, password)
 		VALUES (?, ?, ?, ?, ?, ?, 'lector', ?)
-	`, name, email, memberNumber, body.Phone, address, avatar, password)
+	`, name, userEmail, memberNumber, body.Phone, address, avatar, password)
 	if err != nil {
 		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "No se pudo registrar: el correo o número ya puede estar registrado"})
 		return
@@ -1103,7 +1142,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		UserID:       newID,
 		ID:           newID,
 		Name:         name,
-		Email:        email,
+		Email:        userEmail,
 		MemberNumber: memberNumber,
 		Phone:        body.Phone,
 		Address:      address,
@@ -1112,6 +1151,11 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token := fmt.Sprintf("tok_%d_%d", u.UserID, time.Now().Unix())
+
+	// Enviar correos de bienvenida al nuevo lector y notificación al administrador
+	email.SendWelcomeEmail(name, userEmail, memberNumber)
+	email.SendNewUserAdminEmail(email.GetAdminEmail(), name, userEmail, memberNumber, body.Phone, address)
+
 	jsonResponse(w, http.StatusCreated, map[string]interface{}{
 		"user":  u,
 		"token": token,
