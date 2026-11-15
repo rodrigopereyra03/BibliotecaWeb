@@ -26,11 +26,30 @@ var (
 // InitStorage initializes connection to Neon Object Storage
 func InitStorage() error {
 	rawEndpoint := os.Getenv("AWS_ENDPOINT_URL_S3")
+	if rawEndpoint == "" {
+		rawEndpoint = os.Getenv("NEON_STORAGE_ENDPOINT")
+	}
+
 	accessKey := os.Getenv("AWS_ACCESS_KEY_ID")
+	if accessKey == "" {
+		accessKey = os.Getenv("NEON_STORAGE_ACCESS_KEY")
+	}
+
 	secretKey := os.Getenv("AWS_SECRET_ACCESS_KEY")
+	if secretKey == "" {
+		secretKey = os.Getenv("NEON_STORAGE_SECRET_KEY")
+	}
+
 	region := os.Getenv("AWS_REGION")
 	if region == "" {
+		region = os.Getenv("NEON_STORAGE_REGION")
+	}
+	if region == "" {
 		region = "us-east-2"
+	}
+
+	if b := os.Getenv("NEON_STORAGE_BUCKET"); b != "" {
+		bucketName = b
 	}
 
 	if rawEndpoint == "" || accessKey == "" || secretKey == "" {
