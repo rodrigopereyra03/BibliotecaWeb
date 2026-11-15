@@ -14,6 +14,7 @@ RUN npm run build
 # 2. Build Go Monolith Server
 FROM golang:1.24-alpine AS backend-builder
 WORKDIR /app
+ENV GOTOOLCHAIN=auto
 RUN apk add --no-cache git ca-certificates
 COPY backend/go.mod backend/go.sum ./backend/
 WORKDIR /app/backend
