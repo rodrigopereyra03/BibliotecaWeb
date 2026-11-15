@@ -363,7 +363,7 @@ export default function CommunicationsView({
                 </div>
                 <div className="flex gap-2">
                   <input
-                    type="url"
+                    type="text"
                     placeholder="https://... o sube una imagen de tu PC"
                     value={formData.image_url}
                     onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}

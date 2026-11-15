@@ -649,7 +649,7 @@ export default function InventoryView({
                 </div>
                 <div className="flex gap-2">
                   <input
-                    type="url"
+                    type="text"
                     placeholder="https://... o sube una imagen de tu PC"
                     value={formData.cover_image}
                     onChange={(e) => setFormData({ ...formData, cover_image: e.target.value })}
@@ -690,7 +690,7 @@ export default function InventoryView({
                 </div>
                 <div className="flex gap-2">
                   <input
-                    type="url"
+                    type="text"
                     placeholder="URL del PDF o sube el documento"
                     value={formData.digital_url || ''}
                     onChange={(e) => setFormData({ ...formData, digital_url: e.target.value })}
