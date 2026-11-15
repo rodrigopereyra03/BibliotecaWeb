@@ -25,7 +25,7 @@ export default function Sidebar({
     <aside
       className={`fixed left-0 top-0 h-full ${
         sidebarOpen ? 'w-72 translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20'
-      } bg-parchment-surface/95 backdrop-blur-2xl z-50 flex flex-col justify-between p-3 border-r border-marble-border shadow-[4px_0_24px_-4px_rgba(46,40,35,0.06)] transition-all duration-300 ease-in-out`}
+      } bg-parchment-surface/95 backdrop-blur-2xl z-50 flex flex-col justify-between p-3 border-r border-marble-border shadow-[4px_0_24px_-4px_rgba(46,40,35,0.06)] transition-all duration-300 ease-in-out overflow-y-auto`}
     >
       <div className="flex flex-col gap-5">
         {/* Brand Header */}
@@ -151,41 +151,82 @@ export default function Sidebar({
         </nav>
       </div>
 
-      {/* Footer Info Box */}
+      {/* Footer Vertical Banner Tótem */}
       {sidebarOpen ? (
-        <div className="flex flex-col gap-3">
-          <div className="p-4 rounded-xl bg-parchment-card border border-marble-border shadow-sm flex flex-col gap-2 relative overflow-hidden">
-            <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-gold-burnished/10 rounded-full blur-xl pointer-events-none"></div>
-            <div className="flex items-center gap-1.5 text-gold-burnished font-semibold">
-              <span className="material-symbols-outlined text-base">meeting_room</span>
-              <span className="text-xs uppercase tracking-wider font-bold">Atrio Parroquial</span>
+        <div className="flex flex-col gap-2 pt-3 mt-2 border-t border-marble-border/60">
+          <div
+            onClick={onOpenHours}
+            className="group relative rounded-2xl overflow-hidden shadow-sm border border-marble-border/80 cursor-pointer transition-all duration-300 hover:shadow-md hover:border-gold-burnished/50"
+            title="Haga clic para ver los horarios del despacho"
+          >
+            {/* Background photo of chapel */}
+            <div className="relative h-44 w-full overflow-hidden bg-stone-900">
+              <img
+                src="/capilla-fachada.jpg"
+                alt="Capilla Ntra. Sra. de Lourdes"
+                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700 opacity-90"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/60 to-transparent"></div>
+
+              {/* Status Pill */}
+              <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between z-10">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sepia-heading/85 backdrop-blur-md text-[10px] text-parchment-surface font-semibold border border-white/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                  <span>Misa: Domingo 9 hs</span>
+                </span>
+                <span className="w-5 h-5 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-xs group-hover:translate-x-0.5 transition-transform">
+                  ›
+                </span>
+              </div>
+
+              {/* Banner Text Content */}
+              <div className="absolute bottom-2.5 left-3 right-3 text-white z-10 flex flex-col gap-0.5">
+                <span className="text-[10px] uppercase tracking-wider text-gold-accent font-bold">
+                  Atrio Parroquial
+                </span>
+                <h4 className="text-sm font-bold font-display text-white leading-tight">
+                  Retiro y Devolución de Libros
+                </h4>
+                <p className="text-[11px] text-stone-200 line-clamp-2 leading-snug mt-0.5">
+                  Vení a buscar tus ejemplares los domingos tras la misa o en secretaría.
+                </p>
+              </div>
             </div>
-            <p className="text-xs text-warm-charcoal leading-relaxed">
-              Mostrador de Biblioteca del Atrio · Disponible para retiro y devolución tras la Santa Misa o secretaría.
-            </p>
-            <div className="mt-1 text-[11px] font-medium text-gold-burnished">
-              Préstamos por 21 días renovables
+
+            {/* Click to open hours bar */}
+            <div className="p-2.5 bg-white flex items-center justify-between border-t border-marble-border/60 text-xs">
+              <div className="flex items-center gap-1.5 text-gold-burnished font-semibold">
+                <span className="material-symbols-outlined text-sm">schedule</span>
+                <span>Ver Horarios de Despacho</span>
+              </div>
+              <span className="material-symbols-outlined text-sm text-warm-charcoal group-hover:translate-x-1 transition-transform">
+                arrow_forward
+              </span>
             </div>
           </div>
 
-          <div className="px-2 py-1 flex items-center justify-between text-outline text-xs">
-            <div className="flex flex-col gap-0.5">
-              <span className="uppercase tracking-wider text-warm-charcoal font-bold text-[10px]">
-                SEDE TEMPERLEY
-              </span>
-              <span className="text-[11px] text-outline leading-tight">
-                Sigmund Freud 201, Temperley
-              </span>
+          <div className="px-1.5 py-0.5 flex items-center justify-between text-outline text-[11px]">
+            <div className="flex items-center gap-1 text-warm-charcoal">
+              <span className="material-symbols-outlined text-xs text-gold-burnished">location_on</span>
+              <span className="font-medium">Sigmund Freud 201, Temperley</span>
             </div>
-            <span className="material-symbols-outlined text-sm text-gold-burnished" title="Sede Verificada">
+            <span className="material-symbols-outlined text-xs text-gold-burnished" title="Sede Oficial">
               verified
             </span>
           </div>
         </div>
       ) : (
-        <div className="flex flex-col items-center py-2 text-gold-burnished" title="Sede Temperley · Sigmund Freud 201">
-          <span className="material-symbols-outlined text-lg">meeting_room</span>
-        </div>
+        <button
+          type="button"
+          onClick={onOpenHours}
+          className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-gold-light/40 transition-colors text-gold-burnished cursor-pointer"
+          title="Atrio Parroquial · Ver Horarios de Despacho"
+        >
+          <div className="w-10 h-10 rounded-xl overflow-hidden border border-gold-burnished/40 relative shadow-2xs">
+            <img src="/capilla-fachada.jpg" alt="Capilla" className="w-full h-full object-cover" />
+          </div>
+          <span className="material-symbols-outlined text-sm">schedule</span>
+        </button>
       )}
     </aside>
   );
