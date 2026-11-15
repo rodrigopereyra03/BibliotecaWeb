@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { resolveMediaUrl } from '../api';
+import NoticiaDetalleModal from './NoticiaDetalleModal';
 
 export default function NoticiasView({ news, loading, onGoToCatalog, banner }) {
+  const [selectedNoticia, setSelectedNoticia] = useState(null);
   return (
     <div className="flex flex-col w-full pb-8">
       {/* ============================================================ */}
@@ -126,14 +128,15 @@ export default function NoticiasView({ news, loading, onGoToCatalog, banner }) {
             return (
               <div
                 key={item.id}
-                className="rounded-2xl bg-white border border-marble-border shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col justify-between"
+                onClick={() => setSelectedNoticia(item)}
+                className="group rounded-2xl bg-white border border-marble-border shadow-xs hover:shadow-lg hover:border-gold-burnished/40 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer"
               >
                 <div>
-                  <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-parchment-surface">
+                  <div className="relative h-44 sm:h-52 w-full overflow-hidden bg-parchment-surface">
                     <img
                       src={resolveMediaUrl(item.image_url)}
                       alt={item.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                     />
                     <div className="absolute top-2.5 left-2.5">
                       <span className="px-2.5 py-0.5 rounded-full bg-white/95 backdrop-blur-md text-gold-burnished border border-marble-border text-[11px] font-bold shadow-2xs">
@@ -144,29 +147,42 @@ export default function NoticiasView({ news, loading, onGoToCatalog, banner }) {
 
                   <div className="p-4 sm:p-5 flex flex-col gap-1.5">
                     <span className="text-[10px] text-warm-charcoal font-medium">{pubDate}</span>
-                    <h3 className="text-base font-bold font-display text-sepia-heading leading-snug">
+                    <h3 className="text-base font-bold font-display text-sepia-heading group-hover:text-gold-burnished transition-colors leading-snug line-clamp-2">
                       {item.title}
                     </h3>
-                    <p className="text-xs text-warm-charcoal leading-relaxed mt-1">
+                    <p className="text-xs text-warm-charcoal leading-relaxed mt-1 line-clamp-3">
                       {item.content}
                     </p>
                   </div>
                 </div>
 
-                <div className="px-4 pb-4 pt-2 border-t border-marble-border/60 flex items-center justify-between text-[11px] text-warm-charcoal">
-                  <span className="italic">{item.author}</span>
+                <div className="px-4 pb-4 pt-2 border-t border-marble-border/60 flex items-center justify-between text-[11px] text-warm-charcoal bg-parchment-surface/30">
+                  <span className="italic truncate max-w-[150px]">{item.author || 'Secretaría Parroquial'}</span>
                   <button
                     type="button"
-                    onClick={onGoToCatalog}
-                    className="text-gold-burnished font-bold hover:underline"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedNoticia(item);
+                    }}
+                    className="text-gold-burnished font-bold hover:text-gold-accent hover:underline inline-flex items-center gap-1 cursor-pointer"
                   >
-                    Ver en catálogo →
+                    <span>Leer publicación</span>
+                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
                   </button>
                 </div>
               </div>
             );
           })}
         </div>
+      )}
+
+      {/* Noticia Detalle Modal */}
+      {selectedNoticia && (
+        <NoticiaDetalleModal
+          noticia={selectedNoticia}
+          onClose={() => setSelectedNoticia(null)}
+          onGoToCatalog={onGoToCatalog}
+        />
       )}
     </div>
   );
