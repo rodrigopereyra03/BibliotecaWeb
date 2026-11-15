@@ -247,6 +247,143 @@ func DeleteBook(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, http.StatusOK, map[string]string{"message": "Libro eliminado"})
 }
 
+// PUT /api/books/:id (Backoffice: Actualizar Libro)
+func UpdateBook(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/api/books/")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "ID de libro inválido"})
+		return
+	}
+
+	var req struct {
+		Title           string  `json:"title"`
+		Author          string  `json:"author"`
+		Genre           string  `json:"genre"`
+		ISBN            string  `json:"isbn"`
+		CoverURL        string  `json:"cover_url"`
+		CoverImage      string  `json:"cover_image"`
+		Synopsis        string  `json:"synopsis"`
+		Description     string  `json:"description"`
+		Location        string  `json:"location"`
+		ShelfLocation   string  `json:"shelf_location"`
+		Format          string  `json:"format"`
+		HasDigital      bool    `json:"has_digital"`
+		DigitalURL      string  `json:"digital_url"`
+		Copies          int     `json:"copies"`
+		TotalCopies     int     `json:"total_copies"`
+		AvailableCopies int     `json:"available_copies"`
+		Rating          float64 `json:"rating"`
+		ReviewsCount    int     `json:"reviews_count"`
+		Featured        bool    `json:"featured"`
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Datos inválidos"})
+		return
+	}
+
+	if req.Title == "" || req.Author == "" {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Título y autor son obligatorios"})
+		return
+	}
+
+	coverURL := req.CoverURL
+	if coverURL == "" {
+		coverURL = req.CoverImage
+	}
+	if coverURL == "" {
+		coverURL = "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&w=600&q=80"
+	}
+
+	synopsis := req.Synopsis
+	if synopsis == "" {
+		synopsis = req.Description
+	}
+
+	location := req.Location
+	if location == "" {
+		location = req.ShelfLocation
+	}
+	if location == "" {
+		location = "Sector General · Estante 3B"
+	}
+
+	genre := req.Genre
+	if genre == "" {
+		genre = "Novelas & Ficción"
+	}
+
+	totalCopies := req.TotalCopies
+	if totalCopies <= 0 {
+		totalCopies = req.Copies
+	}
+	if totalCopies <= 0 {
+		totalCopies = 1
+	}
+
+	availCopies := req.AvailableCopies
+	if availCopies <= 0 {
+		availCopies = totalCopies
+	}
+
+	rating := req.Rating
+	if rating <= 0 {
+		rating = 5.0
+	}
+
+	format := strings.ToLower(req.Format)
+	if format == "físico" || format == "fisico" {
+		format = "physical"
+	} else if format == "digital (pdf)" || format == "digital" {
+		format = "digital"
+	} else if format == "ambos" || format == "both" {
+		format = "both"
+	}
+	if format == "" {
+		format = "physical"
+	}
+
+	hasDigital := req.HasDigital
+	if req.DigitalURL != "" {
+		hasDigital = true
+		if format == "physical" {
+			format = "both"
+		}
+	}
+
+	_, err = database.Exec(`
+		UPDATE books
+		SET title = ?, author = ?, genre = ?, isbn = ?, cover_url = ?, synopsis = ?, location = ?, format = ?, has_digital = ?, digital_url = ?, total_copies = ?, available_copies = ?, rating = ?, reviews_count = ?, featured = ?
+		WHERE id = ?
+	`, req.Title, req.Author, genre, req.ISBN, coverURL, synopsis, location, format, hasDigital, req.DigitalURL, totalCopies, availCopies, rating, req.ReviewsCount, req.Featured, id)
+	if err != nil {
+		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	b := models.Book{
+		ID:              id,
+		Title:           req.Title,
+		Author:          req.Author,
+		Genre:           genre,
+		ISBN:            req.ISBN,
+		CoverURL:        coverURL,
+		Synopsis:        synopsis,
+		Location:        location,
+		Format:          format,
+		HasDigital:      hasDigital,
+		DigitalURL:      req.DigitalURL,
+		TotalCopies:     totalCopies,
+		AvailableCopies: availCopies,
+		Rating:          rating,
+		ReviewsCount:    req.ReviewsCount,
+		Featured:        req.Featured,
+	}
+
+	jsonResponse(w, http.StatusOK, b)
+}
+
 // POST /api/reservations
 type CreateReservationRequest struct {
 	UserID         int64  `json:"user_id"`
@@ -715,6 +852,68 @@ func DeleteNews(w http.ResponseWriter, r *http.Request) {
 	}
 
 	jsonResponse(w, http.StatusOK, map[string]string{"message": "Noticia eliminada"})
+}
+
+// PUT /api/news/:id (Backoffice: Actualizar Noticia/Comunicado)
+func UpdateNews(w http.ResponseWriter, r *http.Request) {
+	idStr := strings.TrimPrefix(r.URL.Path, "/api/news/")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "ID de noticia inválido"})
+		return
+	}
+
+	var req struct {
+		Title    string `json:"title"`
+		Category string `json:"category"`
+		Content  string `json:"content"`
+		ImageURL string `json:"image_url"`
+		Image    string `json:"image"`
+		Author   string `json:"author"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Datos inválidos"})
+		return
+	}
+
+	if req.Title == "" || req.Content == "" {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Título y contenido son obligatorios"})
+		return
+	}
+	if req.Category == "" {
+		req.Category = "Avisos & Comunidad"
+	}
+	if req.Author == "" {
+		req.Author = "Secretaría Parroquial"
+	}
+	imageURL := req.ImageURL
+	if imageURL == "" {
+		imageURL = req.Image
+	}
+	if imageURL == "" {
+		imageURL = "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=600&q=80"
+	}
+
+	_, err = database.Exec(`
+		UPDATE news
+		SET title = ?, category = ?, content = ?, image_url = ?, author = ?
+		WHERE id = ?
+	`, req.Title, req.Category, req.Content, imageURL, req.Author, id)
+	if err != nil {
+		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	n := models.News{
+		ID:        id,
+		Title:     req.Title,
+		Category:  req.Category,
+		Content:   req.Content,
+		ImageURL:  imageURL,
+		Published: time.Now(),
+		Author:    req.Author,
+	}
+	jsonResponse(w, http.StatusOK, n)
 }
 
 // GET /api/users (Backoffice: Listar lectores/miembros)

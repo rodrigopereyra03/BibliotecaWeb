@@ -48,6 +48,19 @@ export const api = {
     return res.json();
   },
 
+  async updateBook(id, bookData) {
+    const res = await fetch(`${API_BASE}/books/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bookData)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Error al actualizar libro');
+    }
+    return res.json();
+  },
+
   async deleteBook(id) {
     const res = await fetch(`${API_BASE}/books/${id}`, {
       method: 'DELETE'
@@ -153,6 +166,19 @@ export const api = {
     if (!res.ok) {
       const err = await res.json();
       throw new Error(err.error || 'Error al publicar noticia');
+    }
+    return res.json();
+  },
+
+  async updateNews(id, newsData) {
+    const res = await fetch(`${API_BASE}/news/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newsData)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Error al actualizar noticia');
     }
     return res.json();
   },

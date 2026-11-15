@@ -98,6 +98,8 @@ func main() {
 	mux.HandleFunc("/api/books/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			handlers.GetBook(w, r)
+		} else if r.Method == http.MethodPut || r.Method == http.MethodPost {
+			handlers.UpdateBook(w, r)
 		} else if r.Method == http.MethodDelete {
 			handlers.DeleteBook(w, r)
 		} else {
@@ -166,7 +168,9 @@ func main() {
 	})
 
 	mux.HandleFunc("/api/news/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodDelete {
+		if r.Method == http.MethodPut || r.Method == http.MethodPost {
+			handlers.UpdateNews(w, r)
+		} else if r.Method == http.MethodDelete {
 			handlers.DeleteNews(w, r)
 		} else {
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)

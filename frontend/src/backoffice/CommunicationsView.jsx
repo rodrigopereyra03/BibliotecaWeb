@@ -5,10 +5,12 @@ import { useToast } from '../context/ToastContext';
 export default function CommunicationsView({
   news = [],
   onAddNews,
+  onUpdateNews,
   onDeleteNews,
 }) {
   const toast = useToast();
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingNews, setEditingNews] = useState(null);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadError, setUploadError] = useState('');
   const [formData, setFormData] = useState({
@@ -27,6 +29,32 @@ export default function CommunicationsView({
     'Formación & Charlas',
     'Horarios & Culto',
   ];
+
+  const handleOpenAdd = () => {
+    setEditingNews(null);
+    setFormData({
+      title: '',
+      category: 'Avisos & Comunidad',
+      snippet: '',
+      content: '',
+      author: 'Secretaría Parroquial',
+      image_url: '',
+    });
+    setShowAddModal(true);
+  };
+
+  const handleOpenEdit = (item) => {
+    setEditingNews(item);
+    setFormData({
+      title: item.title || '',
+      category: item.category || 'Avisos & Comunidad',
+      snippet: item.snippet || item.content || '',
+      content: item.content || item.snippet || '',
+      author: item.author || 'Secretaría Parroquial',
+      image_url: item.image_url || '',
+    });
+    setShowAddModal(true);
+  };
 
   const handleImageUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -52,12 +80,28 @@ export default function CommunicationsView({
     const img =
       formData.image_url ||
       'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?auto=format&fit=crop&w=800&q=80';
-    await onAddNews({
-      ...formData,
-      content: formData.content || formData.snippet,
-      image_url: img,
-    });
+
+    if (editingNews) {
+      if (onUpdateNews) {
+        await onUpdateNews(editingNews.id, {
+          ...formData,
+          content: formData.content || formData.snippet,
+          image_url: img,
+        });
+        toast.success(`Comunicado "${formData.title}" actualizado con éxito.`);
+      }
+    } else {
+      if (onAddNews) {
+        await onAddNews({
+          ...formData,
+          content: formData.content || formData.snippet,
+          image_url: img,
+        });
+        toast.success(`Comunicado "${formData.title}" publicado con éxito.`);
+      }
+    }
     setShowAddModal(false);
+    setEditingNews(null);
     setFormData({
       title: '',
       category: 'Avisos & Comunidad',
@@ -91,7 +135,7 @@ export default function CommunicationsView({
         <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
-            onClick={() => setShowAddModal(true)}
+            onClick={handleOpenAdd}
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white font-bold text-xs shadow-xs transition-colors cursor-pointer"
           >
             <span className="material-symbols-outlined text-lg">post_add</span>
@@ -221,19 +265,30 @@ export default function CommunicationsView({
 
                   <div className="mt-4 pt-3 border-t border-marble-border flex items-center justify-between text-xs text-warm-charcoal">
                     <span>Por {item.author || 'Secretaría Parroquial'}</span>
-                    {onDeleteNews && (
+                    <div className="flex items-center gap-3">
                       <button
                         type="button"
-                        onClick={() => {
-                          if (window.confirm(`¿Eliminar el comunicado "${item.title}"?`)) {
-                            onDeleteNews(item.id);
-                          }
-                        }}
-                        className="text-terracotta hover:underline font-bold text-xs"
+                        onClick={() => handleOpenEdit(item)}
+                        className="text-gold-burnished hover:text-gold-accent font-bold text-xs inline-flex items-center gap-1 cursor-pointer"
                       >
-                        Eliminar
+                        <span className="material-symbols-outlined text-sm">edit</span>
+                        <span>Editar</span>
                       </button>
-                    )}
+                      {onDeleteNews && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            if (window.confirm(`¿Eliminar el comunicado "${item.title}"?`)) {
+                              onDeleteNews(item.id);
+                            }
+                          }}
+                          className="text-terracotta hover:underline font-bold text-xs inline-flex items-center gap-1 cursor-pointer"
+                        >
+                          <span className="material-symbols-outlined text-sm">delete</span>
+                          <span>Eliminar</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -271,18 +326,18 @@ export default function CommunicationsView({
         </div>
       </div>
 
-      {/* Modal: Redactar Comunicado */}
+      {/* Modal: Redactar o Editar Comunicado */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-marble-border relative animate-in fade-in duration-200">
             <div className="flex items-center justify-between pb-3 border-b border-marble-border mb-4">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-gold-light text-gold-burnished flex items-center justify-center">
-                  <span className="material-symbols-outlined text-lg">post_add</span>
+                  <span className="material-symbols-outlined text-lg">{editingNews ? 'edit_note' : 'post_add'}</span>
                 </div>
                 <div>
                   <h3 className="font-bold font-display text-base text-sepia-heading">
-                    Redactar Nuevo Comunicado
+                    {editingNews ? 'Editar Comunicado' : 'Redactar Nuevo Comunicado'}
                   </h3>
                   <p className="text-[11px] text-warm-charcoal">
                     Publicación oficial para la Gaceta Comunitaria
@@ -291,8 +346,11 @@ export default function CommunicationsView({
               </div>
               <button
                 type="button"
-                onClick={() => setShowAddModal(false)}
-                className="w-8 h-8 rounded-lg hover:bg-parchment-base text-warm-charcoal flex items-center justify-center"
+                onClick={() => {
+                  setShowAddModal(false);
+                  setEditingNews(null);
+                }}
+                className="w-8 h-8 rounded-lg hover:bg-parchment-base text-warm-charcoal flex items-center justify-center cursor-pointer"
               >
                 <span className="material-symbols-outlined text-lg">close</span>
               </button>
@@ -407,8 +465,11 @@ export default function CommunicationsView({
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-marble-border mt-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-lg bg-parchment-base text-warm-charcoal font-bold hover:bg-parchment-card"
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setEditingNews(null);
+                  }}
+                  className="px-4 py-2 rounded-lg bg-parchment-base text-warm-charcoal font-bold hover:bg-parchment-card cursor-pointer"
                 >
                   Cancelar
                 </button>
@@ -416,7 +477,7 @@ export default function CommunicationsView({
                   type="submit"
                   className="px-5 py-2 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white font-bold shadow-xs cursor-pointer"
                 >
-                  Publicar en Cartelera
+                  {editingNews ? 'Guardar Cambios' : 'Publicar en Cartelera'}
                 </button>
               </div>
             </form>

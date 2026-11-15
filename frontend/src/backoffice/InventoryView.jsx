@@ -6,6 +6,7 @@ export default function InventoryView({
   books = [],
   loading = false,
   onAddBook,
+  onUpdateBook,
   onDeleteBook,
   onDeliverReservation,
 }) {
@@ -14,6 +15,7 @@ export default function InventoryView({
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedBook, setSelectedBook] = useState(books[0] || null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingBook, setEditingBook] = useState(null);
   const [qrModalBook, setQrModalBook] = useState(null);
 
   // File upload loading states
@@ -95,6 +97,55 @@ export default function InventoryView({
     }
   };
 
+  const handleOpenAdd = () => {
+    setEditingBook(null);
+    setFormData({
+      title: '',
+      author: '',
+      genre: 'Novela Histórica',
+      year: 2024,
+      column: '2A',
+      row: 1,
+      copies: 2,
+      available_copies: 2,
+      format: 'Físico',
+      cover_image: '',
+      digital_url: '',
+      description: '',
+    });
+    setShowAddModal(true);
+  };
+
+  const handleOpenEdit = (book) => {
+    setEditingBook(book);
+    const loc = book.location || book.shelf_location || '';
+    let col = '2A';
+    let row = 1;
+    if (loc.includes('Columna') && loc.includes('Fila')) {
+      const parts = loc.split('·');
+      col = parts[0]?.replace('Columna', '').trim() || '2A';
+      row = parseInt(parts[1]?.replace('Fila', '').trim()) || 1;
+    } else if (loc) {
+      col = loc;
+    }
+
+    setFormData({
+      title: book.title || '',
+      author: book.author || '',
+      genre: book.genre || 'Novela Histórica',
+      year: book.year || 2024,
+      column: col,
+      row: row,
+      copies: book.total_copies || book.copies || 1,
+      available_copies: book.available_copies !== undefined ? book.available_copies : (book.copies || 1),
+      format: book.format === 'digital' ? 'Digital' : (book.format === 'both' ? 'Ambos' : 'Físico'),
+      cover_image: book.cover_url || book.cover_image || '',
+      digital_url: book.digital_url || '',
+      description: book.synopsis || book.description || '',
+    });
+    setShowAddModal(true);
+  };
+
   const handleSubmitNewBook = async (e) => {
     e.preventDefault();
     if (!formData.title || !formData.author) {
@@ -108,18 +159,39 @@ export default function InventoryView({
     const row = formData.row !== undefined && formData.row !== '' ? formData.row : '1';
     const computedLocation = `Columna ${col} · Fila ${row}`;
 
-    await onAddBook({
-      ...formData,
-      location: computedLocation,
-      shelf_location: computedLocation,
-      cover_image: cover,
-      cover_url: cover,
-      copies: parseInt(formData.copies) || 1,
-      available_copies: parseInt(formData.copies) || 1,
-      year: parseInt(formData.year) || 2024,
-    });
-    toast.success(`Libro "${formData.title}" agregado al catálogo con éxito.`);
+    if (editingBook) {
+      if (onUpdateBook) {
+        await onUpdateBook(editingBook.id, {
+          ...formData,
+          location: computedLocation,
+          shelf_location: computedLocation,
+          cover_image: cover,
+          cover_url: cover,
+          copies: parseInt(formData.copies) || 1,
+          total_copies: parseInt(formData.copies) || 1,
+          available_copies: parseInt(formData.available_copies) || parseInt(formData.copies) || 1,
+          year: parseInt(formData.year) || 2024,
+        });
+        toast.success(`Libro "${formData.title}" actualizado con éxito.`);
+      }
+    } else {
+      if (onAddBook) {
+        await onAddBook({
+          ...formData,
+          location: computedLocation,
+          shelf_location: computedLocation,
+          cover_image: cover,
+          cover_url: cover,
+          copies: parseInt(formData.copies) || 1,
+          total_copies: parseInt(formData.copies) || 1,
+          available_copies: parseInt(formData.copies) || 1,
+          year: parseInt(formData.year) || 2024,
+        });
+        toast.success(`Libro "${formData.title}" agregado al catálogo con éxito.`);
+      }
+    }
     setShowAddModal(false);
+    setEditingBook(null);
     setFormData({
       title: '',
       author: '',
@@ -161,7 +233,7 @@ export default function InventoryView({
         <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
-            onClick={() => setShowAddModal(true)}
+            onClick={handleOpenAdd}
             className="flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white font-bold text-xs shadow-xs transition-all cursor-pointer"
           >
             <span className="material-symbols-outlined text-lg">add_box</span>
@@ -386,9 +458,17 @@ export default function InventoryView({
                               type="button"
                               onClick={() => setQrModalBook(book)}
                               title="Ver QR del Tomo"
-                              className="p-1 rounded hover:bg-gold-light text-gold-burnished transition-colors"
+                              className="p-1 rounded hover:bg-gold-light text-gold-burnished transition-colors cursor-pointer"
                             >
                               <span className="material-symbols-outlined text-base">qr_code_2</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleOpenEdit(book)}
+                              title="Editar Libro"
+                              className="p-1 rounded hover:bg-gold-light text-gold-burnished transition-colors cursor-pointer"
+                            >
+                              <span className="material-symbols-outlined text-base">edit</span>
                             </button>
                             {onDeleteBook && (
                               <button
@@ -399,7 +479,7 @@ export default function InventoryView({
                                   }
                                 }}
                                 title="Eliminar del Catálogo"
-                                className="p-1 rounded hover:bg-red-50 text-terracotta transition-colors"
+                                className="p-1 rounded hover:bg-red-50 text-terracotta transition-colors cursor-pointer"
                               >
                                 <span className="material-symbols-outlined text-base">delete</span>
                               </button>
@@ -491,6 +571,14 @@ export default function InventoryView({
               <div className="mt-4 flex gap-2">
                 <button
                   type="button"
+                  onClick={() => handleOpenEdit(activeSelected)}
+                  className="flex-1 py-2 px-3 rounded-lg border border-gold-burnished text-gold-burnished hover:bg-gold-light/40 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-base">edit</span>
+                  <span>Editar Ficha</span>
+                </button>
+                <button
+                  type="button"
                   onClick={() => setQrModalBook(activeSelected)}
                   className="flex-1 py-2 px-3 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white font-bold text-xs flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer"
                 >
@@ -516,18 +604,18 @@ export default function InventoryView({
         )}
       </div>
 
-      {/* Modal: Registrar Nuevo Libro */}
+      {/* Modal: Registrar o Editar Libro */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-xl border border-marble-border relative animate-in fade-in duration-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-marble-border mb-4">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-lg bg-gold-light text-gold-burnished flex items-center justify-center">
-                  <span className="material-symbols-outlined text-lg">add_box</span>
+                  <span className="material-symbols-outlined text-lg">{editingBook ? 'edit' : 'add_box'}</span>
                 </div>
                 <div>
                   <h3 className="font-bold font-display text-base text-sepia-heading">
-                    Registrar Nuevo Título
+                    {editingBook ? 'Editar Título / Ejemplar' : 'Registrar Nuevo Título'}
                   </h3>
                   <p className="text-[11px] text-warm-charcoal">
                     Biblioteca Popular San Tito Brandsma · Capilla de Lourdes
@@ -536,8 +624,11 @@ export default function InventoryView({
               </div>
               <button
                 type="button"
-                onClick={() => setShowAddModal(false)}
-                className="w-8 h-8 rounded-lg hover:bg-parchment-base text-warm-charcoal flex items-center justify-center"
+                onClick={() => {
+                  setShowAddModal(false);
+                  setEditingBook(null);
+                }}
+                className="w-8 h-8 rounded-lg hover:bg-parchment-base text-warm-charcoal flex items-center justify-center cursor-pointer"
               >
                 <span className="material-symbols-outlined text-lg">close</span>
               </button>
@@ -747,8 +838,11 @@ export default function InventoryView({
               <div className="flex items-center justify-end gap-2 pt-3 border-t border-marble-border mt-2">
                 <button
                   type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 rounded-lg bg-parchment-base text-warm-charcoal font-bold hover:bg-parchment-card"
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setEditingBook(null);
+                  }}
+                  className="px-4 py-2 rounded-lg bg-parchment-base text-warm-charcoal font-bold hover:bg-parchment-card cursor-pointer"
                 >
                   Cancelar
                 </button>
@@ -756,7 +850,7 @@ export default function InventoryView({
                   type="submit"
                   className="px-5 py-2 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white font-bold shadow-xs cursor-pointer"
                 >
-                  Guardar en el Inventario
+                  {editingBook ? 'Guardar Cambios' : 'Guardar en el Inventario'}
                 </button>
               </div>
             </form>

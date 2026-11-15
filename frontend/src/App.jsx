@@ -220,6 +220,11 @@ export default function App() {
     await Promise.all([loadBooks(), loadStats()]);
   };
 
+  const handleUpdateBook = async (id, bookData) => {
+    await api.updateBook(id, bookData);
+    await Promise.all([loadBooks(), loadStats()]);
+  };
+
   const handleDeleteBook = async (id) => {
     await api.deleteBook(id);
     await Promise.all([loadBooks(), loadStats()]);
@@ -227,6 +232,11 @@ export default function App() {
 
   const handleAddNews = async (newsData) => {
     await api.createNews(newsData);
+    await loadNews();
+  };
+
+  const handleUpdateNews = async (id, newsData) => {
+    await api.updateNews(id, newsData);
     await loadNews();
   };
 
@@ -322,6 +332,7 @@ export default function App() {
             books={books}
             loading={loadingBooks}
             onAddBook={handleAddBook}
+            onUpdateBook={handleUpdateBook}
             onDeleteBook={handleDeleteBook}
             onDeliverReservation={handleDeliverReservation}
           />
@@ -349,6 +360,7 @@ export default function App() {
           <CommunicationsView
             news={news}
             onAddNews={handleAddNews}
+            onUpdateNews={handleUpdateNews}
             onDeleteNews={handleDeleteNews}
           />
         )}
