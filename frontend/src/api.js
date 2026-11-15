@@ -1,5 +1,16 @@
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
+export function resolveMediaUrl(url) {
+  if (!url) return '';
+  if (url.includes('.storage.') && url.includes('.neon.tech/biblioteca/')) {
+    const parts = url.split('.neon.tech/biblioteca/');
+    if (parts.length > 1) {
+      return `/api/storage/${parts[1]}`;
+    }
+  }
+  return url;
+}
+
 export const api = {
   // Books
   async getBooks(params = {}) {
@@ -10,7 +21,12 @@ export const api = {
     
     const res = await fetch(`${API_BASE}/books?${query.toString()}`);
     if (!res.ok) throw new Error('Error al obtener libros');
-    return res.json();
+    const items = await res.json();
+    return (items || []).map((b) => ({
+      ...b,
+      cover_url: resolveMediaUrl(b.cover_url),
+      digital_url: resolveMediaUrl(b.digital_url),
+    }));
   },
 
   async getBook(id) {
@@ -121,7 +137,11 @@ export const api = {
   async getNews() {
     const res = await fetch(`${API_BASE}/news`);
     if (!res.ok) throw new Error('Error al obtener noticias');
-    return res.json();
+    const items = await res.json();
+    return (items || []).map((item) => ({
+      ...item,
+      image_url: resolveMediaUrl(item.image_url),
+    }));
   },
 
   async createNews(newsData) {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { api } from '../api';
+import { api, resolveMediaUrl } from '../api';
 
 export default function CommunicationsView({
   news = [],
@@ -193,7 +193,7 @@ export default function CommunicationsView({
               >
                 {item.image_url && (
                   <img
-                    src={item.image_url}
+                    src={resolveMediaUrl(item.image_url)}
                     alt={item.title}
                     className="w-full sm:w-36 h-28 object-cover rounded-xl shadow-xs border border-marble-border shrink-0"
                   />
@@ -383,7 +383,7 @@ export default function CommunicationsView({
                 </div>
                 {formData.image_url && (
                   <div className="mt-2 flex items-center gap-2 p-1.5 bg-parchment-base rounded-lg border border-marble-border text-[11px] text-warm-charcoal">
-                    <img src={formData.image_url} alt="Preview Noticia" className="w-10 h-7 object-cover rounded shadow-2xs border border-marble-border shrink-0" />
+                    <img src={resolveMediaUrl(formData.image_url)} alt="Preview Noticia" className="w-10 h-7 object-cover rounded shadow-2xs border border-marble-border shrink-0" />
                     <span className="truncate flex-1 font-mono text-[10px]">{formData.image_url}</span>
                     <button
                       type="button"

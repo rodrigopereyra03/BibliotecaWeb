@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io"
 	"math/rand"
 	"net/http"
 	"strconv"
@@ -801,6 +802,38 @@ func UploadFile(w http.ResponseWriter, r *http.Request) {
 		"url":      url,
 		"filename": header.Filename,
 	})
+}
+
+// GET /api/storage/*
+func ServeStorage(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodHead {
+		http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		return
+	}
+
+	rawPath := strings.TrimPrefix(r.URL.Path, "/api/storage/")
+	rawPath = strings.TrimPrefix(rawPath, "/")
+	if rawPath == "" {
+		http.NotFound(w, r)
+		return
+	}
+
+	reader, mimeType, size, err := storage.GetObject(rawPath)
+	if err != nil {
+		http.NotFound(w, r)
+		return
+	}
+	defer reader.Close()
+
+	w.Header().Set("Content-Type", mimeType)
+	w.Header().Set("Cache-Control", "public, max-age=31536000, immutable")
+	if size > 0 {
+		w.Header().Set("Content-Length", fmt.Sprintf("%d", size))
+	}
+	w.WriteHeader(http.StatusOK)
+	if r.Method == http.MethodGet {
+		_, _ = io.Copy(w, reader)
+	}
 }
 
 // POST /api/admin/reset-db

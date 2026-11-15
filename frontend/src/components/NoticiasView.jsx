@@ -1,4 +1,5 @@
 import React from 'react';
+import { resolveMediaUrl } from '../api';
 
 export default function NoticiasView({ news, loading, onGoToCatalog }) {
   return (
@@ -85,7 +86,7 @@ export default function NoticiasView({ news, loading, onGoToCatalog }) {
                 <div>
                   <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-parchment-surface">
                     <img
-                      src={item.image_url}
+                      src={resolveMediaUrl(item.image_url)}
                       alt={item.title}
                       className="w-full h-full object-cover"
                     />

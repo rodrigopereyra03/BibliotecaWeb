@@ -98,39 +98,77 @@ func UploadFile(fileHeader *multipart.FileHeader, folder string) (string, error)
 
 	// 1. If Neon S3 client is initialized, attempt upload to Neon Object Storage
 	if minioClient != nil {
-		ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+		ctx, cancel := context.WithTimeout(context.Background(), 25*time.Second)
 		defer cancel()
 
 		_, err = minioClient.PutObject(ctx, bucketName, uniqueName, file, fileHeader.Size, minio.PutObjectOptions{
 			ContentType: contentType,
 		})
-		if err == nil {
-			// Public URL for Neon bucket
-			publicURL := fmt.Sprintf("%s/%s/%s", strings.TrimRight(endpointURL, "/"), bucketName, uniqueName)
-			return publicURL, nil
+		if err != nil {
+			log.Printf("Aviso: No se pudo subir a Neon S3 (%v). Usando almacenamiento local...\n", err)
 		}
-		log.Printf("Aviso: No se pudo subir a Neon S3 (%v). Usando almacenamiento local como respaldo...\n", err)
 		if seeker, ok := file.(io.Seeker); ok {
 			_, _ = seeker.Seek(0, io.SeekStart)
 		}
 	}
 
-	// 2. Local fallback: Save to uploads/
+	// 2. Always maintain a local copy in uploads/ as fast cache & resilient backup
 	uploadDir := filepath.Join(".", "uploads", folder)
-	if err := os.MkdirAll(uploadDir, 0755); err != nil {
-		return "", fmt.Errorf("error creando directorio local: %w", err)
+	if err := os.MkdirAll(uploadDir, 0755); err == nil {
+		localPath := filepath.Join(uploadDir, filepath.Base(uniqueName))
+		if dest, err := os.Create(localPath); err == nil {
+			defer dest.Close()
+			_, _ = io.Copy(dest, file)
+		}
 	}
 
-	localPath := filepath.Join(uploadDir, filepath.Base(uniqueName))
-	dest, err := os.Create(localPath)
+	// Return relative authenticated streaming path to avoid S3 403 Forbidden in browsers
+	return fmt.Sprintf("/api/storage/%s", uniqueName), nil
+}
+
+// GetObject retrieves and streams an object from Neon S3 or local fallback
+func GetObject(objectPath string) (io.ReadCloser, string, int64, error) {
+	cleanPath := strings.TrimPrefix(objectPath, "/")
+	cleanPath = strings.TrimPrefix(cleanPath, "api/storage/")
+	cleanPath = strings.TrimPrefix(cleanPath, "biblioteca/")
+
+	// 1. Try streaming from Neon S3 using authenticated credentials
+	if minioClient != nil {
+		obj, err := minioClient.GetObject(context.Background(), bucketName, cleanPath, minio.GetObjectOptions{})
+		if err == nil {
+			stat, statErr := obj.Stat()
+			if statErr == nil && stat.Size > 0 {
+				return obj, stat.ContentType, stat.Size, nil
+			}
+			obj.Close()
+		}
+	}
+
+	// 2. Fallback to local uploads/
+	localPath := filepath.Join(".", "uploads", filepath.Clean(cleanPath))
+	f, err := os.Open(localPath)
 	if err != nil {
-		return "", fmt.Errorf("error creando archivo local: %w", err)
+		return nil, "", 0, err
 	}
-	defer dest.Close()
-
-	if _, err := io.Copy(dest, file); err != nil {
-		return "", fmt.Errorf("error guardando archivo local: %w", err)
+	stat, err := f.Stat()
+	if err != nil {
+		f.Close()
+		return nil, "", 0, err
 	}
 
-	return fmt.Sprintf("/uploads/%s/%s", folder, filepath.Base(uniqueName)), nil
+	ext := strings.ToLower(filepath.Ext(cleanPath))
+	mimeType := "application/octet-stream"
+	if ext == ".jpg" || ext == ".jpeg" {
+		mimeType = "image/jpeg"
+	} else if ext == ".png" {
+		mimeType = "image/png"
+	} else if ext == ".webp" {
+		mimeType = "image/webp"
+	} else if ext == ".svg" {
+		mimeType = "image/svg+xml"
+	} else if ext == ".pdf" {
+		mimeType = "application/pdf"
+	}
+
+	return f, mimeType, stat.Size(), nil
 }
