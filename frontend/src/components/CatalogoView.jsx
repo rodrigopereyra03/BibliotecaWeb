@@ -321,11 +321,9 @@ export default function CatalogoView({
                 </div>
 
                 <div className="flex flex-col min-w-0 flex-1">
-                  <div className="flex items-center gap-1 text-gold-burnished text-[11px] font-bold">
-                    <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                    <span>{featuredBook.rating || 5.0}</span>
-                    <span className="text-warm-charcoal font-normal text-[10px]">({featuredBook.reviews_count || 45} reseñas)</span>
-                  </div>
+                  <span className="text-gold-burnished text-[11px] uppercase tracking-wide font-semibold truncate">
+                    {featuredBook.genre || 'Fondo General'}
+                  </span>
 
                   <h3 className="text-sm font-bold font-display text-sepia-heading leading-snug line-clamp-1 mt-0.5">
                     {featuredBook.title}
@@ -833,10 +831,6 @@ export default function CatalogoView({
                       <span className={isAvailable ? 'text-green-700 font-semibold' : 'text-terracotta font-semibold'}>
                         {isAvailable ? `${b.available_copies} disp.` : 'Reservado'}
                       </span>
-                      <span className="text-gold-burnished font-semibold flex items-center gap-0.5">
-                        <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                        {b.rating || 5.0}
-                      </span>
                     </div>
                   </div>
 
@@ -887,14 +881,8 @@ export default function CatalogoView({
 
                     <div className="flex flex-col gap-1">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="text-gold-burnished text-[11px] uppercase tracking-wide font-semibold truncate max-w-[150px]">
+                        <span className="text-gold-burnished text-[11px] uppercase tracking-wide font-semibold truncate">
                           {b.genre}
-                        </span>
-                        <span className="flex items-center gap-0.5 text-gold-burnished text-xs font-bold">
-                          <span className="material-symbols-outlined text-xs" style={{ fontVariationSettings: "'FILL' 1" }}>
-                            star
-                          </span>
-                          {b.rating || 5.0}
                         </span>
                       </div>
 
