@@ -1,23 +1,33 @@
 import React, { useState } from 'react';
+import { api } from '../api';
 
 export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalog, banner }) {
   const [identificador, setIdentificador] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const emailVal = identificador.trim() || 'lector@comunidad.org';
-    const nameVal = emailVal.includes('@') ? emailVal.split('@')[0] : emailVal;
-    const capitalizedName = nameVal.charAt(0).toUpperCase() + nameVal.slice(1);
-    onLoginSuccess({
-      name: capitalizedName,
-      email: emailVal.includes('@') ? emailVal : `${emailVal.toLowerCase()}@comunidad.org`,
-      member_number: emailVal.startsWith('GT-') ? emailVal : 'GT-4001',
-      avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80',
-      role: 'lector',
-    });
+    if (!identificador.trim() || !password.trim()) {
+      setError('Por favor ingrese su correo/credencial y su contraseña.');
+      return;
+    }
+    setError('');
+    setLoading(true);
+    try {
+      const user = await api.login({
+        identificador: identificador.trim(),
+        password: password.trim(),
+      });
+      onLoginSuccess(user);
+    } catch (err) {
+      setError(err.message || 'Error al iniciar sesión. Verifique sus credenciales.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -130,6 +140,13 @@ export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalo
             </p>
           </div>
 
+          {error && (
+            <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+              <span className="material-symbols-outlined text-base shrink-0">error</span>
+              <span>{error}</span>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <label className="block text-xs font-bold text-sepia-heading">
@@ -202,12 +219,13 @@ export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalo
 
             <button
               type="submit"
-              className="w-full py-3 px-6 rounded-xl bg-gold-burnished hover:bg-gold-accent text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 group cursor-pointer hover:shadow-lg active:scale-[0.99]"
+              disabled={loading}
+              className="w-full py-3 px-6 rounded-xl bg-gold-burnished hover:bg-gold-accent text-white font-bold text-sm shadow-md transition-all flex items-center justify-center gap-2 group cursor-pointer hover:shadow-lg active:scale-[0.99] disabled:opacity-60"
             >
               <span className="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">
                 login
               </span>
-              <span>Ingresar a la Biblioteca & Catálogo</span>
+              <span>{loading ? 'Verificando...' : 'Ingresar a la Biblioteca & Catálogo'}</span>
             </button>
           </form>
 

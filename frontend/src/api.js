@@ -173,22 +173,62 @@ export const api = {
   },
 
   async getCurrentUser() {
-    const res = await fetch(`${API_BASE}/user/me`);
-    if (!res.ok) throw new Error('Error al obtener datos de usuario');
-    return res.json();
+    try {
+      const stored = localStorage.getItem('biblioteca_user');
+      if (!stored) return null;
+      const parsed = JSON.parse(stored);
+      if (!parsed || !parsed.id) return null;
+
+      const res = await fetch(`${API_BASE}/user/me?id=${parsed.id}`, {
+        headers: parsed.token ? { Authorization: `Bearer ${parsed.token}` } : {},
+      });
+      if (!res.ok) {
+        localStorage.removeItem('biblioteca_user');
+        return null;
+      }
+      const data = await res.json();
+      if (!data) {
+        localStorage.removeItem('biblioteca_user');
+        return null;
+      }
+      return { ...data, token: parsed.token };
+    } catch {
+      return null;
+    }
+  },
+
+  async login(credentials) {
+    const res = await fetch(`${API_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(credentials),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || 'Credenciales inválidas');
+    }
+    const userWithToken = { ...data.user, token: data.token };
+    localStorage.setItem('biblioteca_user', JSON.stringify(userWithToken));
+    return data.user;
+  },
+
+  async logout() {
+    localStorage.removeItem('biblioteca_user');
   },
 
   async registerUser(userData) {
     const res = await fetch(`${API_BASE}/auth/register`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData)
+      body: JSON.stringify(userData),
     });
+    const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || 'Error al registrarse');
+      throw new Error(data.error || 'Error al registrarse');
     }
-    return res.json();
+    const userWithToken = { ...data.user, token: data.token };
+    localStorage.setItem('biblioteca_user', JSON.stringify(userWithToken));
+    return data.user;
   },
 
   // Banners API

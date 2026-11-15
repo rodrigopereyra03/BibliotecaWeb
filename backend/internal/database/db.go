@@ -159,6 +159,7 @@ func createTables(db *sql.DB) error {
 			phone VARCHAR(100),
 			avatar_url TEXT,
 			role VARCHAR(50) DEFAULT 'lector',
+			password VARCHAR(255) DEFAULT '',
 			created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 		);
 
@@ -239,6 +240,7 @@ func createTables(db *sql.DB) error {
 			phone TEXT,
 			avatar_url TEXT,
 			role TEXT DEFAULT 'lector',
+			password TEXT DEFAULT '',
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		);
 
@@ -317,7 +319,65 @@ func createTables(db *sql.DB) error {
 	if _, err := db.Exec(schema); err != nil {
 		return err
 	}
+
+	// Migración: asegurar que la columna password exista en users
+	if DriverName == "postgres" {
+		_, _ = db.Exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS password VARCHAR(255) DEFAULT ''")
+	} else {
+		_, _ = db.Exec("ALTER TABLE users ADD COLUMN password TEXT DEFAULT ''")
+	}
+
+	if err := SeedAdminUser(db); err != nil {
+		fmt.Printf("Advertencia al sembrar admin: %v\n", err)
+	}
+
 	return SeedDefaultBanners(db)
+}
+
+// SeedAdminUser garantiza la existencia del usuario administrador
+func SeedAdminUser(db *sql.DB) error {
+	adminEmail := "biblioteca@admin.com"
+	adminPass := "admin1234"
+	adminName := "Administrador de Biblioteca"
+	adminMember := "ADMIN-001"
+	adminPhone := "+54 11 4244-0000"
+	adminAvatar := "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=256&q=80"
+
+	var count int
+	err := db.QueryRow(Rebind("SELECT COUNT(*) FROM users WHERE LOWER(email) = LOWER(?)"), adminEmail).Scan(&count)
+	if err != nil {
+		return err
+	}
+
+	if count == 0 {
+		// Asegurar que member_number ADMIN-001 esté libre
+		var memberCount int
+		_ = db.QueryRow(Rebind("SELECT COUNT(*) FROM users WHERE member_number = ?"), adminMember).Scan(&memberCount)
+		if memberCount > 0 {
+			adminMember = fmt.Sprintf("ADMIN-%d", 100+randInt(900))
+		}
+
+		qInsert := Rebind(`INSERT INTO users (name, email, member_number, phone, avatar_url, role, password)
+		                   VALUES (?, ?, ?, ?, ?, 'admin', ?)`)
+		_, err = db.Exec(qInsert, adminName, adminEmail, adminMember, adminPhone, adminAvatar, adminPass)
+		if err != nil {
+			return err
+		}
+	} else {
+		// Asegurar que tenga rol 'admin' y la contraseña correcta
+		qUpdate := Rebind(`UPDATE users SET role = 'admin', password = ?, name = ? WHERE LOWER(email) = LOWER(?)`)
+		_, _ = db.Exec(qUpdate, adminPass, adminName, adminEmail)
+	}
+
+	// Cualquier otro usuario registrado en la base de datos pasa a ser 'lector'
+	qDemote := Rebind(`UPDATE users SET role = 'lector' WHERE LOWER(email) != LOWER(?) AND role = 'admin'`)
+	_, _ = db.Exec(qDemote, adminEmail)
+
+	return nil
+}
+
+func randInt(max int) int {
+	return 100
 }
 
 // SeedDefaultBanners populates default banner rows if none exist

@@ -690,10 +690,98 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, http.StatusOK, users)
 }
 
+// POST /api/auth/login
+func LoginUser(w http.ResponseWriter, r *http.Request) {
+	var body struct {
+		Identificador string `json:"identificador"`
+		Email         string `json:"email"`
+		Password      string `json:"password"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Datos inválidos"})
+		return
+	}
+
+	loginKey := strings.TrimSpace(body.Email)
+	if loginKey == "" {
+		loginKey = strings.TrimSpace(body.Identificador)
+	}
+	password := strings.TrimSpace(body.Password)
+
+	if loginKey == "" || password == "" {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Debe ingresar usuario/correo y contraseña"})
+		return
+	}
+
+	var u models.User
+	var dbPass string
+	err := database.QueryRow(`
+		SELECT user_id, name, email, member_number, phone, avatar_url, role, COALESCE(password, '')
+		FROM users
+		WHERE LOWER(email) = LOWER(?) OR LOWER(member_number) = LOWER(?)
+		LIMIT 1
+	`, loginKey, loginKey).Scan(
+		&u.UserID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.AvatarURL, &u.Role, &dbPass,
+	)
+	if err == sql.ErrNoRows {
+		jsonResponse(w, http.StatusUnauthorized, map[string]string{"error": "Usuario o contraseña incorrectos"})
+		return
+	} else if err != nil {
+		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	// Verificar contraseña
+	if dbPass != password {
+		jsonResponse(w, http.StatusUnauthorized, map[string]string{"error": "Usuario o contraseña incorrectos"})
+		return
+	}
+
+	u.ID = u.UserID
+	token := fmt.Sprintf("tok_%d_%d", u.UserID, time.Now().Unix())
+
+	jsonResponse(w, http.StatusOK, map[string]interface{}{
+		"user":  u,
+		"token": token,
+	})
+}
+
 // GET /api/user/me
 func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
+	idStr := r.URL.Query().Get("id")
+	authHeader := r.Header.Get("Authorization")
+	if idStr == "" && authHeader != "" {
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+		token = strings.TrimSpace(token)
+		if strings.HasPrefix(token, "tok_") {
+			parts := strings.Split(token, "_")
+			if len(parts) >= 2 {
+				idStr = parts[1]
+			}
+		} else {
+			idStr = token
+		}
+	}
+
+	if idStr == "" {
+		// Visitante anónimo sin sesión activa
+		jsonResponse(w, http.StatusOK, nil)
+		return
+	}
+
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		jsonResponse(w, http.StatusOK, nil)
+		return
+	}
+
 	var u models.User
-	err := database.QueryRow("SELECT user_id, name, email, member_number, phone, avatar_url, role FROM users LIMIT 1").Scan(
+	err = database.QueryRow(`
+		SELECT user_id, name, email, member_number, phone, avatar_url, role
+		FROM users
+		WHERE user_id = ?
+		LIMIT 1
+	`, id).Scan(
 		&u.UserID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.AvatarURL, &u.Role,
 	)
 	if err == sql.ErrNoRows {
@@ -711,40 +799,64 @@ func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 // POST /api/auth/register
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	var body struct {
-		Name  string `json:"name"`
-		Email string `json:"email"`
-		Phone string `json:"phone"`
+		Name     string `json:"name"`
+		Email    string `json:"email"`
+		Phone    string `json:"phone"`
+		Password string `json:"password"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
 		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Datos inválidos"})
 		return
 	}
 
+	name := strings.TrimSpace(body.Name)
+	email := strings.TrimSpace(body.Email)
+	if name == "" || email == "" {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Nombre y correo son obligatorios"})
+		return
+	}
+
+	// Prohibir que se intente registrar el correo de administración
+	if strings.ToLower(email) == "biblioteca@admin.com" {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "El correo ingresado está reservado para el administrador"})
+		return
+	}
+
+	password := strings.TrimSpace(body.Password)
+	if password == "" {
+		password = "lector" + strconv.Itoa(1000+rand.Intn(9000))
+	}
+
 	num := 4000 + rand.Intn(5000)
 	memberNumber := fmt.Sprintf("GT-%d", num)
 	avatar := "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"
 
+	// Todo nuevo registro es ESTRICTAMENTE 'lector'
 	newID, err := database.InsertUserWithReturnID(`
-		INSERT INTO users (name, email, member_number, phone, avatar_url, role)
-		VALUES (?, ?, ?, ?, ?, 'lector')
-	`, body.Name, body.Email, memberNumber, body.Phone, avatar)
+		INSERT INTO users (name, email, member_number, phone, avatar_url, role, password)
+		VALUES (?, ?, ?, ?, ?, 'lector', ?)
+	`, name, email, memberNumber, body.Phone, avatar, password)
 	if err != nil {
-		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": "No se pudo registrar: el correo ya puede estar registrado"})
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "No se pudo registrar: el correo o número ya puede estar registrado"})
 		return
 	}
 
 	u := models.User{
 		UserID:       newID,
 		ID:           newID,
-		Name:         body.Name,
-		Email:        body.Email,
+		Name:         name,
+		Email:        email,
 		MemberNumber: memberNumber,
 		Phone:        body.Phone,
 		AvatarURL:    avatar,
 		Role:         "lector",
 	}
 
-	jsonResponse(w, http.StatusCreated, u)
+	token := fmt.Sprintf("tok_%d_%d", u.UserID, time.Now().Unix())
+	jsonResponse(w, http.StatusCreated, map[string]interface{}{
+		"user":  u,
+		"token": token,
+	})
 }
 
 // GET /api/stats (Backoffice: KPIs del Dashboard)

@@ -21,7 +21,7 @@ export default function MobileHeader({ user, onGoToLogin, onOpenHours, onGoToBac
 
         {/* Right: Hours Info + Backoffice + Profile Button */}
         <div className="flex items-center gap-2 shrink-0">
-          {onGoToBackoffice && (
+          {user && user.role === 'admin' && onGoToBackoffice && (
             <button
               type="button"
               onClick={onGoToBackoffice}

@@ -10,6 +10,7 @@ export default function Header({
   sidebarOpen = true,
   onToggleSidebar,
   onGoToBackoffice,
+  onLogout,
 }) {
   return (
     <header
@@ -58,51 +59,62 @@ export default function Header({
             </span>
           </button>
 
-          <button
-            onClick={onGoToLogin}
-            className="px-3 py-1.5 rounded-lg bg-parchment-surface border border-marble-border text-warm-charcoal hover:text-sepia-heading hover:bg-white transition-all text-xs font-semibold"
-          >
-            Acceso
-          </button>
+          {!user ? (
+            <div className="flex items-center gap-2">
+              <button
+                onClick={onGoToLogin}
+                className="px-3.5 py-1.5 rounded-lg bg-parchment-surface border border-marble-border text-warm-charcoal hover:text-sepia-heading hover:bg-white transition-all text-xs font-semibold cursor-pointer shadow-2xs"
+              >
+                Acceso
+              </button>
 
-          <button
-            onClick={onGoToRegister}
-            className="px-3 py-1.5 rounded-lg bg-gold-light border border-gold-burnished/40 text-gold-burnished hover:bg-gold-burnished hover:text-white transition-all text-xs font-semibold cursor-pointer"
-          >
-            Inscribir Lector
-          </button>
-
-          {onGoToBackoffice && (
-            <button
-              onClick={onGoToBackoffice}
-              className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white transition-all text-xs font-semibold shadow-xs cursor-pointer"
-              title="Panel de Administración y Control"
-            >
-              <span className="material-symbols-outlined text-base">admin_panel_settings</span>
-              <span>Backoffice</span>
-            </button>
-          )}
-
-          {/* User Badge */}
-          <div
-            onClick={onGoToLogin}
-            className="flex items-center gap-2.5 pl-2 border-l border-marble-border shrink-0 cursor-pointer group"
-            title="Haga clic para cambiar de cuenta o acceder"
-          >
-            <div className="flex flex-col text-right hidden sm:flex leading-tight">
-              <span className="text-xs font-semibold text-sepia-heading group-hover:text-gold-burnished transition-colors whitespace-nowrap">
-                {user ? user.name : 'Vecino Lector'}
-              </span>
-              <span className="text-[11px] text-gold-burnished font-medium whitespace-nowrap">
-                {user ? `Credencial #${user.member_number}` : 'Lector Activo'}
-              </span>
+              <button
+                onClick={onGoToRegister}
+                className="px-3.5 py-1.5 rounded-lg bg-gold-light border border-gold-burnished/40 text-gold-burnished hover:bg-gold-burnished hover:text-white transition-all text-xs font-semibold cursor-pointer shadow-2xs"
+              >
+                Inscribirme
+              </button>
             </div>
-            <img
-              src={user?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"}
-              alt="Perfil"
-              className="w-9 h-9 rounded-full object-cover ring-2 ring-gold-burnished/40 group-hover:ring-gold-burnished shadow-xs shrink-0 transition-all"
-            />
-          </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              {user.role === 'admin' && onGoToBackoffice && (
+                <button
+                  onClick={onGoToBackoffice}
+                  className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white transition-all text-xs font-semibold shadow-xs cursor-pointer"
+                  title="Panel de Administración y Control"
+                >
+                  <span className="material-symbols-outlined text-base">admin_panel_settings</span>
+                  <span>Backoffice</span>
+                </button>
+              )}
+
+              {/* User Badge */}
+              <div className="flex items-center gap-2.5 pl-2 border-l border-marble-border shrink-0">
+                <div className="flex flex-col text-right hidden sm:flex leading-tight">
+                  <span className="text-xs font-semibold text-sepia-heading whitespace-nowrap">
+                    {user.name}
+                  </span>
+                  <span className="text-[11px] text-gold-burnished font-medium whitespace-nowrap">
+                    {user.role === 'admin' ? 'Administrador' : `Credencial #${user.member_number}`}
+                  </span>
+                </div>
+                <img
+                  src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"}
+                  alt={user.name}
+                  className="w-9 h-9 rounded-full object-cover ring-2 ring-gold-burnished/40 shadow-xs shrink-0"
+                />
+                {onLogout && (
+                  <button
+                    onClick={onLogout}
+                    title="Cerrar Sesión"
+                    className="p-1.5 rounded-lg text-warm-charcoal hover:text-red-700 hover:bg-red-50 transition-colors cursor-pointer"
+                  >
+                    <span className="material-symbols-outlined text-lg">logout</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </header>

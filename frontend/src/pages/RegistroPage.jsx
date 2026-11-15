@@ -42,6 +42,7 @@ export default function RegistroPage({ onRegisterSuccess, onGoToLogin, onGoToCat
         email: email,
         phone: phone || '+54 11 0000-0000',
         address: address,
+        password: password,
       });
     } catch (err) {
       setError(err.message || 'Error al completar la inscripción.');

@@ -6,6 +6,8 @@ export default function BackofficeLayout({
   onExitBackoffice,
   booksCount = 0,
   pendingCount = 0,
+  user,
+  onLogout,
   children,
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -185,12 +187,23 @@ export default function BackofficeLayout({
 
             <div className="flex items-center gap-2.5 pl-2 border-l border-marble-border">
               <div className="text-right hidden sm:block leading-tight">
-                <p className="text-xs font-bold text-sepia-heading">Administrador</p>
-                <span className="text-[10px] text-gold-burnished font-semibold">Operaciones & Atrio</span>
+                <p className="text-xs font-bold text-sepia-heading">{user?.name || 'Administrador'}</p>
+                <span className="text-[10px] text-gold-burnished font-semibold">{user?.email || 'biblioteca@admin.com'}</span>
               </div>
-              <div className="w-8 h-8 rounded-full bg-gold-burnished text-white flex items-center justify-center font-bold text-xs shadow-xs">
-                AD
-              </div>
+              <img
+                src={user?.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=256&q=80"}
+                alt="Admin"
+                className="w-8 h-8 rounded-full object-cover ring-1 ring-gold-burnished/50 shadow-xs"
+              />
+              {onLogout && (
+                <button
+                  onClick={onLogout}
+                  title="Cerrar Sesión de Administrador"
+                  className="p-1.5 rounded-lg text-warm-charcoal hover:text-red-700 hover:bg-red-50 transition-colors cursor-pointer"
+                >
+                  <span className="material-symbols-outlined text-lg">logout</span>
+                </button>
+              )}
             </div>
           </div>
         </header>

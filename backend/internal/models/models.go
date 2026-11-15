@@ -30,6 +30,7 @@ type User struct {
 	Phone        string    `json:"phone,omitempty"`
 	AvatarURL    string    `json:"avatar_url,omitempty"`
 	Role         string    `json:"role"`
+	Password     string    `json:"-"`
 	CreatedAt    time.Time `json:"created_at,omitempty"`
 }
 

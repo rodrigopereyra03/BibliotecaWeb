@@ -239,13 +239,27 @@ export default function App() {
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);
+    if (userData && userData.role === 'admin') {
+      setIsBackoffice(true);
+    } else {
+      setIsBackoffice(false);
+      setActiveTab('catalogo');
+    }
+  };
+
+  const handleLogout = async () => {
+    await api.logout();
+    setUser(null);
+    setIsBackoffice(false);
     setActiveTab('catalogo');
   };
+
+  const canAccessBackoffice = Boolean(user && user.role === 'admin');
 
   // ==========================================
   // RENDER: BACKOFFICE MODE
   // ==========================================
-  if (isBackoffice) {
+  if (isBackoffice && canAccessBackoffice) {
     return (
       <BackofficeLayout
         activeView={backofficeView}
@@ -253,6 +267,8 @@ export default function App() {
         onExitBackoffice={() => setIsBackoffice(false)}
         booksCount={books.length}
         pendingCount={reservations.length}
+        user={user}
+        onLogout={handleLogout}
       >
         {backofficeView === 'dashboard' && (
           <DashboardView
@@ -358,8 +374,10 @@ export default function App() {
           onOpenHours={() => setShowHoursModal(true)}
           sidebarOpen={sidebarOpen}
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-          onGoToBackoffice={() => setIsBackoffice(true)}
+          onGoToBackoffice={canAccessBackoffice ? () => setIsBackoffice(true) : null}
           banner={banners?.sidebar_totem}
+          user={user}
+          onLogout={handleLogout}
         />
       </div>
 
@@ -368,7 +386,7 @@ export default function App() {
         user={user}
         onGoToLogin={() => setActiveTab('login')}
         onOpenHours={() => setShowHoursModal(true)}
-        onGoToBackoffice={() => setIsBackoffice(true)}
+        onGoToBackoffice={canAccessBackoffice ? () => setIsBackoffice(true) : null}
       />
 
       {/* Mobile Fixed Bottom Navigation Bar */}
@@ -395,7 +413,8 @@ export default function App() {
             onOpenHours={() => setShowHoursModal(true)}
             sidebarOpen={sidebarOpen}
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
-            onGoToBackoffice={() => setIsBackoffice(true)}
+            onGoToBackoffice={canAccessBackoffice ? () => setIsBackoffice(true) : null}
+            onLogout={handleLogout}
           />
         </div>
 
