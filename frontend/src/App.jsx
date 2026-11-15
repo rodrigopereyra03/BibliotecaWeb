@@ -13,6 +13,7 @@ import HorariosModal from './components/HorariosModal';
 import BienvenidaModal from './components/BienvenidaModal';
 import LoginPage from './pages/LoginPage';
 import RegistroPage from './pages/RegistroPage';
+import { useToast } from './context/ToastContext';
 
 // Backoffice Views
 import BackofficeLayout from './backoffice/BackofficeLayout';
@@ -25,6 +26,7 @@ import SettingsView from './backoffice/SettingsView';
 import BannersView from './backoffice/BannersView';
 
 export default function App() {
+  const toast = useToast();
   // Public Portal State
   const [activeTab, setActiveTab] = useState('catalogo');
   const [books, setBooks] = useState([]);
@@ -217,18 +219,19 @@ export default function App() {
     try {
       await api.cancelReservation(id);
       await Promise.all([loadReservations(), loadBooks(), loadStats()]);
+      toast.success('Reserva cancelada correctamente.', 'Reserva Cancelada');
     } catch (e) {
-      alert(e.message || 'Error al cancelar');
+      toast.error(e.message || 'Error al cancelar la reserva');
     }
   };
 
   const handleRenewLoan = async (id) => {
     try {
       const res = await api.renewLoan(id);
-      alert(res.message);
+      toast.success(res.message || 'Préstamo renovado con éxito por 21 días más.', 'Renovación Exitosa');
       await loadLoans();
     } catch (e) {
-      alert(e.message || 'Error al renovar');
+      toast.error(e.message || 'Error al renovar préstamo');
     }
   };
 

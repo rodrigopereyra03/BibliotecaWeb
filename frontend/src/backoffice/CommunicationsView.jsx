@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { api, resolveMediaUrl } from '../api';
+import { useToast } from '../context/ToastContext';
 
 export default function CommunicationsView({
   news = [],
   onAddNews,
   onDeleteNews,
 }) {
+  const toast = useToast();
   const [showAddModal, setShowAddModal] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadError, setUploadError] = useState('');
@@ -44,7 +46,7 @@ export default function CommunicationsView({
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.title || (!formData.snippet && !formData.content)) {
-      alert('Por favor ingrese el título y el contenido del comunicado.');
+      toast.warning('Por favor ingrese el título y el contenido del comunicado.');
       return;
     }
     const img =

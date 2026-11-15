@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useToast } from '../context/ToastContext';
 
 export default function CirculationView({
   reservations = [],
@@ -7,6 +8,7 @@ export default function CirculationView({
   onDeliverReservation,
   onReturnLoan,
 }) {
+  const toast = useToast();
   const [searchCode, setSearchCode] = useState('RES-LOURDES-0001');
   const [selectedRes, setSelectedRes] = useState(reservations[0] || null);
   const [successMessage, setSuccessMessage] = useState('');
@@ -26,10 +28,9 @@ export default function CirculationView({
 
     if (found) {
       setSelectedRes(found);
-      setSuccessMessage(`¡Orden encontrada: ${found.reservation_code}!`);
-      setTimeout(() => setSuccessMessage(''), 4000);
+      toast.success(`Orden encontrada: ${found.reservation_code}`, 'Búsqueda Exitosa');
     } else {
-      alert(`No se encontró ninguna reserva pendiente con el criterio: "${searchCode}"`);
+      toast.error(`No se encontró ninguna reserva pendiente con el criterio: "${searchCode}"`, 'Reserva No Encontrada');
     }
   };
 
@@ -41,12 +42,11 @@ export default function CirculationView({
         book_id: res.book_id,
         user_id: res.user_id,
       });
-      setSuccessMessage(`¡Ejemplar entregado con éxito a ${res.user_name}! Préstamo activado por 21 días.`);
+      toast.success(`¡Ejemplar entregado con éxito a ${res.user_name}! Préstamo activado por 21 días.`, 'Entrega Confirmada');
       setSelectedRes(null);
-      setTimeout(() => setSuccessMessage(''), 5000);
     } catch (e) {
       console.error(e);
-      alert('Error al confirmar la entrega.');
+      toast.error('Error al confirmar la entrega del libro.');
     }
   };
 
@@ -59,11 +59,10 @@ export default function CirculationView({
         loan_id: loan.id,
         book_id: loan.book_id,
       });
-      setSuccessMessage(`¡Devolución asentada! Ejemplar restituido al catálogo.`);
-      setTimeout(() => setSuccessMessage(''), 4000);
+      toast.success(`¡Devolución asentada! Ejemplar restituido al catálogo.`, 'Devolución Registrada');
     } catch (e) {
       console.error(e);
-      alert('Error al registrar devolución.');
+      toast.error('Error al registrar devolución.');
     }
   };
 

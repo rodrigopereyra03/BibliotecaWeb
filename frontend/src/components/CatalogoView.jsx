@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useToast } from '../context/ToastContext';
 
 export default function CatalogoView({
   books,
@@ -12,6 +13,7 @@ export default function CatalogoView({
   onReserveSuccess,
   banners,
 }) {
+  const toast = useToast();
   const [selectedBook, setSelectedBook] = useState(null);
   const [pickupSlot, setPickupSlot] = useState('Turno Mañana (10:00 a 13:00 hs)');
   const [note, setNote] = useState('Retiro en mostrador del atrio');
@@ -142,7 +144,7 @@ export default function CatalogoView({
         pickup_location: 'Sigmund Freud 201, Temperley',
       });
     } catch (err) {
-      alert(err.message || 'Error al confirmar reserva');
+      toast.error(err.message || 'Error al confirmar reserva', 'Error de Reserva');
     } finally {
       setReserving(false);
     }
@@ -752,7 +754,7 @@ export default function CatalogoView({
                     ) : (
                       <button
                         type="button"
-                        onClick={() => alert(`Versión digital no disponible aún para: ${selectedBook.title}`)}
+                        onClick={() => toast.info(`Versión digital no disponible aún para: ${selectedBook.title}`, 'Depósito Digital')}
                         className="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 text-xs font-semibold shadow-xs flex items-center gap-2 cursor-not-allowed"
                       >
                         <span className="material-symbols-outlined text-base">picture_as_pdf</span>

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { api } from '../api';
+import { useToast } from '../context/ToastContext';
 
 export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalog, banner }) {
+  const toast = useToast();
   const [identificador, setIdentificador] = useState('');
   const [password, setPassword] = useState('');
   const [remember, setRemember] = useState(true);
@@ -174,7 +176,7 @@ export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalo
                 </label>
                 <button
                   type="button"
-                  onClick={() => alert('Para restablecer su clave, acérquese a secretaría parroquial o consulte al bibliotecario en Sigmund Freud 201.')}
+                  onClick={() => toast.info('Para restablecer su clave, acérquese a secretaría parroquial o consulte al bibliotecario en Sigmund Freud 201.', 'Recuperación de Clave')}
                   className="text-[11px] text-gold-burnished hover:text-gold-accent hover:underline cursor-pointer"
                 >
                   ¿Olvidó su clave?

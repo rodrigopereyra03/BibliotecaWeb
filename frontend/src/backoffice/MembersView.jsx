@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useToast } from '../context/ToastContext';
 
 export default function MembersView({
   users = [],
   loans = [],
   reservations = [],
 }) {
+  const toast = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedUser, setSelectedUser] = useState(users[0] || null);
 
@@ -41,7 +43,7 @@ export default function MembersView({
         <div className="flex items-center gap-3 shrink-0">
           <button
             type="button"
-            onClick={() => alert('Exportando directorio de socios en formato CSV...')}
+            onClick={() => toast.info('Exportando directorio de socios en formato CSV...', 'Directorio de Socios')}
             className="flex items-center gap-1.5 px-3.5 py-2.5 rounded-lg bg-white border border-marble-border hover:bg-gold-light/40 text-sepia-heading font-bold text-xs shadow-xs transition-colors cursor-pointer"
           >
             <span className="material-symbols-outlined text-base text-gold-burnished">file_download</span>
@@ -302,7 +304,7 @@ export default function MembersView({
                   </div>
                   <button
                     type="button"
-                    onClick={() => alert(`Imprimiendo credencial física para ${activeSelected.name}...`)}
+                    onClick={() => toast.success(`Imprimiendo credencial física para ${activeSelected.name}...`, 'Credencial de Lector')}
                     className="px-2.5 py-1 rounded bg-gold-burnished hover:bg-gold-accent text-white font-bold text-[10px] flex items-center gap-1 transition-colors cursor-pointer"
                   >
                     <span className="material-symbols-outlined text-xs">print</span>
@@ -338,7 +340,7 @@ export default function MembersView({
 
                 <button
                   type="button"
-                  onClick={() => alert(`Enviando notificación por correo a ${activeSelected.email}...`)}
+                  onClick={() => toast.info(`Notificación de cortesía enviada a ${activeSelected.email}`, 'Aviso Enviado')}
                   className="w-full py-2 rounded-lg bg-gold-light hover:bg-gold-burnished hover:text-white text-gold-burnished font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                 >
                   <span className="material-symbols-outlined text-base">outgoing_mail</span>

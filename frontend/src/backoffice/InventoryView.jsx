@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { api } from '../api';
+import { useToast } from '../context/ToastContext';
 
 export default function InventoryView({
   books = [],
@@ -8,6 +9,7 @@ export default function InventoryView({
   onDeleteBook,
   onDeliverReservation,
 }) {
+  const toast = useToast();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [selectedBook, setSelectedBook] = useState(books[0] || null);
@@ -96,7 +98,7 @@ export default function InventoryView({
   const handleSubmitNewBook = async (e) => {
     e.preventDefault();
     if (!formData.title || !formData.author) {
-      alert('Por favor complete al menos el título y el autor.');
+      toast.warning('Por favor complete al menos el título y el autor.');
       return;
     }
     const cover =
@@ -116,6 +118,7 @@ export default function InventoryView({
       available_copies: parseInt(formData.copies) || 1,
       year: parseInt(formData.year) || 2024,
     });
+    toast.success(`Libro "${formData.title}" agregado al catálogo con éxito.`);
     setShowAddModal(false);
     setFormData({
       title: '',
