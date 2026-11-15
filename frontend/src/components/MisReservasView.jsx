@@ -69,30 +69,101 @@ export default function MisReservasView({
       </div>
 
       {/* ============================================================ */}
-      {/* DESKTOP HEADER BANNER                                         */}
+      {/* PANORAMIC ATRIO & RETIRO BANNER                               */}
       {/* ============================================================ */}
-      <div className="hidden lg:flex items-center justify-between pb-6 mb-8 border-b border-marble-border flex-wrap gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-gold-light border border-gold-burnished/30 flex items-center justify-center text-gold-burnished shadow-xs">
-            <span className="material-symbols-outlined text-2xl">bookmark</span>
-          </div>
-          <div className="flex flex-col">
-            <h2 className="text-2xl font-bold font-display text-sepia-heading">
-              Mis Reservas & Pases de Retiro
-            </h2>
-            <p className="text-xs text-warm-charcoal">
-              Consulte sus ejemplares reservados listos para retirar en el mostrador del atrio.
-            </p>
+      <div className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-r from-parchment-surface via-parchment-card to-[#234e52]/10 border border-marble-border shadow-sm mb-8 p-6 sm:p-8 lg:p-9">
+        <div className="absolute -left-10 -bottom-10 w-60 h-60 rounded-full bg-gold-burnished/10 blur-3xl pointer-events-none"></div>
+        <div className="absolute right-1/4 -top-12 w-72 h-72 rounded-full bg-marian-blue/10 blur-3xl pointer-events-none"></div>
+
+        {/* Right side masked image of Capilla Fachada */}
+        <div className="absolute right-0 top-0 bottom-0 w-[380px] pointer-events-none select-none overflow-hidden hidden xl:block">
+          <img
+            src="/capilla-fachada.jpg"
+            alt="Capilla Nuestra Señora de Lourdes"
+            className="w-full h-full object-cover object-center opacity-80"
+            style={{
+              maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 95%)',
+              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 95%)',
+            }}
+          />
+          <div className="absolute bottom-3 right-5 px-3 py-1 rounded-full bg-sepia-heading/85 backdrop-blur-md border border-white/20 flex items-center gap-1.5 shadow-xs">
+            <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
+            <span className="text-[11px] text-parchment-surface font-display font-medium">
+              Atrio Parroquial · Sigmund Freud 201
+            </span>
           </div>
         </div>
 
-        <button
-          onClick={onGoToCatalog}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-parchment-card hover:bg-white text-sepia-heading border border-marble-border text-xs font-semibold transition-all shadow-xs"
-        >
-          <span className="material-symbols-outlined text-base text-gold-burnished">auto_stories</span>
-          Explorar Más Libros
-        </button>
+        <div className="relative z-10 flex flex-col gap-5 max-w-2xl xl:max-w-3xl">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm border border-marble-border shadow-2xs">
+                <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
+                <span className="text-xs uppercase tracking-wider text-sepia-heading font-bold">
+                  Pase Digital & Retiro en Sede • Temperley
+                </span>
+              </div>
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-light/60 border border-gold-burnished/30 text-gold-burnished text-xs font-semibold">
+                <span className="material-symbols-outlined text-sm">event_repeat</span>
+                Préstamos por 21 Días (Renovables)
+              </span>
+            </div>
+
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-display text-sepia-heading tracking-tight leading-tight">
+              Mis Reservas & Retiro de Libros
+            </h1>
+            <p className="text-sm text-warm-charcoal max-w-xl leading-relaxed">
+              Tus ejemplares reservados te esperan preparados en el atrio parroquial. Presentá tu nombre o carnet en secretaría para retirarlos.
+            </p>
+          </div>
+
+          {/* 3 Step Guide Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-2xs">
+              <div className="w-8 h-8 rounded-full bg-gold-light text-gold-burnished flex items-center justify-center font-bold text-xs shrink-0 border border-gold-burnished/30">
+                1
+              </div>
+              <div className="flex flex-col">
+                <p className="text-xs font-bold text-sepia-heading font-display">Apartá tu Libro</p>
+                <p className="text-[11px] text-warm-charcoal leading-snug">Desde el catálogo general con un solo clic.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-2xs">
+              <div className="w-8 h-8 rounded-full bg-gold-light text-gold-burnished flex items-center justify-center font-bold text-xs shrink-0 border border-gold-burnished/30">
+                2
+              </div>
+              <div className="flex flex-col">
+                <p className="text-xs font-bold text-sepia-heading font-display">Reserva 48 hs</p>
+                <p className="text-[11px] text-warm-charcoal leading-snug">Queda apartado en el atrio de la capilla.</p>
+              </div>
+            </div>
+
+            <div className="flex items-start gap-3 p-3.5 rounded-2xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-2xs">
+              <div className="w-8 h-8 rounded-full bg-gold-light text-gold-burnished flex items-center justify-center font-bold text-xs shrink-0 border border-gold-burnished/30">
+                3
+              </div>
+              <div className="flex flex-col">
+                <p className="text-xs font-bold text-sepia-heading font-display">Retirá y Leé</p>
+                <p className="text-[11px] text-warm-charcoal leading-snug">21 días de lectura para disfrutar en familia.</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Action button */}
+          <div className="flex items-center gap-3 pt-1">
+            <button
+              onClick={onGoToCatalog}
+              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gold-burnished hover:bg-gold-accent text-white text-xs font-bold shadow-md hover:shadow-lg transition-all"
+            >
+              <span className="material-symbols-outlined text-base">auto_stories</span>
+              Explorar Más Libros
+            </button>
+            <span className="text-xs text-warm-charcoal hidden sm:inline">
+              Sigmund Freud 201 · Temperley
+            </span>
+          </div>
+        </div>
       </div>
 
       {loading ? (
