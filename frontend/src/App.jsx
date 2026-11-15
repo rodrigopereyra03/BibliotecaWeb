@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { api } from './api';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -57,6 +57,36 @@ export default function App() {
   const [loadingReservations, setLoadingReservations] = useState(false);
   const [loadingLoans, setLoadingLoans] = useState(false);
   const [loadingNews, setLoadingNews] = useState(false);
+
+  // Préstamos y reservas personales del usuario / lector con sesión activa
+  const currentUserId = user?.user_id || user?.id;
+  const currentUserEmail = (user?.email || '').toLowerCase().trim();
+
+  const myLoans = useMemo(() => {
+    if (!currentUserId && !currentUserEmail) return [];
+    return loans.filter((l) => {
+      if (currentUserId && (l.user_id === currentUserId || String(l.user_id) === String(currentUserId))) {
+        return true;
+      }
+      if (currentUserEmail && l.user_email && l.user_email.toLowerCase().trim() === currentUserEmail) {
+        return true;
+      }
+      return false;
+    });
+  }, [loans, currentUserId, currentUserEmail]);
+
+  const myReservations = useMemo(() => {
+    if (!currentUserId && !currentUserEmail) return [];
+    return reservations.filter((r) => {
+      if (currentUserId && (r.user_id === currentUserId || String(r.user_id) === String(currentUserId))) {
+        return true;
+      }
+      if (currentUserEmail && r.user_email && r.user_email.toLowerCase().trim() === currentUserEmail) {
+        return true;
+      }
+      return false;
+    });
+  }, [reservations, currentUserId, currentUserEmail]);
 
   // Modals
   const [activePassModal, setActivePassModal] = useState(null);
@@ -375,7 +405,7 @@ export default function App() {
         <Sidebar
           activeTab={activeTab}
           setActiveTab={setActiveTab}
-          activeReservationsCount={reservations.length}
+          activeReservationsCount={myReservations.length}
           onOpenHours={() => setShowHoursModal(true)}
           sidebarOpen={sidebarOpen}
           onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
@@ -398,7 +428,7 @@ export default function App() {
       <MobileBottomNav
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        activeReservationsCount={reservations.length}
+        activeReservationsCount={myReservations.length}
       />
 
       {/* Main Content Area */}
@@ -442,21 +472,23 @@ export default function App() {
 
           {activeTab === 'reservas' && (
             <MisReservasView
-              reservations={reservations}
+              reservations={myReservations}
               loading={loadingReservations}
               onCancelReservation={handleCancelReservation}
               onViewPass={(res) => setActivePassModal(res)}
               onGoToCatalog={() => setActiveTab('catalogo')}
               banner={banners?.reservas_banner}
+              user={user}
             />
           )}
 
           {activeTab === 'historial' && (
             <HistorialView
-              loans={loans}
+              loans={myLoans}
               loading={loadingLoans}
               onRenewLoan={handleRenewLoan}
               onGoToCatalog={() => setActiveTab('catalogo')}
+              user={user}
             />
           )}
 

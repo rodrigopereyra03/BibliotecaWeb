@@ -336,16 +336,32 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 
 // GET /api/reservations
 func GetReservations(w http.ResponseWriter, r *http.Request) {
-	rows, err := database.Query(`
-		SELECT r.id, r.user_id, r.book_id, r.pickup_slot, r.pickup_location, r.note, r.reservation_code, r.qr_token, r.status, r.created_at, r.expires_at,
-		       b.title, b.author, b.genre, b.cover_url, b.location,
-		       COALESCE(u.name, 'Socio Lector'), COALESCE(u.address, 'Sigmund Freud 201, Temperley'), COALESCE(u.member_number, ''), COALESCE(u.phone, ''), COALESCE(u.email, '')
-		FROM reservations r
-		JOIN books b ON r.book_id = b.id
-		LEFT JOIN users u ON r.user_id = u.user_id
-		WHERE r.status = 'ACTIVA'
-		ORDER BY r.id DESC
-	`)
+	userIDParam := r.URL.Query().Get("user_id")
+	var rows *sql.Rows
+	var err error
+	if userIDParam != "" {
+		rows, err = database.Query(`
+			SELECT r.id, r.user_id, r.book_id, r.pickup_slot, r.pickup_location, r.note, r.reservation_code, r.qr_token, r.status, r.created_at, r.expires_at,
+			       b.title, b.author, b.genre, b.cover_url, b.location,
+			       COALESCE(u.name, 'Socio Lector'), COALESCE(u.address, 'Sigmund Freud 201, Temperley'), COALESCE(u.member_number, ''), COALESCE(u.phone, ''), COALESCE(u.email, '')
+			FROM reservations r
+			JOIN books b ON r.book_id = b.id
+			LEFT JOIN users u ON r.user_id = u.user_id
+			WHERE r.status = 'ACTIVA' AND r.user_id = ?
+			ORDER BY r.id DESC
+		`, userIDParam)
+	} else {
+		rows, err = database.Query(`
+			SELECT r.id, r.user_id, r.book_id, r.pickup_slot, r.pickup_location, r.note, r.reservation_code, r.qr_token, r.status, r.created_at, r.expires_at,
+			       b.title, b.author, b.genre, b.cover_url, b.location,
+			       COALESCE(u.name, 'Socio Lector'), COALESCE(u.address, 'Sigmund Freud 201, Temperley'), COALESCE(u.member_number, ''), COALESCE(u.phone, ''), COALESCE(u.email, '')
+			FROM reservations r
+			JOIN books b ON r.book_id = b.id
+			LEFT JOIN users u ON r.user_id = u.user_id
+			WHERE r.status = 'ACTIVA'
+			ORDER BY r.id DESC
+		`)
+	}
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
@@ -469,15 +485,31 @@ func DeliverReservation(w http.ResponseWriter, r *http.Request) {
 
 // GET /api/loans
 func GetLoans(w http.ResponseWriter, r *http.Request) {
-	rows, err := database.Query(`
-		SELECT l.id, l.user_id, l.book_id, l.loan_date, l.due_date, l.returned_date, l.renewals_count, l.status,
-		       b.title, b.author, b.genre, b.cover_url, b.location,
-		       COALESCE(u.name, 'Socio Lector'), COALESCE(u.address, 'Sigmund Freud 201, Temperley'), COALESCE(u.member_number, ''), COALESCE(u.phone, ''), COALESCE(u.email, '')
-		FROM loans l
-		JOIN books b ON l.book_id = b.id
-		LEFT JOIN users u ON l.user_id = u.user_id
-		ORDER BY l.status ASC, l.due_date ASC
-	`)
+	userIDParam := r.URL.Query().Get("user_id")
+	var rows *sql.Rows
+	var err error
+	if userIDParam != "" {
+		rows, err = database.Query(`
+			SELECT l.id, l.user_id, l.book_id, l.loan_date, l.due_date, l.returned_date, l.renewals_count, l.status,
+			       b.title, b.author, b.genre, b.cover_url, b.location,
+			       COALESCE(u.name, 'Socio Lector'), COALESCE(u.address, 'Sigmund Freud 201, Temperley'), COALESCE(u.member_number, ''), COALESCE(u.phone, ''), COALESCE(u.email, '')
+			FROM loans l
+			JOIN books b ON l.book_id = b.id
+			LEFT JOIN users u ON l.user_id = u.user_id
+			WHERE l.user_id = ?
+			ORDER BY l.status ASC, l.due_date ASC
+		`, userIDParam)
+	} else {
+		rows, err = database.Query(`
+			SELECT l.id, l.user_id, l.book_id, l.loan_date, l.due_date, l.returned_date, l.renewals_count, l.status,
+			       b.title, b.author, b.genre, b.cover_url, b.location,
+			       COALESCE(u.name, 'Socio Lector'), COALESCE(u.address, 'Sigmund Freud 201, Temperley'), COALESCE(u.member_number, ''), COALESCE(u.phone, ''), COALESCE(u.email, '')
+			FROM loans l
+			JOIN books b ON l.book_id = b.id
+			LEFT JOIN users u ON l.user_id = u.user_id
+			ORDER BY l.status ASC, l.due_date ASC
+		`)
+	}
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return

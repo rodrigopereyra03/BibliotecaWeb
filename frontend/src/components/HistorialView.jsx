@@ -5,6 +5,7 @@ export default function HistorialView({
   loading,
   onRenewLoan,
   onGoToCatalog,
+  user,
 }) {
   const [mobileTab, setMobileTab] = useState('active'); // 'active' or 'returned'
 
@@ -107,8 +108,23 @@ export default function HistorialView({
             </div>
 
             {activeLoans.length === 0 ? (
-              <div className="p-6 rounded-xl bg-white border border-marble-border text-center text-xs text-warm-charcoal">
-                No tiene libros en préstamo actualmente.
+              <div className="p-8 rounded-2xl bg-white border border-marble-border text-center flex flex-col items-center gap-2 shadow-2xs">
+                <span className="material-symbols-outlined text-3xl text-gold-burnished/50">menu_book</span>
+                <p className="text-sm font-bold font-display text-sepia-heading">
+                  {user ? "No posee libros en préstamo activo a su nombre" : "No posee préstamos activos"}
+                </p>
+                <p className="text-xs text-warm-charcoal max-w-md">
+                  {user 
+                    ? "Cuando retire ejemplares reservados en el mostrador del atrio, figurarán aquí junto con su fecha de vencimiento y opción de prórroga." 
+                    : "Iniciá sesión con tu carnet de lector vecinal para consultar tus préstamos activos y gestionar tus lecturas."}
+                </p>
+                <button
+                  type="button"
+                  onClick={onGoToCatalog}
+                  className="mt-2 px-4 py-2 rounded-xl bg-gold-burnished hover:bg-gold-accent text-white text-xs font-bold transition-all shadow-xs"
+                >
+                  Explorar Catálogo General
+                </button>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
