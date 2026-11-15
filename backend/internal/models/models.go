@@ -28,6 +28,7 @@ type User struct {
 	Email        string    `json:"email"`
 	MemberNumber string    `json:"member_number"`
 	Phone        string    `json:"phone,omitempty"`
+	Address      string    `json:"address,omitempty"`
 	AvatarURL    string    `json:"avatar_url,omitempty"`
 	Role         string    `json:"role"`
 	Password     string    `json:"-"`
@@ -39,6 +40,13 @@ type Reservation struct {
 	UserID          int64      `json:"user_id"`
 	BookID          int64      `json:"book_id"`
 	Book            *Book      `json:"book,omitempty"`
+	BookTitle       string     `json:"book_title,omitempty"`
+	Author          string     `json:"author,omitempty"`
+	UserName        string     `json:"user_name,omitempty"`
+	UserAddress     string     `json:"user_address,omitempty"`
+	MemberNumber    string     `json:"member_number,omitempty"`
+	UserPhone       string     `json:"user_phone,omitempty"`
+	UserEmail       string     `json:"user_email,omitempty"`
 	PickupSlot      string     `json:"pickup_slot"`
 	PickupLocation  string     `json:"pickup_location"`
 	Note            string     `json:"note"`
@@ -50,15 +58,22 @@ type Reservation struct {
 }
 
 type Loan struct {
-	ID             int64      `json:"id"`
-	UserID         int64      `json:"user_id"`
-	BookID         int64      `json:"book_id"`
-	Book           *Book      `json:"book,omitempty"`
-	LoanDate       time.Time  `json:"loan_date"`
-	DueDate        time.Time  `json:"due_date"`
-	ReturnedDate   *time.Time `json:"returned_date,omitempty"`
-	RenewalsCount  int        `json:"renewals_count"`
-	Status         string     `json:"status"` // "EN_CURSO", "DEVUELTO", "VENCIDO"
+	ID            int64      `json:"id"`
+	UserID        int64      `json:"user_id"`
+	BookID        int64      `json:"book_id"`
+	Book          *Book      `json:"book,omitempty"`
+	BookTitle     string     `json:"book_title,omitempty"`
+	Author        string     `json:"author,omitempty"`
+	UserName      string     `json:"user_name,omitempty"`
+	UserAddress   string     `json:"user_address,omitempty"`
+	MemberNumber  string     `json:"member_number,omitempty"`
+	UserPhone     string     `json:"user_phone,omitempty"`
+	UserEmail     string     `json:"user_email,omitempty"`
+	LoanDate      time.Time  `json:"loan_date"`
+	DueDate       time.Time  `json:"due_date"`
+	ReturnedDate  *time.Time `json:"returned_date,omitempty"`
+	RenewalsCount int        `json:"renewals_count"`
+	Status        string     `json:"status"` // "EN_CURSO", "DEVUELTO", "VENCIDO"
 }
 
 type News struct {

@@ -34,6 +34,10 @@ export default function RegistroPage({ onRegisterSuccess, onGoToLogin, onGoToCat
       setError('Por favor complete su nombre y correo electrónico.');
       return;
     }
+    if (!address.trim()) {
+      setError('Por favor complete su domicilio (calle y altura).');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
@@ -41,7 +45,7 @@ export default function RegistroPage({ onRegisterSuccess, onGoToLogin, onGoToCat
         name: fullname,
         email: email,
         phone: phone || '+54 11 0000-0000',
-        address: address,
+        address: address.trim(),
         password: password,
       });
     } catch (err) {
@@ -237,7 +241,7 @@ export default function RegistroPage({ onRegisterSuccess, onGoToLogin, onGoToCat
 
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-sepia-heading">
-                  Barrio o Domicilio en Temperley
+                  Domicilio Completo (Calle y Altura) *
                 </label>
                 <div className="relative flex items-center">
                   <span className="material-symbols-outlined absolute left-3 text-warm-charcoal text-base pointer-events-none">
@@ -245,9 +249,10 @@ export default function RegistroPage({ onRegisterSuccess, onGoToLogin, onGoToCat
                   </span>
                   <input
                     type="text"
+                    required
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Ej. Temperley Este / Barrio San José"
+                    placeholder="Ej. Ezequiel Paz 224, Temperley"
                     className="w-full bg-parchment-base pl-9 pr-3.5 py-2 rounded-xl text-xs sm:text-sm text-sepia-ink border border-marble-border focus:bg-white focus:outline-none focus:ring-2 focus:ring-gold-burnished/40 focus:border-gold-burnished transition-all"
                   />
                 </div>

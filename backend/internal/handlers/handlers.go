@@ -338,9 +338,11 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 func GetReservations(w http.ResponseWriter, r *http.Request) {
 	rows, err := database.Query(`
 		SELECT r.id, r.user_id, r.book_id, r.pickup_slot, r.pickup_location, r.note, r.reservation_code, r.qr_token, r.status, r.created_at, r.expires_at,
-		       b.title, b.author, b.genre, b.cover_url, b.location
+		       b.title, b.author, b.genre, b.cover_url, b.location,
+		       COALESCE(u.name, 'Socio Lector'), COALESCE(u.address, 'Sigmund Freud 201, Temperley'), COALESCE(u.member_number, ''), COALESCE(u.phone, ''), COALESCE(u.email, '')
 		FROM reservations r
 		JOIN books b ON r.book_id = b.id
+		LEFT JOIN users u ON r.user_id = u.user_id
 		WHERE r.status = 'ACTIVA'
 		ORDER BY r.id DESC
 	`)
@@ -354,13 +356,22 @@ func GetReservations(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var res models.Reservation
 		var book models.Book
+		var userName, userAddress, memberNumber, userPhone, userEmail string
 		err := rows.Scan(&res.ID, &res.UserID, &res.BookID, &res.PickupSlot, &res.PickupLocation, &res.Note, &res.ReservationCode, &res.QRToken, &res.Status, &res.CreatedAt, &res.ExpiresAt,
-			&book.Title, &book.Author, &book.Genre, &book.CoverURL, &book.Location)
+			&book.Title, &book.Author, &book.Genre, &book.CoverURL, &book.Location,
+			&userName, &userAddress, &memberNumber, &userPhone, &userEmail)
 		if err != nil {
 			continue
 		}
 		book.ID = res.BookID
 		res.Book = &book
+		res.BookTitle = book.Title
+		res.Author = book.Author
+		res.UserName = userName
+		res.UserAddress = userAddress
+		res.MemberNumber = memberNumber
+		res.UserPhone = userPhone
+		res.UserEmail = userEmail
 		reservations = append(reservations, res)
 	}
 
@@ -460,9 +471,11 @@ func DeliverReservation(w http.ResponseWriter, r *http.Request) {
 func GetLoans(w http.ResponseWriter, r *http.Request) {
 	rows, err := database.Query(`
 		SELECT l.id, l.user_id, l.book_id, l.loan_date, l.due_date, l.returned_date, l.renewals_count, l.status,
-		       b.title, b.author, b.genre, b.cover_url, b.location
+		       b.title, b.author, b.genre, b.cover_url, b.location,
+		       COALESCE(u.name, 'Socio Lector'), COALESCE(u.address, 'Sigmund Freud 201, Temperley'), COALESCE(u.member_number, ''), COALESCE(u.phone, ''), COALESCE(u.email, '')
 		FROM loans l
 		JOIN books b ON l.book_id = b.id
+		LEFT JOIN users u ON l.user_id = u.user_id
 		ORDER BY l.status ASC, l.due_date ASC
 	`)
 	if err != nil {
@@ -475,13 +488,22 @@ func GetLoans(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var l models.Loan
 		var book models.Book
+		var userName, userAddress, memberNumber, userPhone, userEmail string
 		err := rows.Scan(&l.ID, &l.UserID, &l.BookID, &l.LoanDate, &l.DueDate, &l.ReturnedDate, &l.RenewalsCount, &l.Status,
-			&book.Title, &book.Author, &book.Genre, &book.CoverURL, &book.Location)
+			&book.Title, &book.Author, &book.Genre, &book.CoverURL, &book.Location,
+			&userName, &userAddress, &memberNumber, &userPhone, &userEmail)
 		if err != nil {
 			continue
 		}
 		book.ID = l.BookID
 		l.Book = &book
+		l.BookTitle = book.Title
+		l.Author = book.Author
+		l.UserName = userName
+		l.UserAddress = userAddress
+		l.MemberNumber = memberNumber
+		l.UserPhone = userPhone
+		l.UserEmail = userEmail
 		loans = append(loans, l)
 	}
 
@@ -665,7 +687,7 @@ func DeleteNews(w http.ResponseWriter, r *http.Request) {
 
 // GET /api/users (Backoffice: Listar lectores/miembros)
 func GetUsers(w http.ResponseWriter, r *http.Request) {
-	rows, err := database.Query("SELECT user_id, name, email, member_number, phone, avatar_url, role FROM users ORDER BY user_id ASC")
+	rows, err := database.Query("SELECT user_id, name, email, member_number, phone, COALESCE(address, ''), avatar_url, role FROM users ORDER BY user_id ASC")
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
@@ -675,7 +697,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	var users []models.User
 	for rows.Next() {
 		var u models.User
-		err := rows.Scan(&u.UserID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.AvatarURL, &u.Role)
+		err := rows.Scan(&u.UserID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.Address, &u.AvatarURL, &u.Role)
 		if err != nil {
 			continue
 		}
@@ -716,12 +738,12 @@ func LoginUser(w http.ResponseWriter, r *http.Request) {
 	var u models.User
 	var dbPass string
 	err := database.QueryRow(`
-		SELECT user_id, name, email, member_number, phone, avatar_url, role, COALESCE(password, '')
+		SELECT user_id, name, email, member_number, phone, COALESCE(address, ''), avatar_url, role, COALESCE(password, '')
 		FROM users
 		WHERE LOWER(email) = LOWER(?) OR LOWER(member_number) = LOWER(?)
 		LIMIT 1
 	`, loginKey, loginKey).Scan(
-		&u.UserID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.AvatarURL, &u.Role, &dbPass,
+		&u.UserID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.Address, &u.AvatarURL, &u.Role, &dbPass,
 	)
 	if err == sql.ErrNoRows {
 		jsonResponse(w, http.StatusUnauthorized, map[string]string{"error": "Usuario o contraseña incorrectos"})
@@ -777,12 +799,12 @@ func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 
 	var u models.User
 	err = database.QueryRow(`
-		SELECT user_id, name, email, member_number, phone, avatar_url, role
+		SELECT user_id, name, email, member_number, phone, COALESCE(address, ''), avatar_url, role
 		FROM users
 		WHERE user_id = ?
 		LIMIT 1
 	`, id).Scan(
-		&u.UserID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.AvatarURL, &u.Role,
+		&u.UserID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.Address, &u.AvatarURL, &u.Role,
 	)
 	if err == sql.ErrNoRows {
 		jsonResponse(w, http.StatusOK, nil)
@@ -802,6 +824,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		Name     string `json:"name"`
 		Email    string `json:"email"`
 		Phone    string `json:"phone"`
+		Address  string `json:"address"`
 		Password string `json:"password"`
 	}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
@@ -811,6 +834,10 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	name := strings.TrimSpace(body.Name)
 	email := strings.TrimSpace(body.Email)
+	address := strings.TrimSpace(body.Address)
+	if address == "" {
+		address = "Sigmund Freud 201, Temperley"
+	}
 	if name == "" || email == "" {
 		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Nombre y correo son obligatorios"})
 		return
@@ -831,11 +858,11 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	memberNumber := fmt.Sprintf("GT-%d", num)
 	avatar := "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"
 
-	// Todo nuevo registro es ESTRICTAMENTE 'lector'
+	// Todo nuevo registro es ESTRICTAMENTE 'lector' y almacena el domicilio
 	newID, err := database.InsertUserWithReturnID(`
-		INSERT INTO users (name, email, member_number, phone, avatar_url, role, password)
-		VALUES (?, ?, ?, ?, ?, 'lector', ?)
-	`, name, email, memberNumber, body.Phone, avatar, password)
+		INSERT INTO users (name, email, member_number, phone, address, avatar_url, role, password)
+		VALUES (?, ?, ?, ?, ?, ?, 'lector', ?)
+	`, name, email, memberNumber, body.Phone, address, avatar, password)
 	if err != nil {
 		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "No se pudo registrar: el correo o número ya puede estar registrado"})
 		return
@@ -848,6 +875,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 		Email:        email,
 		MemberNumber: memberNumber,
 		Phone:        body.Phone,
+		Address:      address,
 		AvatarURL:    avatar,
 		Role:         "lector",
 	}

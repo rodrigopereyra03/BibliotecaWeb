@@ -157,6 +157,7 @@ func createTables(db *sql.DB) error {
 			email VARCHAR(255) UNIQUE NOT NULL,
 			member_number VARCHAR(100) UNIQUE NOT NULL,
 			phone VARCHAR(100),
+			address TEXT DEFAULT '',
 			avatar_url TEXT,
 			role VARCHAR(50) DEFAULT 'lector',
 			password VARCHAR(255) DEFAULT '',
@@ -238,6 +239,7 @@ func createTables(db *sql.DB) error {
 			email TEXT UNIQUE NOT NULL,
 			member_number TEXT UNIQUE NOT NULL,
 			phone TEXT,
+			address TEXT DEFAULT '',
 			avatar_url TEXT,
 			role TEXT DEFAULT 'lector',
 			password TEXT DEFAULT '',
@@ -320,12 +322,17 @@ func createTables(db *sql.DB) error {
 		return err
 	}
 
-	// Migración: asegurar que la columna password exista en users
+	// Migración: asegurar que las columnas password y address existan en users
 	if DriverName == "postgres" {
 		_, _ = db.Exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS password VARCHAR(255) DEFAULT ''")
+		_, _ = db.Exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT DEFAULT ''")
 	} else {
 		_, _ = db.Exec("ALTER TABLE users ADD COLUMN password TEXT DEFAULT ''")
+		_, _ = db.Exec("ALTER TABLE users ADD COLUMN address TEXT DEFAULT ''")
 	}
+
+	// Completar domicilio de Rodrigo Pereyra si está en blanco
+	_, _ = db.Exec(Rebind("UPDATE users SET address = 'Ezequiel Paz 224, Temperley' WHERE LOWER(email) = 'rodrigopereyra02@gmail.com' AND (address IS NULL OR address = '')"))
 
 	if err := SeedAdminUser(db); err != nil {
 		fmt.Printf("Advertencia al sembrar admin: %v\n", err)

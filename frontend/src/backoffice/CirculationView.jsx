@@ -303,8 +303,9 @@ export default function CirculationView({
                           <p className="font-bold text-xs text-sepia-heading">
                             {activeSelected.user_name || 'Socio Lector'}
                           </p>
-                          <p className="text-[10px] text-warm-charcoal">
-                            Socio Registrado · Sede Central Lourdes
+                          <p className="text-[10px] text-warm-charcoal flex items-center gap-1 mt-0.5">
+                            <span className="material-symbols-outlined text-[12px] text-gold-burnished">home</span>
+                            <span>{activeSelected.user_address || 'Sigmund Freud 201, Temperley'}</span>
                           </p>
                         </div>
                       </div>
@@ -385,12 +386,22 @@ export default function CirculationView({
                 return (
                   <tr key={loan.id} className="hover:bg-gold-light/20 transition-colors">
                     <td className="py-3 px-4 align-middle">
-                      <p className="font-bold text-sepia-heading">{loan.book_title}</p>
-                      <p className="text-[11px] text-warm-charcoal">{loan.author}</p>
+                      <p className="font-bold text-sepia-heading">
+                        {loan.book_title || loan.book?.title || 'Título no especificado'}
+                      </p>
+                      <p className="text-[11px] text-warm-charcoal">
+                        {loan.author || loan.book?.author || ''}
+                      </p>
                     </td>
 
-                    <td className="py-3 px-4 align-middle font-medium">
-                      {loan.user_name || 'Lector Registrado'}
+                    <td className="py-3 px-4 align-middle">
+                      <p className="font-bold text-sepia-heading">
+                        {loan.user_name || 'Socio Lector'}
+                      </p>
+                      <p className="text-[11px] text-warm-charcoal flex items-center gap-1 mt-0.5">
+                        <span className="material-symbols-outlined text-[13px] text-gold-burnished shrink-0">home</span>
+                        <span>{loan.user_address || 'Sigmund Freud 201, Temperley'}</span>
+                      </p>
                     </td>
 
                     <td className="py-3 px-4 align-middle text-warm-charcoal">
