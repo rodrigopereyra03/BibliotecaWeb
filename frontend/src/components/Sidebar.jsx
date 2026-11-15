@@ -101,87 +101,57 @@ export default function Sidebar({
             </div>
           </button>
 
-          <div className="my-1.5 border-t border-marble-border/70"></div>
-
-          {/* Dedicated Login and Register or User Session */}
-          {!user ? (
+          {/* User Session Profile (if logged in) */}
+          {user && (
             <>
-              <button
-                onClick={() => setActiveTab('login')}
-                title="Pantalla de Acceso / Login"
-                className={`flex items-center ${
-                  sidebarOpen ? 'gap-3 px-3.5 py-2 text-left' : 'justify-center p-2'
-                } rounded-lg text-xs transition-all ${
-                  activeTab === 'login'
-                    ? 'bg-gold-light text-gold-burnished font-bold border border-gold-burnished/30'
-                    : 'text-warm-charcoal hover:bg-parchment-card hover:text-sepia-ink'
-                }`}
-              >
-                <span className="material-symbols-outlined text-base shrink-0">login</span>
-                {sidebarOpen && <span className="truncate">Acceso / Iniciar Sesión</span>}
-              </button>
-
-              <button
-                onClick={() => setActiveTab('registro')}
-                title="Pantalla de Registro"
-                className={`flex items-center ${
-                  sidebarOpen ? 'gap-3 px-3.5 py-2 text-left' : 'justify-center p-2'
-                } rounded-lg text-xs transition-all ${
-                  activeTab === 'registro'
-                    ? 'bg-gold-light text-gold-burnished font-bold border border-gold-burnished/30'
-                    : 'text-warm-charcoal hover:bg-parchment-card hover:text-sepia-ink'
-                }`}
-              >
-                <span className="material-symbols-outlined text-base shrink-0">person_add</span>
-                {sidebarOpen && <span className="truncate">Inscribirme como Lector</span>}
-              </button>
-            </>
-          ) : (
-            <div className={`p-2 rounded-xl bg-parchment-card border border-marble-border/80 flex flex-col gap-1.5 ${sidebarOpen ? '' : 'items-center'}`}>
-              <div className={`flex items-center gap-2 ${sidebarOpen ? '' : 'justify-center'}`}>
-                <img
-                  src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"}
-                  alt={user.name}
-                  className="w-7 h-7 rounded-full object-cover ring-1 ring-gold-burnished/40 shrink-0"
-                />
-                {sidebarOpen && (
-                  <div className="flex flex-col min-w-0 flex-1">
-                    <span className="text-xs font-bold text-sepia-heading truncate">{user.name}</span>
-                    <span className="text-[10px] text-gold-burnished font-semibold truncate">
-                      {user.role === 'admin' ? 'Administrador' : `#${user.member_number}`}
-                    </span>
-                  </div>
+              <div className="my-1.5 border-t border-marble-border/70"></div>
+              <div className={`p-2 rounded-xl bg-parchment-card border border-marble-border/80 flex flex-col gap-1.5 ${sidebarOpen ? '' : 'items-center'}`}>
+                <div className={`flex items-center gap-2 ${sidebarOpen ? '' : 'justify-center'}`}>
+                  <img
+                    src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"}
+                    alt={user.name}
+                    className="w-7 h-7 rounded-full object-cover ring-1 ring-gold-burnished/40 shrink-0"
+                  />
+                  {sidebarOpen && (
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="text-xs font-bold text-sepia-heading truncate">{user.name}</span>
+                      <span className="text-[10px] text-gold-burnished font-semibold truncate">
+                        {user.role === 'admin' ? 'Administrador' : `#${user.member_number}`}
+                      </span>
+                    </div>
+                  )}
+                </div>
+                {onLogout && (
+                  <button
+                    onClick={onLogout}
+                    title="Cerrar Sesión"
+                    className={`flex items-center gap-1.5 text-[11px] text-warm-charcoal hover:text-red-700 py-1 px-1.5 rounded hover:bg-red-50 transition-colors cursor-pointer ${sidebarOpen ? '' : 'justify-center w-full'}`}
+                  >
+                    <span className="material-symbols-outlined text-sm">logout</span>
+                    {sidebarOpen && <span>Cerrar Sesión</span>}
+                  </button>
                 )}
               </div>
-              {onLogout && (
-                <button
-                  onClick={onLogout}
-                  title="Cerrar Sesión"
-                  className={`flex items-center gap-1.5 text-[11px] text-warm-charcoal hover:text-red-700 py-1 px-1.5 rounded hover:bg-red-50 transition-colors cursor-pointer ${sidebarOpen ? '' : 'justify-center w-full'}`}
-                >
-                  <span className="material-symbols-outlined text-sm">logout</span>
-                  {sidebarOpen && <span>Cerrar Sesión</span>}
-                </button>
-              )}
-            </div>
+            </>
           )}
-
-          <div className="my-1.5 border-t border-marble-border/70"></div>
 
           {/* Backoffice Admin Mode Link - ONLY VISIBLE TO ADMIN */}
           {user && user.role === 'admin' && onGoToBackoffice && (
-            <button
-              onClick={onGoToBackoffice}
-              title="Modo Backoffice (Administración)"
-              className={`flex items-center ${
-                sidebarOpen ? 'gap-3 px-3.5 py-2.5 text-left' : 'justify-center p-2.5'
-              } rounded-lg text-xs font-bold bg-gold-burnished hover:bg-gold-accent text-white transition-all shadow-xs cursor-pointer group`}
-            >
-              <span className="material-symbols-outlined text-base shrink-0 group-hover:rotate-45 transition-transform">
-                admin_panel_settings
-              </span>
-              {sidebarOpen && <span className="truncate">⚙️ Modo Backoffice</span>}
-            </button>
+            <>
+              <div className="my-1.5 border-t border-marble-border/70"></div>
+              <button
+                onClick={onGoToBackoffice}
+                title="Modo Backoffice (Administración)"
+                className={`flex items-center ${
+                  sidebarOpen ? 'gap-3 px-3.5 py-2.5 text-left' : 'justify-center p-2.5'
+                } rounded-lg text-xs font-bold bg-gold-burnished hover:bg-gold-accent text-white transition-all shadow-xs cursor-pointer group`}
+              >
+                <span className="material-symbols-outlined text-base shrink-0 group-hover:rotate-45 transition-transform">
+                  admin_panel_settings
+                </span>
+                {sidebarOpen && <span className="truncate">⚙️ Modo Backoffice</span>}
+              </button>
+            </>
           )}
         </nav>
       </div>
