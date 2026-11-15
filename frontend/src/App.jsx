@@ -33,10 +33,34 @@ export default function App() {
   const [reservations, setReservations] = useState([]);
   const [loans, setLoans] = useState([]);
   const [news, setNews] = useState([]);
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(() => {
+    try {
+      const stored = localStorage.getItem('biblioteca_user');
+      if (!stored) return null;
+      const parsed = JSON.parse(stored);
+      return parsed && (parsed.id || parsed.user_id) ? parsed : null;
+    } catch {
+      return null;
+    }
+  });
 
   // Backoffice Mode State
-  const [isBackoffice, setIsBackoffice] = useState(false);
+  const [isBackoffice, setIsBackofficeState] = useState(() => {
+    const stored = localStorage.getItem('biblioteca_user');
+    if (!stored) return false;
+    try {
+      const parsed = JSON.parse(stored);
+      if (parsed?.role !== 'admin') return false;
+      return localStorage.getItem('biblioteca_backoffice') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const setIsBackoffice = (val) => {
+    setIsBackofficeState(val);
+    localStorage.setItem('biblioteca_backoffice', val ? 'true' : 'false');
+  };
   const [backofficeView, setBackofficeView] = useState('dashboard');
   const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);

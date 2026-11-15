@@ -203,23 +203,52 @@ export const api = {
       const stored = localStorage.getItem('biblioteca_user');
       if (!stored) return null;
       const parsed = JSON.parse(stored);
-      if (!parsed || !parsed.id) return null;
+      const userId = parsed?.id || parsed?.user_id;
+      if (!userId) {
+        localStorage.removeItem('biblioteca_user');
+        return null;
+      }
 
-      const res = await fetch(`${API_BASE}/user/me?id=${parsed.id}`, {
+      const res = await fetch(`${API_BASE}/user/me?id=${userId}`, {
         headers: parsed.token ? { Authorization: `Bearer ${parsed.token}` } : {},
       });
+
+      // Solo si el servidor rechaza explícitamente la autenticación (401/403) eliminamos la sesión
+      if (res.status === 401 || res.status === 403) {
+        localStorage.removeItem('biblioteca_user');
+        return null;
+      }
+
+      // Si hubo un error temporal del servidor (500, 502, timeout, etc.), no cerramos la sesión
       if (!res.ok) {
-        localStorage.removeItem('biblioteca_user');
-        return null;
+        return { ...parsed, id: userId, user_id: userId };
       }
+
       const data = await res.json();
-      if (!data) {
-        localStorage.removeItem('biblioteca_user');
+      if (!data || (!data.id && !data.user_id)) {
+        return { ...parsed, id: userId, user_id: userId };
+      }
+
+      const updated = {
+        ...parsed,
+        ...data,
+        id: data.id || data.user_id || userId,
+        user_id: data.user_id || data.id || userId,
+        token: parsed.token,
+      };
+      localStorage.setItem('biblioteca_user', JSON.stringify(updated));
+      return updated;
+    } catch (e) {
+      // Si falla la red o está offline, conservamos la sesión local
+      try {
+        const stored = localStorage.getItem('biblioteca_user');
+        if (!stored) return null;
+        const parsed = JSON.parse(stored);
+        const userId = parsed?.id || parsed?.user_id;
+        return userId ? { ...parsed, id: userId, user_id: userId } : null;
+      } catch {
         return null;
       }
-      return { ...data, token: parsed.token };
-    } catch {
-      return null;
     }
   },
 
@@ -233,13 +262,25 @@ export const api = {
     if (!res.ok) {
       throw new Error(data.error || 'Credenciales inválidas');
     }
-    const userWithToken = { ...data.user, token: data.token };
+    const userId = data.user?.id || data.user?.user_id;
+    const userWithToken = {
+      ...data.user,
+      id: userId,
+      user_id: userId,
+      token: data.token,
+    };
     localStorage.setItem('biblioteca_user', JSON.stringify(userWithToken));
-    return data.user;
+    if (data.user?.role === 'admin') {
+      localStorage.setItem('biblioteca_backoffice', 'true');
+    } else {
+      localStorage.setItem('biblioteca_backoffice', 'false');
+    }
+    return userWithToken;
   },
 
   async logout() {
     localStorage.removeItem('biblioteca_user');
+    localStorage.removeItem('biblioteca_backoffice');
   },
 
   async registerUser(userData) {
@@ -252,9 +293,16 @@ export const api = {
     if (!res.ok) {
       throw new Error(data.error || 'Error al registrarse');
     }
-    const userWithToken = { ...data.user, token: data.token };
+    const userId = data.user?.id || data.user?.user_id;
+    const userWithToken = {
+      ...data.user,
+      id: userId,
+      user_id: userId,
+      token: data.token,
+    };
     localStorage.setItem('biblioteca_user', JSON.stringify(userWithToken));
-    return data.user;
+    localStorage.setItem('biblioteca_backoffice', 'false');
+    return userWithToken;
   },
 
   // Banners API
