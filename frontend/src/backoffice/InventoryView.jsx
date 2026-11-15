@@ -25,7 +25,8 @@ export default function InventoryView({
     author: '',
     genre: 'Novela Histórica',
     year: 2024,
-    shelf_location: 'Estantería 2A · Módulo 01',
+    column: '2A',
+    row: 1,
     copies: 2,
     available_copies: 2,
     format: 'Físico',
@@ -101,8 +102,14 @@ export default function InventoryView({
     const cover =
       formData.cover_image ||
       'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80';
+    const col = (formData.column || '').trim() || 'A';
+    const row = formData.row !== undefined && formData.row !== '' ? formData.row : '1';
+    const computedLocation = `Columna ${col} · Fila ${row}`;
+
     await onAddBook({
       ...formData,
+      location: computedLocation,
+      shelf_location: computedLocation,
       cover_image: cover,
       cover_url: cover,
       copies: parseInt(formData.copies) || 1,
@@ -115,7 +122,8 @@ export default function InventoryView({
       author: '',
       genre: 'Novela Histórica',
       year: 2024,
-      shelf_location: 'Estantería 2A · Módulo 01',
+      column: '2A',
+      row: 1,
       copies: 2,
       available_copies: 2,
       format: 'Físico',
@@ -605,15 +613,32 @@ export default function InventoryView({
                 </div>
               </div>
 
-              <div>
-                <label className="block font-bold text-sepia-heading mb-1">Ubicación / Estantería</label>
-                <input
-                  type="text"
-                  placeholder="Ej. Estantería 2A · Módulo 01"
-                  value={formData.shelf_location}
-                  onChange={(e) => setFormData({ ...formData, shelf_location: e.target.value })}
-                  className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading"
-                />
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-bold text-sepia-heading mb-1">
+                    Columna (Alfanumérico)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej. 2A, B, EST-1"
+                    value={formData.column}
+                    onChange={(e) => setFormData({ ...formData, column: e.target.value })}
+                    className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading font-mono text-xs uppercase"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-sepia-heading mb-1">
+                    Fila (Numérico)
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    placeholder="Ej. 1, 2, 3..."
+                    value={formData.row}
+                    onChange={(e) => setFormData({ ...formData, row: e.target.value })}
+                    className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading font-mono text-xs"
+                  />
+                </div>
               </div>
 
               {/* Portada: URL o subir desde PC a Neon Bucket 'biblioteca' */}
