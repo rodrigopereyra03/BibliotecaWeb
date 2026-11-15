@@ -168,17 +168,6 @@ export default function Sidebar({
               />
               <div className="absolute inset-0 bg-gradient-to-t from-stone-950 via-stone-950/60 to-transparent"></div>
 
-              {/* Status Pill */}
-              <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between z-10">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sepia-heading/85 backdrop-blur-md text-[10px] text-parchment-surface font-semibold border border-white/20">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                  <span>Misa: Domingo 9 hs</span>
-                </span>
-                <span className="w-5 h-5 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white text-xs group-hover:translate-x-0.5 transition-transform">
-                  ›
-                </span>
-              </div>
-
               {/* Banner Text Content */}
               <div className="absolute bottom-2.5 left-3 right-3 text-white z-10 flex flex-col gap-0.5">
                 <span className="text-[10px] uppercase tracking-wider text-gold-accent font-bold">
