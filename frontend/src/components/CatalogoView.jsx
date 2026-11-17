@@ -180,12 +180,29 @@ export default function CatalogoView({
 
   useEffect(() => {
     if (books && books.length > 0 && !selectedBook) {
-      setSelectedBook(books[0]);
+      const first = books[0];
+      setSelectedBook(first);
+      setActiveTabMode(first.format === 'digital' ? 'digital' : 'physical');
     }
   }, [books]);
 
-  const handleSelectBook = (book) => {
+  useEffect(() => {
+    if (selectedBook) {
+      if (selectedBook.format === 'digital' && activeTabMode !== 'digital') {
+        setActiveTabMode('digital');
+      }
+    }
+  }, [selectedBook, activeTabMode]);
+
+  const handleSelectBook = (book, preferredMode = null) => {
     setSelectedBook(book);
+    if (preferredMode) {
+      setActiveTabMode(preferredMode);
+    } else if (book.format === 'digital') {
+      setActiveTabMode('digital');
+    } else {
+      setActiveTabMode('physical');
+    }
     if (workbenchRef.current) {
       workbenchRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -393,19 +410,32 @@ export default function CatalogoView({
                     {featuredBook.author}
                   </p>
 
-                  <span className="text-[10px] text-green-700 font-semibold mt-2 block">
-                    {featuredBook.available_copies > 0 ? '✓ Listo para retiro' : 'Agotado'}
-                  </span>
+                  {featuredBook.format === 'digital' ? (
+                    <span className="text-[10px] text-marian-blue font-semibold mt-2 block flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-marian-blue"></span>
+                      PDF Digital · Descarga Inmediata
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-green-700 font-semibold mt-2 block">
+                      {featuredBook.available_copies > 0 ? '✓ Listo para retiro' : 'Agotado'}
+                    </span>
+                  )}
                 </div>
               </div>
 
               <button
                 type="button"
-                onClick={() => handleSelectBook(featuredBook)}
-                className="w-full py-2 px-3 rounded-lg bg-gold-burnished hover:bg-gold-accent text-white font-bold text-xs shadow-xs flex items-center justify-center gap-1.5 transition-all"
+                onClick={() => handleSelectBook(featuredBook, featuredBook.format === 'digital' ? 'digital' : 'physical')}
+                className={`w-full py-2 px-3 rounded-lg font-bold text-xs shadow-xs flex items-center justify-center gap-1.5 transition-all ${
+                  featuredBook.format === 'digital'
+                    ? 'bg-marian-blue hover:bg-blue-900 text-white'
+                    : 'bg-gold-burnished hover:bg-gold-accent text-white'
+                }`}
               >
-                <span className="material-symbols-outlined text-sm">bookmark_add</span>
-                Apartar para Retiro
+                <span className="material-symbols-outlined text-sm">
+                  {featuredBook.format === 'digital' ? 'download' : 'bookmark_add'}
+                </span>
+                {featuredBook.format === 'digital' ? 'Leer / Descargar PDF' : 'Apartar para Retiro'}
               </button>
             </div>
           </section>
@@ -612,32 +642,52 @@ export default function CatalogoView({
           <div className="relative z-10 flex flex-col gap-5 sm:gap-6">
             <div className="flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-marble-border">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gold-light border border-gold-burnished/30 flex items-center justify-center text-gold-burnished shadow-xs">
-                  <span className="material-symbols-outlined text-lg sm:text-xl">auto_stories</span>
+                <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full border flex items-center justify-center shadow-xs ${
+                  selectedBook.format === 'digital' || activeTabMode === 'digital'
+                    ? 'bg-blue-50 border-blue-200 text-marian-blue'
+                    : 'bg-gold-light border-gold-burnished/30 text-gold-burnished'
+                }`}>
+                  <span className="material-symbols-outlined text-lg sm:text-xl">
+                    {selectedBook.format === 'digital' || activeTabMode === 'digital' ? 'picture_as_pdf' : 'auto_stories'}
+                  </span>
                 </div>
                 <div className="flex flex-col">
-                  <span className="text-[10px] sm:text-xs uppercase tracking-wider text-gold-burnished font-semibold">
-                    Ejemplar para Reserva
+                  <span className={`text-[10px] sm:text-xs uppercase tracking-wider font-semibold ${
+                    selectedBook.format === 'digital' || activeTabMode === 'digital' ? 'text-marian-blue' : 'text-gold-burnished'
+                  }`}>
+                    {selectedBook.format === 'digital'
+                      ? 'Ejemplar Digital (PDF) · Acceso Inmediato'
+                      : activeTabMode === 'digital'
+                      ? 'Versión Digital (PDF)'
+                      : 'Ejemplar para Reserva'}
                   </span>
                   <span className="text-base sm:text-lg font-bold font-display text-sepia-heading">
-                    Ficha de Préstamo para Retiro en la Biblioteca
+                    {selectedBook.format === 'digital' || activeTabMode === 'digital'
+                      ? 'Ficha de Lectura y Descarga Digital'
+                      : 'Ficha de Préstamo para Retiro en la Biblioteca'}
                   </span>
                 </div>
               </div>
 
-              <div className="flex items-center p-1 rounded-lg bg-white border border-marble-border shadow-2xs">
-                <button
-                  type="button"
-                  onClick={() => setActiveTabMode('physical')}
-                  className={`px-2.5 sm:px-3 py-1 rounded text-xs transition-all ${
-                    activeTabMode === 'physical'
-                      ? 'bg-gold-burnished text-white font-semibold shadow-xs'
-                      : 'text-warm-charcoal hover:text-sepia-ink'
-                  }`}
-                >
-                  Físico
-                </button>
-                {selectedBook.has_digital && (
+              {/* Selector de Modo Físico / Digital */}
+              {selectedBook.format === 'digital' ? (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200 text-marian-blue text-xs font-bold shadow-2xs">
+                  <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
+                  <span>Edición Digital (PDF)</span>
+                </div>
+              ) : selectedBook.format === 'both' || selectedBook.has_digital ? (
+                <div className="flex items-center p-1 rounded-lg bg-white border border-marble-border shadow-2xs">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTabMode('physical')}
+                    className={`px-2.5 sm:px-3 py-1 rounded text-xs transition-all ${
+                      activeTabMode === 'physical'
+                        ? 'bg-gold-burnished text-white font-semibold shadow-xs'
+                        : 'text-warm-charcoal hover:text-sepia-ink'
+                    }`}
+                  >
+                    Físico
+                  </button>
                   <button
                     type="button"
                     onClick={() => setActiveTabMode('digital')}
@@ -649,8 +699,13 @@ export default function CatalogoView({
                   >
                     PDF
                   </button>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-parchment-base border border-marble-border text-warm-charcoal text-xs font-semibold">
+                  <span className="material-symbols-outlined text-sm text-gold-burnished">menu_book</span>
+                  <span>Ejemplar Físico</span>
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch">
@@ -663,14 +718,23 @@ export default function CatalogoView({
                       alt={selectedBook.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute bottom-1.5 left-1.5 right-1.5 px-2 py-1 rounded bg-sepia-ink/85 backdrop-blur-md flex items-center justify-between text-[11px] text-white">
-                      <span className="text-gold-accent flex items-center gap-1 font-medium">
-                        <span className="material-symbols-outlined text-xs">menu_book</span> Físico
-                      </span>
-                      <span className="text-parchment-surface font-mono">
-                        {selectedBook.available_copies > 0 ? `${selectedBook.available_copies} Disponibles` : 'Agotado'}
-                      </span>
-                    </div>
+                    {selectedBook.format === 'digital' || activeTabMode === 'digital' ? (
+                      <div className="absolute bottom-1.5 left-1.5 right-1.5 px-2 py-1 rounded bg-slate-900/90 backdrop-blur-md flex items-center justify-between text-[11px] text-white">
+                        <span className="text-cyan-300 flex items-center gap-1 font-semibold">
+                          <span className="material-symbols-outlined text-xs">picture_as_pdf</span> PDF Digital
+                        </span>
+                        <span className="text-emerald-300 font-medium">Descarga Inmediata</span>
+                      </div>
+                    ) : (
+                      <div className="absolute bottom-1.5 left-1.5 right-1.5 px-2 py-1 rounded bg-sepia-ink/85 backdrop-blur-md flex items-center justify-between text-[11px] text-white">
+                        <span className="text-gold-accent flex items-center gap-1 font-medium">
+                          <span className="material-symbols-outlined text-xs">menu_book</span> Físico
+                        </span>
+                        <span className="text-parchment-surface font-mono">
+                          {selectedBook.available_copies > 0 ? `${selectedBook.available_copies} Disponibles` : 'Agotado'}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 w-full pt-1 text-center">
@@ -681,13 +745,19 @@ export default function CatalogoView({
                       </span>
                     </div>
                     <div className="flex flex-col items-center justify-center p-2 rounded bg-parchment-surface border border-marble-border/60">
-                      <span className="text-[10px] uppercase text-warm-charcoal tracking-wider">Plazo</span>
-                      <span className="text-xs font-semibold text-sepia-heading mt-0.5">21 Días</span>
+                      <span className="text-[10px] uppercase text-warm-charcoal tracking-wider">
+                        {selectedBook.format === 'digital' || activeTabMode === 'digital' ? 'Disponibilidad' : 'Plazo'}
+                      </span>
+                      <span className="text-xs font-semibold text-sepia-heading mt-0.5">
+                        {selectedBook.format === 'digital' || activeTabMode === 'digital' ? 'Sin Límites' : '21 Días'}
+                      </span>
                     </div>
                     <div className="flex flex-col items-center justify-center p-2 rounded bg-parchment-surface border border-marble-border/60 col-span-2">
                       <span className="text-[10px] uppercase text-warm-charcoal tracking-wider">Modalidad</span>
                       <span className="text-xs text-gold-burnished font-semibold mt-0.5 truncate w-full">
-                        Préstamo Libre y Gratuito
+                        {selectedBook.format === 'digital' || activeTabMode === 'digital'
+                          ? 'Descarga y Lectura Libre'
+                          : 'Préstamo Libre y Gratuito'}
                       </span>
                     </div>
                   </div>
@@ -714,7 +784,7 @@ export default function CatalogoView({
                   </div>
                 </div>
 
-                {activeTabMode === 'physical' ? (
+                {activeTabMode === 'physical' && selectedBook.format !== 'digital' ? (
                   <div className="p-4 sm:p-6 rounded-xl bg-white border border-marble-border shadow-xs flex flex-col gap-3 sm:gap-4">
                     <div className="flex items-center justify-between pb-1 border-b border-marble-border/50">
                       <span className="text-xs sm:text-sm text-sepia-heading font-bold flex items-center gap-1.5">
@@ -831,30 +901,76 @@ export default function CatalogoView({
                     </button>
                   </div>
                 ) : (
-                  <div className="p-5 rounded-xl bg-white border border-marble-border shadow-xs flex flex-col gap-3 text-center items-center">
-                    <span className="text-xs sm:text-sm text-marian-blue font-bold">
-                      Edición Digital Completa (PDF)
-                    </span>
-                    {selectedBook.digital_url ? (
-                      <a
-                        href={selectedBook.digital_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="px-6 py-2 rounded-lg bg-marian-blue hover:bg-blue-800 text-white text-xs font-semibold shadow-xs transition-all flex items-center gap-2"
-                      >
-                        <span className="material-symbols-outlined text-base">open_in_new</span>
-                        Abrir / Descargar PDF desde Neon
-                      </a>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => toast.info(`Versión digital no disponible aún para: ${selectedBook.title}`, 'Depósito Digital')}
-                        className="px-6 py-2 rounded-lg bg-slate-300 text-slate-700 text-xs font-semibold shadow-xs flex items-center gap-2 cursor-not-allowed"
-                      >
-                        <span className="material-symbols-outlined text-base">picture_as_pdf</span>
-                        PDF no cargado
-                      </button>
-                    )}
+                  <div className="p-6 sm:p-8 rounded-xl bg-white border border-marble-border shadow-xs flex flex-col gap-5 text-center items-center">
+                    <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-200 text-marian-blue flex items-center justify-center shadow-xs">
+                      <span className="material-symbols-outlined text-3xl">picture_as_pdf</span>
+                    </div>
+
+                    <div className="max-w-lg">
+                      <span className="px-3 py-1 rounded-full bg-blue-50 text-marian-blue text-xs uppercase tracking-wider font-bold border border-blue-200 inline-block mb-2">
+                        Edición Digital Comunitaria · Acceso Inmediato
+                      </span>
+                      <h4 className="text-xl sm:text-2xl font-bold font-display text-sepia-heading">
+                        Lectura y Descarga Directa
+                      </h4>
+                      <p className="text-xs sm:text-sm text-warm-charcoal mt-2 leading-relaxed">
+                        Este libro se encuentra disponible en formato digital (PDF) para toda la comunidad de la Capilla Ntra. Sra. de Lourdes. <strong>No requiere retiro físico ni reserva presencial en el despacho</strong>: podés descargarlo a tu dispositivo o leerlo online al instante.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md pt-1">
+                      {selectedBook.digital_url ? (
+                        <>
+                          <a
+                            href={selectedBook.digital_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            download
+                            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-marian-blue hover:bg-blue-900 text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer flex-1"
+                          >
+                            <span className="material-symbols-outlined text-lg">download</span>
+                            <span>Descargar PDF</span>
+                          </a>
+                          <a
+                            href={selectedBook.digital_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full sm:w-auto px-5 py-3 rounded-xl bg-parchment-surface hover:bg-parchment-card border border-marble-border text-sepia-heading text-xs sm:text-sm font-bold shadow-xs hover:border-gold-burnished/50 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            <span className="material-symbols-outlined text-lg">chrome_reader_mode</span>
+                            <span>Leer Online</span>
+                          </a>
+                        </>
+                      ) : (
+                        <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs">
+                          El archivo PDF de este título se encuentra en proceso de carga.
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full pt-4 border-t border-marble-border/70 text-left">
+                      <div className="p-3 rounded-lg bg-parchment-base/60 border border-marble-border/70 flex items-start gap-2.5">
+                        <span className="material-symbols-outlined text-gold-burnished text-lg shrink-0">devices</span>
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-sepia-heading">Multiplataforma</span>
+                          <span className="text-[11px] text-warm-charcoal">Leé en tu celular, tablet o computadora.</span>
+                        </div>
+                      </div>
+                      <div className="p-3 rounded-lg bg-parchment-base/60 border border-marble-border/70 flex items-start gap-2.5">
+                        <span className="material-symbols-outlined text-emerald-700 text-lg shrink-0">all_inclusive</span>
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-sepia-heading">Sin Plazos</span>
+                          <span className="text-[11px] text-warm-charcoal">Conservá el archivo sin necesidad de devolverlo.</span>
+                        </div>
+                      </div>
+                      <div className="p-3 rounded-lg bg-parchment-base/60 border border-marble-border/70 flex items-start gap-2.5">
+                        <span className="material-symbols-outlined text-marian-blue text-lg shrink-0">church</span>
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-sepia-heading">Biblioteca Parroquial</span>
+                          <span className="text-[11px] text-warm-charcoal">Fondo literario abierto y gratuito.</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -913,8 +1029,14 @@ export default function CatalogoView({
                       <span className="text-[9px] uppercase tracking-wider text-gold-burnished font-bold truncate">
                         {b.genre}
                       </span>
-                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-parchment-surface text-warm-charcoal border border-marble-border font-mono ml-auto shrink-0">
-                        {b.format === 'both' ? 'PDF+Físico' : b.format === 'digital' ? 'PDF' : 'Físico'}
+                      <span className={`text-[9px] px-1.5 py-0.2 rounded font-mono ml-auto shrink-0 border ${
+                        b.format === 'digital'
+                          ? 'bg-blue-50 text-marian-blue border-blue-200 font-bold'
+                          : b.format === 'both'
+                          ? 'bg-amber-50 text-amber-900 border-amber-200'
+                          : 'bg-parchment-surface text-warm-charcoal border-marble-border'
+                      }`}>
+                        {b.format === 'both' ? 'PDF+Físico' : b.format === 'digital' ? 'PDF Digital' : 'Físico'}
                       </span>
                     </div>
 
@@ -924,9 +1046,16 @@ export default function CatalogoView({
                     <p className="text-[11px] text-warm-charcoal truncate mt-0.5">{b.author}</p>
 
                     <div className="flex items-center justify-between text-[10px] text-warm-charcoal mt-1.5">
-                      <span className={isAvailable ? 'text-green-700 font-semibold' : 'text-terracotta font-semibold'}>
-                        {isAvailable ? `${b.available_copies} disp.` : 'Reservado'}
-                      </span>
+                      {b.format === 'digital' ? (
+                        <span className="text-marian-blue font-semibold flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-marian-blue"></span>
+                          Descarga Libre
+                        </span>
+                      ) : (
+                        <span className={isAvailable ? 'text-green-700 font-semibold' : 'text-terracotta font-semibold'}>
+                          {isAvailable ? `${b.available_copies} disp.` : 'Reservado'}
+                        </span>
+                      )}
                     </div>
                   </div>
 
@@ -934,11 +1063,18 @@ export default function CatalogoView({
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSelectBook(b);
+                      handleSelectBook(b, b.format === 'digital' ? 'digital' : 'physical');
                     }}
-                    className="w-8 h-8 rounded-full bg-gold-light border border-gold-burnished/30 text-gold-burnished flex items-center justify-center shrink-0 hover:bg-gold-burnished hover:text-white transition-colors"
+                    className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
+                      b.format === 'digital'
+                        ? 'bg-blue-50 border-blue-200 text-marian-blue hover:bg-marian-blue hover:text-white'
+                        : 'bg-gold-light border-gold-burnished/30 text-gold-burnished hover:bg-gold-burnished hover:text-white'
+                    }`}
+                    title={b.format === 'digital' ? 'Leer / Descargar PDF' : 'Reservar Ejemplar'}
                   >
-                    <span className="material-symbols-outlined text-base">bookmark_add</span>
+                    <span className="material-symbols-outlined text-base">
+                      {b.format === 'digital' ? 'download' : 'bookmark_add'}
+                    </span>
                   </button>
                 </div>
               );
@@ -963,10 +1099,22 @@ export default function CatalogoView({
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute top-2 left-2 z-20">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/95 backdrop-blur-md text-[11px] text-gold-burnished border border-marble-border font-semibold shadow-2xs">
-                          <span className="material-symbols-outlined text-xs">menu_book</span>
-                          {b.format === 'both' ? 'Físico + PDF' : b.format === 'digital' ? 'PDF Digital' : 'Físico'}
-                        </span>
+                        {b.format === 'digital' ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-marian-blue text-white backdrop-blur-md text-[11px] font-bold shadow-2xs">
+                            <span className="material-symbols-outlined text-xs">picture_as_pdf</span>
+                            PDF Digital
+                          </span>
+                        ) : b.format === 'both' ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-sepia-ink/90 text-gold-accent backdrop-blur-md text-[11px] font-semibold shadow-2xs">
+                            <span className="material-symbols-outlined text-xs">auto_stories</span>
+                            Físico + PDF
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/95 text-gold-burnished border border-marble-border text-[11px] font-semibold shadow-2xs">
+                            <span className="material-symbols-outlined text-xs">menu_book</span>
+                            Físico
+                          </span>
+                        )}
                       </div>
                       <div className="absolute bottom-2 right-2 z-20">
                         <span className="px-2 py-0.5 rounded bg-white/95 text-[10px] text-warm-charcoal border border-marble-border font-mono font-medium">
@@ -988,26 +1136,45 @@ export default function CatalogoView({
                       <p className="text-xs text-warm-charcoal truncate">{b.author}</p>
                     </div>
 
-                    <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-white border border-marble-border/60 text-xs">
-                      <span className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-gold-burnished' : 'bg-terracotta'}`}></span>
-                      <span className="text-xs text-sepia-heading font-medium">
-                        {isAvailable ? `${b.available_copies} Disponibles` : 'Reservado'}
-                      </span>
-                      <span className="text-[11px] text-gold-burnished font-semibold ml-auto">
-                        {b.format === 'digital' ? 'Digital PDF' : 'Ejemplar Físico'}
-                      </span>
-                    </div>
+                    {b.format === 'digital' ? (
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-blue-50 border border-blue-200 text-xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-marian-blue"></span>
+                        <span className="text-xs text-marian-blue font-semibold">Descarga Libre</span>
+                        <span className="text-[11px] text-marian-blue font-bold ml-auto">PDF Online</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-white border border-marble-border/60 text-xs">
+                        <span className={`w-1.5 h-1.5 rounded-full ${isAvailable ? 'bg-gold-burnished' : 'bg-terracotta'}`}></span>
+                        <span className="text-xs text-sepia-heading font-medium">
+                          {isAvailable ? `${b.available_copies} Disponibles` : 'Reservado'}
+                        </span>
+                        <span className="text-[11px] text-gold-burnished font-semibold ml-auto">
+                          {b.format === 'both' ? 'Híbrido' : 'Ejemplar Físico'}
+                        </span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="pt-3 mt-1">
-                    <button
-                      type="button"
-                      onClick={() => handleSelectBook(b)}
-                      className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded bg-gold-burnished hover:bg-gold-accent text-white text-xs font-bold transition-all shadow-xs"
-                    >
-                      <span className="material-symbols-outlined text-sm">bookmark_add</span>
-                      Ver & Reservar
-                    </button>
+                    {b.format === 'digital' ? (
+                      <button
+                        type="button"
+                        onClick={() => handleSelectBook(b, 'digital')}
+                        className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded bg-marian-blue hover:bg-blue-900 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                      >
+                        <span className="material-symbols-outlined text-sm">download</span>
+                        Leer / Descargar PDF
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => handleSelectBook(b, 'physical')}
+                        className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded bg-gold-burnished hover:bg-gold-accent text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+                      >
+                        <span className="material-symbols-outlined text-sm">bookmark_add</span>
+                        Ver & Reservar
+                      </button>
+                    )}
                   </div>
                 </div>
               );

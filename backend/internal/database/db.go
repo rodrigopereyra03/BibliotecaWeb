@@ -346,6 +346,9 @@ func createTables(db *sql.DB) error {
 	// Limpiar fotos de personas falsas en avatares
 	_, _ = db.Exec(Rebind("UPDATE users SET avatar_url = '' WHERE avatar_url LIKE '%unsplash%'"))
 
+	// Asegurar que libros digitales no tengan copias físicas ni ubicación de estantería
+	_, _ = db.Exec(Rebind("UPDATE books SET total_copies = 0, available_copies = 0, location = 'Repositorio Digital (PDF)' WHERE format = 'digital'"))
+
 	if err := SeedAdminUser(db); err != nil {
 		fmt.Printf("Advertencia al sembrar admin: %v\n", err)
 	}

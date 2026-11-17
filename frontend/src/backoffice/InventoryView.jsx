@@ -155,38 +155,35 @@ export default function InventoryView({
     const cover =
       formData.cover_image ||
       'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&w=600&q=80';
+    const isDigital = formData.format === 'Digital';
     const col = (formData.column || '').trim() || 'A';
     const row = formData.row !== undefined && formData.row !== '' ? formData.row : '1';
-    const computedLocation = `Columna ${col} · Fila ${row}`;
+    const computedLocation = isDigital ? 'Repositorio Digital (PDF)' : `Columna ${col} · Fila ${row}`;
+    const copiesNum = isDigital ? 0 : (parseInt(formData.copies) || 1);
+    const availableNum = isDigital ? 0 : (parseInt(formData.available_copies) || copiesNum);
+
+    const bookPayload = {
+      ...formData,
+      format: isDigital ? 'digital' : (formData.format === 'Ambos' ? 'both' : 'physical'),
+      has_digital: isDigital || formData.format === 'Ambos' || Boolean(formData.digital_url),
+      location: computedLocation,
+      shelf_location: computedLocation,
+      cover_image: cover,
+      cover_url: cover,
+      copies: copiesNum,
+      total_copies: copiesNum,
+      available_copies: availableNum,
+      year: parseInt(formData.year) || 2024,
+    };
 
     if (editingBook) {
       if (onUpdateBook) {
-        await onUpdateBook(editingBook.id, {
-          ...formData,
-          location: computedLocation,
-          shelf_location: computedLocation,
-          cover_image: cover,
-          cover_url: cover,
-          copies: parseInt(formData.copies) || 1,
-          total_copies: parseInt(formData.copies) || 1,
-          available_copies: parseInt(formData.available_copies) || parseInt(formData.copies) || 1,
-          year: parseInt(formData.year) || 2024,
-        });
+        await onUpdateBook(editingBook.id, bookPayload);
         toast.success(`Libro "${formData.title}" actualizado con éxito.`);
       }
     } else {
       if (onAddBook) {
-        await onAddBook({
-          ...formData,
-          location: computedLocation,
-          shelf_location: computedLocation,
-          cover_image: cover,
-          cover_url: cover,
-          copies: parseInt(formData.copies) || 1,
-          total_copies: parseInt(formData.copies) || 1,
-          available_copies: parseInt(formData.copies) || 1,
-          year: parseInt(formData.year) || 2024,
-        });
+        await onAddBook(bookPayload);
         toast.success(`Libro "${formData.title}" agregado al catálogo con éxito.`);
       }
     }
@@ -423,23 +420,48 @@ export default function InventoryView({
                         </td>
 
                         <td className="py-3 px-4 align-middle">
-                          <div className="flex items-center gap-1 text-sepia-heading font-semibold">
-                            <span className="material-symbols-outlined text-xs text-gold-burnished">meeting_room</span>
-                            <span>{loc}</span>
-                          </div>
+                          {book.format === 'digital' ? (
+                            <div className="flex items-center gap-1 text-marian-blue font-semibold text-xs">
+                              <span className="material-symbols-outlined text-xs">picture_as_pdf</span>
+                              <span>Repositorio Digital</span>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1 text-sepia-heading font-semibold">
+                              <span className="material-symbols-outlined text-xs text-gold-burnished">meeting_room</span>
+                              <span>{loc}</span>
+                            </div>
+                          )}
                         </td>
 
                         <td className="py-3 px-4 align-middle">
-                          <span className="font-semibold text-sepia-heading">
-                            {available} / {total}
-                          </span>
-                          <span className="block text-[10px] text-warm-charcoal">
-                            {book.format || 'Físico'}
-                          </span>
+                          {book.format === 'digital' ? (
+                            <>
+                              <span className="font-semibold text-marian-blue text-xs">
+                                Digital (PDF)
+                              </span>
+                              <span className="block text-[10px] text-warm-charcoal">
+                                Descarga Directa
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <span className="font-semibold text-sepia-heading">
+                                {available} / {total}
+                              </span>
+                              <span className="block text-[10px] text-warm-charcoal">
+                                {book.format === 'both' ? 'Físico + PDF' : 'Físico'}
+                              </span>
+                            </>
+                          )}
                         </td>
 
                         <td className="py-3 px-4 align-middle">
-                          {isAvailable ? (
+                          {book.format === 'digital' ? (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-marian-blue border border-blue-200">
+                              <span className="w-1.5 h-1.5 rounded-full bg-marian-blue"></span>
+                              Acceso Libre
+                            </span>
+                          ) : isAvailable ? (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
                               Disponible
@@ -555,16 +577,20 @@ export default function InventoryView({
 
               <div className="mt-4 p-3 bg-parchment-surface rounded-xl border border-marble-border">
                 <span className="text-[10px] uppercase font-bold text-warm-charcoal tracking-wider">
-                  Localización Física en Depósito
+                  {activeSelected.format === 'digital' ? 'Repositorio Digital' : 'Localización Física en Depósito'}
                 </span>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="material-symbols-outlined text-gold-burnished text-base">shelves</span>
+                  <span className={`material-symbols-outlined text-base ${activeSelected.format === 'digital' ? 'text-marian-blue' : 'text-gold-burnished'}`}>
+                    {activeSelected.format === 'digital' ? 'picture_as_pdf' : 'shelves'}
+                  </span>
                   <span className="text-xs font-bold text-sepia-heading">
-                    {activeSelected.location || activeSelected.shelf_location || 'Estantería General'}
+                    {activeSelected.format === 'digital' ? 'Biblioteca Digital (Neon Storage)' : (activeSelected.location || activeSelected.shelf_location || 'Estantería General')}
                   </span>
                 </div>
                 <p className="text-[11px] text-warm-charcoal mt-1">
-                  Módulo central de biblioteca parroquial. Acceso libre para lectores y socios.
+                  {activeSelected.format === 'digital'
+                    ? 'Ejemplar en formato digital PDF disponible para descarga directa y lectura en pantalla.'
+                    : 'Módulo central de biblioteca parroquial. Acceso libre para lectores y socios.'}
                 </p>
               </div>
 
@@ -683,16 +709,18 @@ export default function InventoryView({
                     className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading"
                   />
                 </div>
-                <div>
-                  <label className="block font-bold text-sepia-heading mb-1">Total Copias</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={formData.copies}
-                    onChange={(e) => setFormData({ ...formData, copies: e.target.value, available_copies: e.target.value })}
-                    className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading"
-                  />
-                </div>
+                {formData.format !== 'Digital' && (
+                  <div>
+                    <label className="block font-bold text-sepia-heading mb-1">Total Copias</label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={formData.copies}
+                      onChange={(e) => setFormData({ ...formData, copies: e.target.value, available_copies: e.target.value })}
+                      className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading"
+                    />
+                  </div>
+                )}
                 <div>
                   <label className="block font-bold text-sepia-heading mb-1">Formato</label>
                   <select
@@ -707,33 +735,42 @@ export default function InventoryView({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-bold text-sepia-heading mb-1">
-                    Columna (Alfanumérico)
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Ej. 2A, B, EST-1"
-                    value={formData.column}
-                    onChange={(e) => setFormData({ ...formData, column: e.target.value })}
-                    className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading font-mono text-xs uppercase"
-                  />
+              {formData.format === 'Digital' ? (
+                <div className="p-3 rounded-lg bg-blue-50 border border-blue-200 text-marian-blue text-xs flex items-center gap-2">
+                  <span className="material-symbols-outlined text-base shrink-0">info</span>
+                  <span>
+                    <strong>Edición Digital (PDF):</strong> Este ejemplar no requiere copias físicas ni ubicación en estantería. Los lectores podrán descargarlo y leerlo directamente desde el catálogo.
+                  </span>
                 </div>
-                <div>
-                  <label className="block font-bold text-sepia-heading mb-1">
-                    Fila (Numérico)
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    placeholder="Ej. 1, 2, 3..."
-                    value={formData.row}
-                    onChange={(e) => setFormData({ ...formData, row: e.target.value })}
-                    className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading font-mono text-xs"
-                  />
+              ) : (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block font-bold text-sepia-heading mb-1">
+                      Columna (Alfanumérico)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Ej. 2A, B, EST-1"
+                      value={formData.column}
+                      onChange={(e) => setFormData({ ...formData, column: e.target.value })}
+                      className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading font-mono text-xs uppercase"
+                    />
+                  </div>
+                  <div>
+                    <label className="block font-bold text-sepia-heading mb-1">
+                      Fila (Numérico)
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      placeholder="Ej. 1, 2, 3..."
+                      value={formData.row}
+                      onChange={(e) => setFormData({ ...formData, row: e.target.value })}
+                      className="w-full px-3 py-2 bg-parchment-base rounded-lg border border-marble-border focus:ring-1 focus:ring-gold-burnished text-sepia-heading font-mono text-xs"
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Portada: URL o subir desde PC a Neon Bucket 'biblioteca' */}
               <div>

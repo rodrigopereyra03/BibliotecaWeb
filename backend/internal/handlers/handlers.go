@@ -161,19 +161,6 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		genre = "Novelas & Ficción"
 	}
 
-	totalCopies := req.TotalCopies
-	if totalCopies <= 0 {
-		totalCopies = req.Copies
-	}
-	if totalCopies <= 0 {
-		totalCopies = 1
-	}
-
-	availCopies := req.AvailableCopies
-	if availCopies <= 0 {
-		availCopies = totalCopies
-	}
-
 	rating := req.Rating
 	if rating <= 0 {
 		rating = 5.0
@@ -196,6 +183,27 @@ func CreateBook(w http.ResponseWriter, r *http.Request) {
 		hasDigital = true
 		if format == "physical" {
 			format = "both"
+		}
+	}
+
+	totalCopies := req.TotalCopies
+	if totalCopies <= 0 {
+		totalCopies = req.Copies
+	}
+	availCopies := req.AvailableCopies
+
+	if format == "digital" {
+		totalCopies = 0
+		availCopies = 0
+		if location == "Sector General · Estante 3B" || strings.Contains(location, "Columna") {
+			location = "Repositorio Digital (PDF)"
+		}
+	} else {
+		if totalCopies <= 0 {
+			totalCopies = 1
+		}
+		if availCopies <= 0 {
+			availCopies = totalCopies
 		}
 	}
 
@@ -315,19 +323,6 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 		genre = "Novelas & Ficción"
 	}
 
-	totalCopies := req.TotalCopies
-	if totalCopies <= 0 {
-		totalCopies = req.Copies
-	}
-	if totalCopies <= 0 {
-		totalCopies = 1
-	}
-
-	availCopies := req.AvailableCopies
-	if availCopies <= 0 {
-		availCopies = totalCopies
-	}
-
 	rating := req.Rating
 	if rating <= 0 {
 		rating = 5.0
@@ -350,6 +345,27 @@ func UpdateBook(w http.ResponseWriter, r *http.Request) {
 		hasDigital = true
 		if format == "physical" {
 			format = "both"
+		}
+	}
+
+	totalCopies := req.TotalCopies
+	if totalCopies <= 0 {
+		totalCopies = req.Copies
+	}
+	availCopies := req.AvailableCopies
+
+	if format == "digital" {
+		totalCopies = 0
+		availCopies = 0
+		if location == "Sector General · Estante 3B" || strings.Contains(location, "Columna") {
+			location = "Repositorio Digital (PDF)"
+		}
+	} else {
+		if totalCopies <= 0 {
+			totalCopies = 1
+		}
+		if availCopies <= 0 {
+			availCopies = totalCopies
 		}
 	}
 
