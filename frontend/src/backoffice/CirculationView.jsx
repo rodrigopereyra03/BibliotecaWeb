@@ -240,6 +240,10 @@ export default function CirculationView({
                     <div className="truncate mr-2">
                       <p className="font-bold text-sepia-heading truncate">{res.book_title}</p>
                       <p className="text-[10px] text-warm-charcoal">{res.user_name} · {res.reservation_code}</p>
+                      <p className="text-[10px] text-gold-burnished font-semibold flex items-center gap-1 mt-0.5">
+                        <span className="material-symbols-outlined text-[12px]">calendar_today</span>
+                        <span>Retira: {res.pickup_slot || 'Fecha no informada'}</span>
+                      </p>
                     </div>
                     <span className="material-symbols-outlined text-gold-burnished text-sm shrink-0">
                       arrow_forward
@@ -319,7 +323,27 @@ export default function CirculationView({
                       </div>
                     </div>
 
-                    <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] text-warm-charcoal">
+                    {/* Prominent Scheduled Pickup Day & Slot (QA Item 7) */}
+                    <div className="mt-3 p-3 bg-amber-50/90 rounded-xl border border-gold-burnished/40">
+                      <div className="flex items-center gap-2.5">
+                        <span className="material-symbols-outlined text-gold-burnished text-2xl shrink-0">event_upcoming</span>
+                        <div>
+                          <span className="block text-[10px] uppercase font-bold text-gold-burnished tracking-wider">
+                            Día y Turno de Retiro Elegido por el Lector
+                          </span>
+                          <strong className="text-xs sm:text-sm text-sepia-heading font-extrabold block mt-0.5">
+                            {activeSelected.pickup_slot || 'No especificado'}
+                          </strong>
+                        </div>
+                      </div>
+                      {activeSelected.note && (
+                        <p className="text-[11px] text-warm-charcoal mt-2 pt-2 border-t border-gold-burnished/20 italic">
+                          Nota del lector: "{activeSelected.note}"
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="mt-2.5 grid grid-cols-2 gap-2 text-[11px] text-warm-charcoal">
                       <div className="p-2 bg-parchment-base rounded-lg border border-marble-border">
                         <span className="block text-[9px] uppercase font-bold text-warm-charcoal">
                           Plazo Préstamo

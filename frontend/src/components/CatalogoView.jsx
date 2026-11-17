@@ -15,13 +15,71 @@ export default function CatalogoView({
 }) {
   const toast = useToast();
   const [selectedBook, setSelectedBook] = useState(null);
-  const [pickupSlot, setPickupSlot] = useState('Turno Mañana (10:00 a 13:00 hs)');
-  const [note, setNote] = useState('Retiro en mostrador del atrio');
+  const [note, setNote] = useState('Retiro en mostrador de la biblioteca');
   const [reserving, setReserving] = useState(false);
   const [activeTabMode, setActiveTabMode] = useState('physical');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const workbenchRef = useRef(null);
+
+  // Generar próximos días disponibles de retiro en biblioteca (Lunes a Domingo)
+  const upcomingDays = React.useMemo(() => {
+    const days = [];
+    const dayNames = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+    const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+    const now = new Date();
+
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(now);
+      d.setDate(now.getDate() + i);
+      const dayOfWeek = d.getDay();
+      const dayName = dayNames[dayOfWeek];
+      const isoDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+      const formatted = `${d.getDate()} ${monthNames[d.getMonth()]}`;
+      const label = i === 0 ? `Hoy (${dayName} ${formatted})` : i === 1 ? `Mañana (${dayName} ${formatted})` : `${dayName} ${formatted}`;
+
+      let shifts = [];
+      if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        shifts = [
+          { id: 'Turno Mañana (10:00 a 13:00 hs)', title: 'Turno Mañana', hours: '10:00 a 13:00 hs', note: 'Despacho Biblioteca' },
+          { id: 'Turno Tarde (15:00 a 18:00 hs)', title: 'Turno Tarde', hours: '15:00 a 18:00 hs', note: 'Despacho Biblioteca' },
+        ];
+      } else if (dayOfWeek === 6) {
+        shifts = [
+          { id: 'Atención General (9:30 a 12:30 hs)', title: 'Turno Sábado', hours: '9:30 a 12:30 hs', note: 'Biblioteca' },
+        ];
+      } else {
+        shifts = [
+          { id: 'Jornada Comunitaria (8:30 a 14:00 hs)', title: 'Turno Domingo', hours: '8:30 a 14:00 hs', note: 'Biblioteca' },
+        ];
+      }
+
+      days.push({
+        date: d,
+        isoDate,
+        dayName,
+        label,
+        shifts,
+      });
+    }
+    return days;
+  }, []);
+
+  const [selectedDayIndex, setSelectedDayIndex] = useState(0);
+  const [selectedShiftId, setSelectedShiftId] = useState(
+    upcomingDays[0]?.shifts[0]?.id || 'Turno Mañana (10:00 a 13:00 hs)'
+  );
+
+  const handleSelectDay = (idx) => {
+    setSelectedDayIndex(idx);
+    const day = upcomingDays[idx];
+    if (day && day.shifts.length > 0) {
+      const exists = day.shifts.find((s) => s.id === selectedShiftId);
+      if (!exists) {
+        setSelectedShiftId(day.shifts[0].id);
+      }
+    }
+  };
 
   const heroSlides = [
     {
@@ -52,7 +110,7 @@ export default function CatalogoView({
       quote: banners?.hero_slide_2?.quote ? `"${banners.hero_slide_2.quote.replace(/^"|"$/g, '')}"` : '"La lectura, la reflexión y la verdad como faro abierto para toda nuestra comunidad."',
       description:
         banners?.hero_slide_2?.description ||
-        'Consulte y retire libros para todo el barrio: novelas universales, literatura contemporánea, cuentos, terror, suspenso y documentos digitales con descarga libre y retiro en el atrio.',
+        'Inspirados en su testimonio de búsqueda incansable de la verdad y pasión por las letras, promovemos un espacio de pensamiento crítico, fe y cultura abierto a niños, jóvenes y adultos.',
       image: banners?.hero_slide_2?.image_url || '/hero-titus.jpg',
       imageAlt: 'San Tito Brandsma',
       imageCaption: banners?.hero_slide_2?.subtitle || 'San Tito Brandsma · Mártir & Académico Carmelita',
@@ -68,7 +126,7 @@ export default function CatalogoView({
       id: 'capilla',
       kicker: banners?.hero_slide_3?.tagline || 'Sede Central & Encuentro Vecinal • Abierto a Familias',
       badge: banners?.hero_slide_3?.badge_text || 'Sede Temperley · Sigmund Freud 201',
-      title: banners?.hero_slide_3?.title || 'Retiro en el Atrio Parroquial y Préstamos Domiciliarios',
+      title: banners?.hero_slide_3?.title || 'Retiro en la Biblioteca y Préstamos Domiciliarios',
       quote: banners?.hero_slide_3?.quote ? `"${banners.hero_slide_3.quote.replace(/^"|"$/g, '')}"` : '"Un templo y una biblioteca comunitaria donde cada vecino y familia encuentra su lugar."',
       description:
         banners?.hero_slide_3?.description ||
@@ -136,10 +194,13 @@ export default function CatalogoView({
   const handleConfirmReservation = async () => {
     if (!selectedBook) return;
     setReserving(true);
+    const chosenDay = upcomingDays[selectedDayIndex] || upcomingDays[0];
+    const fullPickupSlot = `${chosenDay.dayName} ${chosenDay.date.getDate()}/${chosenDay.date.getMonth() + 1} · ${selectedShiftId}`;
     try {
       await onReserveSuccess({
         book_id: selectedBook.id,
-        pickup_slot: pickupSlot,
+        pickup_slot: fullPickupSlot,
+        pickup_date: chosenDay.isoDate,
         note: note,
         pickup_location: 'Sigmund Freud 201, Temperley',
       });
@@ -332,11 +393,7 @@ export default function CatalogoView({
                     {featuredBook.author}
                   </p>
 
-                  <div className="mt-2 text-[10px] text-gold-burnished font-mono font-bold truncate">
-                    {featuredBook.location || 'Sector Central · Estante 2A'}
-                  </div>
-
-                  <span className="text-[10px] text-green-700 font-semibold mt-0.5">
+                  <span className="text-[10px] text-green-700 font-semibold mt-2 block">
                     {featuredBook.available_copies > 0 ? '✓ Listo para retiro' : 'Agotado'}
                   </span>
                 </div>
@@ -384,7 +441,7 @@ export default function CatalogoView({
         <div className="absolute right-1/3 -top-16 w-80 h-80 rounded-full bg-amber-500/10 blur-3xl pointer-events-none"></div>
 
         {/* Hero Image (Editorial fade blend) */}
-        <div className="absolute right-0 top-0 bottom-0 w-[450px] pointer-events-none select-none overflow-hidden hidden xl:block">
+        <div className="absolute right-0 top-0 bottom-0 w-[360px] xl:w-[400px] pointer-events-none select-none overflow-hidden hidden xl:block">
           {heroSlides.map((slide, idx) => (
             <img
               key={slide.id}
@@ -394,12 +451,12 @@ export default function CatalogoView({
                 idx === currentSlide ? 'opacity-90' : 'opacity-0'
               }`}
               style={{
-                maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 98%)',
-                WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 98%)',
+                maskImage: 'linear-gradient(to left, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0) 85%)',
+                WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0) 85%)',
               }}
             />
           ))}
-          <div className="absolute bottom-3 right-5 px-3 py-1 rounded-full bg-sepia-heading/80 backdrop-blur-md border border-white/20 flex items-center gap-2 shadow-xs transition-all duration-500">
+          <div className="absolute bottom-5 right-6 px-3 py-1 rounded-full bg-stone-900/85 backdrop-blur-md border border-white/20 flex items-center gap-2 shadow-xs transition-all duration-500 z-10">
             <span className="w-2 h-2 rounded-full bg-gold-burnished animate-pulse"></span>
             <span className="text-[11px] text-parchment-surface font-display font-medium tracking-wide">
               {heroSlides[currentSlide].imageCaption}
@@ -407,46 +464,46 @@ export default function CatalogoView({
           </div>
         </div>
 
-        {/* Slide Content */}
-        <div className="relative z-10 flex flex-col gap-4 max-w-2xl xl:max-w-3xl mb-6">
+        {/* Slide Content (Limit to 65% width to avoid touching image/face) */}
+        <div className="relative z-10 flex flex-col gap-4 max-w-[70%] lg:max-w-[65%] xl:max-w-[66%] mb-6">
           <div className="flex flex-col gap-2">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm border shadow-2xs w-max transition-all">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm border border-marble-border shadow-2xs w-max transition-all">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
-              <span className="text-xs uppercase tracking-wider text-sepia-heading font-bold">
+              <span className="text-xs uppercase tracking-wider text-stone-900 font-bold">
                 {heroSlides[currentSlide].kicker}
               </span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-bold font-display text-sepia-heading tracking-tight pt-1 leading-tight min-h-[72px] flex items-center">
+            <h2 className="text-3xl sm:text-4xl font-extrabold font-display text-stone-950 tracking-tight pt-1 leading-tight min-h-[72px] flex items-center">
               {heroSlides[currentSlide].title}
             </h2>
 
-            <p className="text-xs sm:text-sm text-sepia-heading/90 italic font-display border-l-2 border-gold-burnished pl-3 my-1">
+            <p className="text-xs sm:text-sm text-stone-900 font-semibold italic font-display border-l-2 border-gold-burnished pl-3 my-1">
               {heroSlides[currentSlide].quote}
             </p>
 
-            <p className="text-xs sm:text-sm text-warm-charcoal leading-relaxed min-h-[44px]">
+            <p className="text-xs sm:text-sm text-stone-950 font-medium leading-relaxed min-h-[44px]">
               {heroSlides[currentSlide].description}
             </p>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-xs hover:border-gold-burnished/40 transition-colors">
+            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/95 backdrop-blur-sm border border-marble-border shadow-xs hover:border-gold-burnished/40 transition-colors">
               <span className="material-symbols-outlined text-gold-burnished text-2xl">shelves</span>
               <div className="flex flex-col">
-                <span className="text-[10px] uppercase text-warm-charcoal font-semibold">Volúmenes Físicos</span>
-                <span className="text-sm font-bold text-sepia-heading">
+                <span className="text-[10px] uppercase text-stone-700 font-bold">Volúmenes Físicos</span>
+                <span className="text-sm font-extrabold text-stone-950">
                   {physicalBooksCount} {physicalBooksCount === 1 ? 'Título' : 'Títulos'}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/90 backdrop-blur-sm border border-marble-border shadow-xs hover:border-marian-blue/40 transition-colors">
+            <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-white/95 backdrop-blur-sm border border-marble-border shadow-xs hover:border-marian-blue/40 transition-colors">
               <span className="material-symbols-outlined text-marian-blue text-2xl">cloud_done</span>
               <div className="flex items-center gap-1.5">
                 <div className="flex flex-col">
-                  <span className="text-[10px] uppercase text-warm-charcoal font-semibold">Depósito Digital</span>
-                  <span className="text-sm font-bold text-sepia-heading">
+                  <span className="text-[10px] uppercase text-stone-700 font-bold">Depósito Digital</span>
+                  <span className="text-sm font-extrabold text-stone-950">
                     {digitalBooksCount} {digitalBooksCount === 1 ? 'Documento' : 'Documentos'}
                   </span>
                 </div>
@@ -563,7 +620,7 @@ export default function CatalogoView({
                     Ejemplar para Reserva
                   </span>
                   <span className="text-base sm:text-lg font-bold font-display text-sepia-heading">
-                    Ficha de Préstamo para Retiro en el Atrio
+                    Ficha de Préstamo para Retiro en la Biblioteca
                   </span>
                 </div>
               </div>
@@ -628,9 +685,9 @@ export default function CatalogoView({
                       <span className="text-xs font-semibold text-sepia-heading mt-0.5">21 Días</span>
                     </div>
                     <div className="flex flex-col items-center justify-center p-2 rounded bg-parchment-surface border border-marble-border/60 col-span-2">
-                      <span className="text-[10px] uppercase text-warm-charcoal tracking-wider">Ubicación</span>
-                      <span className="text-xs text-gold-burnished font-mono font-bold mt-0.5 truncate w-full">
-                        {selectedBook.location || 'Estante 2A · Atrio Central'}
+                      <span className="text-[10px] uppercase text-warm-charcoal tracking-wider">Modalidad</span>
+                      <span className="text-xs text-gold-burnished font-semibold mt-0.5 truncate w-full">
+                        Préstamo Libre y Gratuito
                       </span>
                     </div>
                   </div>
@@ -662,49 +719,88 @@ export default function CatalogoView({
                     <div className="flex items-center justify-between pb-1 border-b border-marble-border/50">
                       <span className="text-xs sm:text-sm text-sepia-heading font-bold flex items-center gap-1.5">
                         <span className="material-symbols-outlined text-gold-burnished text-lg sm:text-xl">event_available</span>
-                        Paso 1: Selección de Turno de Retiro
+                        Paso 1: ¿Qué día pasarás a retirar por la Biblioteca?
                       </span>
                       <span className={`text-[11px] sm:text-xs px-2 py-0.5 rounded font-semibold ${
                         selectedBook.available_copies > 0
-                          ? 'text-green-700 bg-green-50 border border-green-200'
+                           ? 'text-green-700 bg-green-50 border border-green-200'
                           : 'text-terracotta bg-terracotta-light border border-terracotta/20'
                       }`}>
                         {selectedBook.available_copies > 0 ? `${selectedBook.available_copies} Disponibles` : 'Agotado'}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                      {[
-                        { id: 'Turno Mañana (10:00 a 13:00 hs)', title: 'Turno Mañana', hours: '10:00 a 13:00 hs', note: 'Recepción' },
-                        { id: 'Turno Tarde (15:00 a 18:00 hs)', title: 'Turno Tarde', hours: '15:00 a 18:00 hs', note: 'Despacho' },
-                        { id: 'Sábado (9:30 a 12:30 hs)', title: 'Sábado', hours: '9:30 a 12:30 hs', note: 'Atrio' },
-                      ].map((slot) => {
-                        const isSelected = pickupSlot === slot.id;
-                        return (
-                          <label
-                            key={slot.id}
-                            onClick={() => setPickupSlot(slot.id)}
-                            className={`cursor-pointer relative p-2.5 sm:p-3 rounded-xl border flex flex-col items-center text-center gap-0.5 transition-all ${
-                              isSelected
-                                ? 'bg-gold-light/40 border-2 border-gold-burnished shadow-xs'
-                                : 'bg-parchment-base border-marble-border hover:bg-gold-light/20'
-                            }`}
-                          >
-                            <input
-                              type="radio"
-                              name="pickupSlot"
-                              checked={isSelected}
-                              onChange={() => setPickupSlot(slot.id)}
-                              className="accent-amber-700 absolute top-2 right-2"
-                            />
-                            <span className="text-xs sm:text-sm font-bold text-sepia-heading">{slot.title}</span>
-                            <span className="text-[11px] text-warm-charcoal">{slot.hours}</span>
-                            <span className="text-[9px] text-gold-burnished font-semibold mt-0.5 px-1.5 py-0.5 bg-white/80 rounded border border-gold-burnished/20">
-                              {slot.note}
-                            </span>
-                          </label>
-                        );
-                      })}
+                    {/* Selector de Día de Retiro */}
+                    <div className="flex flex-col gap-1.5">
+                      <span className="text-[11px] text-warm-charcoal font-semibold">
+                        Selecciona el día de visita:
+                      </span>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {upcomingDays.map((day, idx) => {
+                          const isSelectedDay = selectedDayIndex === idx;
+                          return (
+                            <button
+                              key={day.isoDate}
+                              type="button"
+                              onClick={() => handleSelectDay(idx)}
+                              className={`p-2 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                                isSelectedDay
+                                  ? 'bg-gold-light/60 border-2 border-gold-burnished shadow-xs text-sepia-heading'
+                                  : 'bg-parchment-base border-marble-border text-warm-charcoal hover:bg-gold-light/20'
+                              }`}
+                            >
+                              <span className="text-xs font-bold leading-tight flex items-center justify-between">
+                                <span>{day.dayName}</span>
+                                {isSelectedDay && (
+                                  <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
+                                )}
+                              </span>
+                              <span className="text-[11px] text-warm-charcoal mt-0.5 font-mono">
+                                {day.date.getDate()}/{day.date.getMonth() + 1}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Selector de Turno Horario según el día seleccionado */}
+                    <div className="flex flex-col gap-1.5 pt-1">
+                      <span className="text-[11px] text-warm-charcoal font-semibold">
+                        Franja Horaria en Despacho Biblioteca:
+                      </span>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {(upcomingDays[selectedDayIndex]?.shifts || []).map((shift) => {
+                          const isSelectedShift = selectedShiftId === shift.id;
+                          return (
+                            <label
+                              key={shift.id}
+                              onClick={() => setSelectedShiftId(shift.id)}
+                              className={`cursor-pointer p-2.5 rounded-xl border flex items-center justify-between transition-all ${
+                                isSelectedShift
+                                  ? 'bg-gold-light/40 border-2 border-gold-burnished shadow-xs'
+                                  : 'bg-parchment-base border-marble-border hover:bg-gold-light/20'
+                              }`}
+                            >
+                              <div className="flex flex-col">
+                                <span className="text-xs font-bold text-sepia-heading">{shift.title}</span>
+                                <span className="text-[11px] text-warm-charcoal">{shift.hours}</span>
+                              </div>
+                              <span className="text-[9px] text-gold-burnished font-semibold px-2 py-0.5 bg-white/80 rounded border border-gold-burnished/20">
+                                {shift.note}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Grace Period Notice (QA Item 6) */}
+                    <div className="p-2.5 rounded-xl bg-amber-50/70 border border-gold-burnished/30 flex items-center gap-2 text-[11px] text-warm-charcoal">
+                      <span className="material-symbols-outlined text-gold-burnished text-base shrink-0">verified_user</span>
+                      <p>
+                        Tu reserva quedará guardada y protegida hasta <strong>48 horas después del día elegido</strong> ({upcomingDays[selectedDayIndex]?.label}).
+                      </p>
                     </div>
 
                     <div className="flex flex-col gap-1">
@@ -897,8 +993,8 @@ export default function CatalogoView({
                       <span className="text-xs text-sepia-heading font-medium">
                         {isAvailable ? `${b.available_copies} Disponibles` : 'Reservado'}
                       </span>
-                      <span className="text-[11px] text-warm-charcoal ml-auto truncate max-w-[110px]">
-                        {b.location ? b.location.split('·')[0] : 'Atrio'}
+                      <span className="text-[11px] text-gold-burnished font-semibold ml-auto">
+                        {b.format === 'digital' ? 'Digital PDF' : 'Ejemplar Físico'}
                       </span>
                     </div>
                   </div>

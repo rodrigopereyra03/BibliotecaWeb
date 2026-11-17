@@ -105,7 +105,7 @@ export default function RegistroPage({ onRegisterSuccess, onGoToLogin, onGoToCat
               </span>
               <div className="flex flex-col text-left">
                 <span className="text-[11px] font-bold">Pase Digital QR</span>
-                <span className="text-[10px] text-stone-300">Retiro ágil en el atrio</span>
+                <span className="text-[10px] text-stone-300">Retiro ágil en la biblioteca</span>
               </div>
             </div>
           </div>

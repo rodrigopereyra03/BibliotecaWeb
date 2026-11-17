@@ -66,9 +66,6 @@ export default function PaseQRModal({ reservation, onClose, onGoToReservations }
               {book.title}
             </h4>
             <p className="text-[11px] text-warm-charcoal truncate">{book.author}</p>
-            <span className="text-[10px] text-warm-charcoal font-mono mt-0.5 truncate">
-              {book.location || 'Estante 2A · Biblioteca'}
-            </span>
           </div>
         </div>
 

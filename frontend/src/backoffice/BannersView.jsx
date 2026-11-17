@@ -35,7 +35,7 @@ const BANNER_DEFINITIONS = [
   {
     key: 'hero_slide_3',
     category: 'carrusel',
-    label: 'Slide 3 · Atrio Parroquial Abierto',
+    label: 'Slide 3 · Biblioteca Parroquial Abierta',
     location: 'Portada del Catálogo (Slide Comunitario)',
     icon: 'church',
   },
@@ -71,7 +71,7 @@ const BANNER_DEFINITIONS = [
   {
     key: 'sidebar_totem',
     category: 'sidebar',
-    label: 'Tarjeta Tótem Inferior del Atrio',
+    label: 'Tarjeta Tótem Inferior de la Biblioteca',
     location: 'Pie de la barra lateral izquierda fija',
     icon: 'vertical_split',
   },

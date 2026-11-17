@@ -391,6 +391,7 @@ type CreateReservationRequest struct {
 	BookID         int64  `json:"book_id"`
 	PickupSlot     string `json:"pickup_slot"`
 	PickupLocation string `json:"pickup_location"`
+	PickupDate     string `json:"pickup_date"`
 	Note           string `json:"note"`
 }
 
@@ -433,12 +434,23 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 	code := fmt.Sprintf("RES-LOURDES-%d", randomNum)
 	qrToken := fmt.Sprintf("PASS-QR-%s-%d", code, time.Now().Unix())
 	now := time.Now()
-	expiresAt := now.Add(48 * time.Hour) // 48hs para retirar
+	expiresAt := now.Add(48 * time.Hour) // 48hs por defecto
+
+	// Si se eligió un día de retiro futuro, la reserva vence 48hs después de dicho día de retiro
+	if req.PickupDate != "" {
+		cleanDate := strings.TrimSpace(req.PickupDate)
+		if t, err := time.Parse("2006-01-02", cleanDate); err == nil {
+			pickupDayEnd := time.Date(t.Year(), t.Month(), t.Day(), 23, 59, 59, 0, time.Local)
+			if pickupDayEnd.After(now) {
+				expiresAt = pickupDayEnd.Add(48 * time.Hour)
+			}
+		}
+	}
 
 	resID, err := database.InsertWithReturnID(`
-		INSERT INTO reservations (user_id, book_id, pickup_slot, pickup_location, note, reservation_code, qr_token, status, created_at, expires_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, 'ACTIVA', ?, ?)
-	`, req.UserID, req.BookID, req.PickupSlot, req.PickupLocation, req.Note, code, qrToken, now, expiresAt)
+		INSERT INTO reservations (user_id, book_id, pickup_slot, pickup_location, note, reservation_code, qr_token, status, created_at, expires_at, pickup_date)
+		VALUES (?, ?, ?, ?, ?, ?, ?, 'ACTIVA', ?, ?, ?)
+	`, req.UserID, req.BookID, req.PickupSlot, req.PickupLocation, req.Note, code, qrToken, now, expiresAt, req.PickupDate)
 	if err != nil {
 		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
 		return
@@ -461,6 +473,7 @@ func CreateReservation(w http.ResponseWriter, r *http.Request) {
 		Book:            &book,
 		PickupSlot:      req.PickupSlot,
 		PickupLocation:  req.PickupLocation,
+		PickupDate:      req.PickupDate,
 		Note:            req.Note,
 		ReservationCode: code,
 		QRToken:         qrToken,
@@ -490,7 +503,7 @@ func GetReservations(w http.ResponseWriter, r *http.Request) {
 	var err error
 	if userIDParam != "" {
 		rows, err = database.Query(`
-			SELECT r.id, r.user_id, r.book_id, r.pickup_slot, r.pickup_location, r.note, r.reservation_code, r.qr_token, r.status, r.created_at, r.expires_at,
+			SELECT r.id, r.user_id, r.book_id, r.pickup_slot, r.pickup_location, r.note, r.reservation_code, r.qr_token, r.status, r.created_at, r.expires_at, COALESCE(r.pickup_date, ''),
 			       b.title, b.author, b.genre, b.cover_url, b.location,
 			       COALESCE(u.name, 'Socio Lector'), COALESCE(u.address, 'Sigmund Freud 201, Temperley'), COALESCE(u.member_number, ''), COALESCE(u.phone, ''), COALESCE(u.email, '')
 			FROM reservations r
@@ -501,7 +514,7 @@ func GetReservations(w http.ResponseWriter, r *http.Request) {
 		`, userIDParam)
 	} else {
 		rows, err = database.Query(`
-			SELECT r.id, r.user_id, r.book_id, r.pickup_slot, r.pickup_location, r.note, r.reservation_code, r.qr_token, r.status, r.created_at, r.expires_at,
+			SELECT r.id, r.user_id, r.book_id, r.pickup_slot, r.pickup_location, r.note, r.reservation_code, r.qr_token, r.status, r.created_at, r.expires_at, COALESCE(r.pickup_date, ''),
 			       b.title, b.author, b.genre, b.cover_url, b.location,
 			       COALESCE(u.name, 'Socio Lector'), COALESCE(u.address, 'Sigmund Freud 201, Temperley'), COALESCE(u.member_number, ''), COALESCE(u.phone, ''), COALESCE(u.email, '')
 			FROM reservations r
@@ -522,7 +535,7 @@ func GetReservations(w http.ResponseWriter, r *http.Request) {
 		var res models.Reservation
 		var book models.Book
 		var userName, userAddress, memberNumber, userPhone, userEmail string
-		err := rows.Scan(&res.ID, &res.UserID, &res.BookID, &res.PickupSlot, &res.PickupLocation, &res.Note, &res.ReservationCode, &res.QRToken, &res.Status, &res.CreatedAt, &res.ExpiresAt,
+		err := rows.Scan(&res.ID, &res.UserID, &res.BookID, &res.PickupSlot, &res.PickupLocation, &res.Note, &res.ReservationCode, &res.QRToken, &res.Status, &res.CreatedAt, &res.ExpiresAt, &res.PickupDate,
 			&book.Title, &book.Author, &book.Genre, &book.CoverURL, &book.Location,
 			&userName, &userAddress, &memberNumber, &userPhone, &userEmail)
 		if err != nil {

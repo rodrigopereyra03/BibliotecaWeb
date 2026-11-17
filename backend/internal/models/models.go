@@ -49,6 +49,7 @@ type Reservation struct {
 	UserEmail       string     `json:"user_email,omitempty"`
 	PickupSlot      string     `json:"pickup_slot"`
 	PickupLocation  string     `json:"pickup_location"`
+	PickupDate      string     `json:"pickup_date,omitempty"`
 	Note            string     `json:"note"`
 	ReservationCode string     `json:"reservation_code"`
 	QRToken         string     `json:"qr_token"`

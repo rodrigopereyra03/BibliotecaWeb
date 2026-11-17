@@ -65,43 +65,43 @@ export default function MisReservasView({
                 <p className="text-xs text-sepia-heading font-medium truncate">Sigmund Freud 201 · Temperley</p>
               </div>
             </div>
-            <span className="text-[11px] text-gold-burnished font-bold shrink-0">Atrio Central</span>
+            <span className="text-[11px] text-gold-burnished font-bold shrink-0">Biblioteca Central</span>
           </div>
         </div>
       </div>
 
       {/* ============================================================ */}
-      {/* PANORAMIC ATRIO & RETIRO BANNER                               */}
+      {/* PANORAMIC BIBLIOTECA & RETIRO BANNER                          */}
       {/* ============================================================ */}
       <div className="relative w-full overflow-hidden rounded-3xl bg-gradient-to-r from-parchment-surface via-parchment-card to-[#234e52]/10 border border-marble-border shadow-sm mb-8 p-6 sm:p-8 lg:p-9">
         <div className="absolute -left-10 -bottom-10 w-60 h-60 rounded-full bg-gold-burnished/10 blur-3xl pointer-events-none"></div>
         <div className="absolute right-1/4 -top-12 w-72 h-72 rounded-full bg-marian-blue/10 blur-3xl pointer-events-none"></div>
 
         {/* Right side masked image */}
-        <div className="absolute right-0 top-0 bottom-0 w-[380px] pointer-events-none select-none overflow-hidden hidden xl:block">
+        <div className="absolute right-0 top-0 bottom-0 w-[360px] xl:w-[400px] pointer-events-none select-none overflow-hidden hidden xl:block">
           <img
             src={banner?.image_url || '/capilla-fachada.jpg'}
             alt="Capilla Nuestra Señora de Lourdes"
-            className="w-full h-full object-cover object-center opacity-80"
+            className="w-full h-full object-cover object-center opacity-85"
             style={{
-              maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 95%)',
-              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 95%)',
+              maskImage: 'linear-gradient(to left, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0) 85%)',
+              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0) 85%)',
             }}
           />
-          <div className="absolute bottom-3 right-5 px-3 py-1 rounded-full bg-sepia-heading/85 backdrop-blur-md border border-white/20 flex items-center gap-1.5 shadow-xs">
+          <div className="absolute bottom-3 right-5 px-3 py-1 rounded-full bg-stone-900/85 backdrop-blur-md border border-white/20 flex items-center gap-1.5 shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
             <span className="text-[11px] text-parchment-surface font-display font-medium">
-              {banner?.subtitle || 'Atrio Parroquial · Sigmund Freud 201'}
+              {banner?.subtitle || 'Biblioteca Parroquial · Sigmund Freud 201'}
             </span>
           </div>
         </div>
 
-        <div className="relative z-10 flex flex-col gap-5 max-w-2xl xl:max-w-3xl">
+        <div className="relative z-10 flex flex-col gap-5 max-w-[70%] lg:max-w-[65%] xl:max-w-[66%]">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm border border-marble-border shadow-2xs">
                 <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
-                <span className="text-xs uppercase tracking-wider text-sepia-heading font-bold">
+                <span className="text-xs uppercase tracking-wider text-stone-900 font-bold">
                   {banner?.tagline || 'Pase Digital & Retiro en Sede • Temperley'}
                 </span>
               </div>
@@ -111,11 +111,11 @@ export default function MisReservasView({
               </span>
             </div>
 
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold font-display text-sepia-heading tracking-tight leading-tight">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold font-display text-stone-950 tracking-tight leading-tight">
               {banner?.title || 'Mis Reservas & Retiro de Libros'}
             </h1>
-            <p className="text-sm text-warm-charcoal max-w-xl leading-relaxed">
-              {banner?.description || 'Tus ejemplares reservados te esperan preparados en el atrio parroquial. Presentá tu nombre o carnet en secretaría para retirarlos.'}
+            <p className="text-sm text-stone-950 font-medium max-w-xl leading-relaxed">
+              {banner?.description || 'Tus ejemplares reservados te esperan preparados en la biblioteca parroquial. Presentá tu nombre o carnet en secretaría para retirarlos.'}
             </p>
           </div>
 
@@ -137,7 +137,7 @@ export default function MisReservasView({
               </div>
               <div className="flex flex-col">
                 <p className="text-xs font-bold text-sepia-heading font-display">Reserva 48 hs</p>
-                <p className="text-[11px] text-warm-charcoal leading-snug">Queda apartado en el atrio de la capilla.</p>
+                <p className="text-[11px] text-warm-charcoal leading-snug">Queda apartado en la biblioteca de la capilla.</p>
               </div>
             </div>
 

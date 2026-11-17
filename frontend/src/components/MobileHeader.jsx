@@ -36,7 +36,7 @@ export default function MobileHeader({ user, onGoToLogin, onOpenHours, onGoToBac
             type="button"
             onClick={onOpenHours}
             className="w-8 h-8 rounded-full bg-parchment-surface border border-marble-border flex items-center justify-center text-warm-charcoal hover:text-sepia-ink transition-colors"
-            title="Horarios del Atrio"
+            title="Horarios de la Biblioteca"
           >
             <span className="material-symbols-outlined text-lg">church</span>
           </button>

@@ -128,7 +128,7 @@ export default function CommunicationsView({
             Comunicaciones, Boletines y Anuncios
           </h2>
           <p className="text-xs sm:text-sm text-warm-charcoal mt-0.5">
-            Publicación y difusión de noticias, colectas de libros, convocatorias de lectura y avisos del atrio.
+            Publicación y difusión de noticias, colectas de libros, convocatorias de lectura y avisos de la biblioteca.
           </p>
         </div>
 
@@ -318,7 +318,7 @@ export default function CommunicationsView({
               </div>
 
               <div className="p-3 bg-parchment-base rounded-xl border border-marble-border">
-                <strong className="text-sepia-heading block mb-0.5">Sincronización con el Atrio</strong>
+                <strong className="text-sepia-heading block mb-0.5">Sincronización con la Biblioteca</strong>
                 Las novedades publicadas aquí se reflejan en la pantalla de la gacetilla pública y en la cartelera física.
               </div>
             </div>

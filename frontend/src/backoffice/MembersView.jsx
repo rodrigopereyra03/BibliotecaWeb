@@ -143,7 +143,7 @@ export default function MembersView({
               <span className="material-symbols-outlined text-4xl text-gold-burnished/60">groups</span>
               <p className="font-bold text-sm text-sepia-heading">No hay socios registrados en la biblioteca aún</p>
               <p className="text-xs text-warm-charcoal max-w-sm">
-                La base de datos está completamente limpia. Cuando un nuevo lector complete el formulario de registro o se inscriba en el atrio, aparecerá aquí su ficha y credencial.
+                La base de datos está completamente limpia. Cuando un nuevo lector complete el formulario de registro o se inscriba en la biblioteca, aparecerá aquí su ficha y credencial.
               </p>
             </div>
           ) : (

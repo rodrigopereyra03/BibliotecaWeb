@@ -268,7 +268,7 @@ func SendWelcomeEmail(readerName, readerEmail, memberNumber string) {
 			</tr>
 			<tr>
 				<td style="padding:10px 0;border-bottom:1px solid #F0EAE1;">
-					<strong style="color:#2B2118;">2. Retira en el Atrio:</strong> Acércate a la secretaría con tu número de credencial o pase QR digital.
+					<strong style="color:#2B2118;">2. Retira en la Biblioteca:</strong> Acércate a la secretaría con tu número de credencial o pase QR digital.
 				</td>
 			</tr>
 			<tr>
@@ -399,7 +399,7 @@ func SendReservationAdminEmail(adminEmail, readerName, readerEmail, bookTitle, a
 		</table>
 	`, reservationCode, pickupSlot, bookTitle, author, readerName, readerEmail, appURL)
 
-	html := renderEmailLayout("Circulación y Despacho", "Pase pendiente de entrega en el atrio", "Nueva Reserva de Libro", content)
+	html := renderEmailLayout("Circulación y Despacho", "Pase pendiente de entrega en la biblioteca", "Nueva Reserva de Libro", content)
 	SendAsync(adminEmail, fmt.Sprintf("Nueva Reserva: \"%s\" (Lector: %s)", bookTitle, readerName), html)
 }
 
@@ -448,7 +448,7 @@ func SendReservationReaderEmail(readerName, readerEmail, bookTitle, author, rese
 		</table>
 	`, readerName, bookTitle, author, reservationCode, pickupSlot, appURL)
 
-	html := renderEmailLayout("Reserva Activa", "Tu ejemplar ya está apartado en el atrio", "Reserva Confirmada con Éxito", content)
+	html := renderEmailLayout("Reserva Activa", "Tu ejemplar ya está apartado en la biblioteca", "Reserva Confirmada con Éxito", content)
 	SendAsync(readerEmail, fmt.Sprintf("Reserva Confirmada: \"%s\" - Código #%s", bookTitle, reservationCode), html)
 }
 
@@ -504,7 +504,7 @@ func SendLoanDeliveredAdminEmail(adminEmail, readerName, readerEmail, bookTitle,
 	appURL := GetAppURL()
 	content := fmt.Sprintf(`
 		<p style="font-size:15px;margin-top:0;color:#2B2118;">
-			Se ha completado la entrega de un ejemplar en el atrio parroquial:
+			Se ha completado la entrega de un ejemplar en la biblioteca parroquial:
 		</p>
 		
 		<table width="100%%" border="0" cellspacing="0" cellpadding="10" style="font-size:13px;border-collapse:collapse;margin:18px 0;background:#FAF7F2;border:1px solid #E6DED4;border-radius:12px;">
@@ -591,7 +591,7 @@ func SendLoanReturnedAdminEmail(adminEmail, readerName, readerEmail, bookTitle s
 	appURL := GetAppURL()
 	content := fmt.Sprintf(`
 		<p style="font-size:15px;margin-top:0;color:#2B2118;">
-			Se ha recibido una devolución física en el atrio parroquial:
+			Se ha recibido una devolución física en la biblioteca parroquial:
 		</p>
 		
 		<table width="100%%" border="0" cellspacing="0" cellpadding="10" style="font-size:13px;border-collapse:collapse;margin:18px 0;background:#FAF7F2;border:1px solid #E6DED4;border-radius:12px;">

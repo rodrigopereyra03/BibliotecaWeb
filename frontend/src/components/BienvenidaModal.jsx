@@ -96,7 +96,7 @@ export default function BienvenidaModal({ user, onClose, onGoToCatalog }) {
               </div>
               <div className="flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-gold-burnished text-sm">church</span>
-                <span>Retiro en <strong>Atrio Parroquial</strong></span>
+                <span>Retiro en <strong>Biblioteca Parroquial</strong></span>
               </div>
             </div>
           </div>

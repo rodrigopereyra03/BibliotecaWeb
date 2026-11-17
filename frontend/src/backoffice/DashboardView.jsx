@@ -79,7 +79,7 @@ export default function DashboardView({
           </div>
         </div>
 
-        {/* KPI 2: Retiros en Atrio */}
+        {/* KPI 2: Retiros en Biblioteca */}
         <div className="bg-white rounded-2xl p-5 border border-marble-border shadow-xs relative overflow-hidden flex flex-col justify-between">
           <div className="absolute -right-3 -bottom-3 opacity-5 pointer-events-none text-marian-blue">
             <span className="material-symbols-outlined text-[90px]">handshake</span>
@@ -98,7 +98,7 @@ export default function DashboardView({
           </div>
           <div className="mt-4 pt-2 border-t border-marble-border/60 flex items-center justify-between text-[11px] text-warm-charcoal">
             <span>Esperando en mostrador</span>
-            <span className="font-mono text-gold-burnished font-bold">HOY ATRIO</span>
+            <span className="font-mono text-gold-burnished font-bold">HOY BIBLIOTECA</span>
           </div>
         </div>
 
@@ -164,7 +164,7 @@ export default function DashboardView({
                     Turno de Retiro y Entregas Pendientes
                   </h3>
                   <p className="text-[11px] text-warm-charcoal">
-                    Pases QR generados por lectores esperando retiro en el atrio
+                    Pases QR generados por lectores esperando retiro en la biblioteca
                   </p>
                 </div>
               </div>
@@ -176,7 +176,7 @@ export default function DashboardView({
 
             {reservations.length === 0 ? (
               <div className="p-8 text-center text-warm-charcoal text-xs">
-                No hay pedidos de retiro pendientes en el atrio en este momento.
+                No hay pedidos de retiro pendientes en la biblioteca en este momento.
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -217,7 +217,7 @@ export default function DashboardView({
                           </td>
                           <td className="p-3.5">
                             <span className="px-2 py-0.5 rounded bg-green-50 text-green-700 border border-green-200 font-bold text-[10px]">
-                              Listo en Atrio
+                              Listo en Biblioteca
                             </span>
                           </td>
                           <td className="p-3.5 text-right">
@@ -277,7 +277,7 @@ export default function DashboardView({
           <div className="bg-gradient-to-br from-gold-burnished via-gold-accent to-amber-700 text-white rounded-2xl p-5 shadow-sm flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-xl">church</span>
-              <span className="text-xs uppercase font-bold tracking-wider">Atrio Parroquial Temperley</span>
+              <span className="text-xs uppercase font-bold tracking-wider">Biblioteca Parroquial Temperley</span>
             </div>
             <p className="text-xs text-white/90 leading-relaxed">
               Atención presencial en mostrador para retiro y recepción de devoluciones. Plazo estándar: 21 días con prórroga web.

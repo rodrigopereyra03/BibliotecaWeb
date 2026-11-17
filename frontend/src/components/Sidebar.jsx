@@ -176,7 +176,7 @@ export default function Sidebar({
               {/* Banner Text Content */}
               <div className="absolute bottom-2.5 left-3 right-3 text-white z-10 flex flex-col gap-0.5">
                 <span className="text-[10px] uppercase tracking-wider text-gold-accent font-bold">
-                  {banner?.tagline || 'Atrio Parroquial'}
+                  {banner?.tagline || 'Biblioteca Parroquial'}
                 </span>
                 <h4 className="text-sm font-bold font-display text-white leading-tight">
                   {banner?.title || 'Retiro y Devolución de Libros'}
@@ -214,7 +214,7 @@ export default function Sidebar({
           type="button"
           onClick={onOpenHours}
           className="flex flex-col items-center gap-1 p-2 rounded-xl hover:bg-gold-light/40 transition-colors text-gold-burnished cursor-pointer"
-          title="Atrio Parroquial · Ver Horarios de Despacho"
+          title="Biblioteca Parroquial · Ver Horarios de Despacho"
         >
           <div className="w-10 h-10 rounded-xl overflow-hidden border border-gold-burnished/40 relative shadow-2xs">
             <img src="/capilla-fachada.jpg" alt="Capilla" className="w-full h-full object-cover" />

@@ -29,7 +29,7 @@ export default function HorariosModal({ onClose, banner }) {
           <div className="absolute bottom-3 left-4 right-4 flex flex-col gap-0.5 text-white">
             <div className="flex items-center gap-1.5 text-gold-light text-[11px] font-bold uppercase tracking-wider">
               <span className="material-symbols-outlined text-sm text-gold-burnished">church</span>
-              <span>{banner?.tagline || 'Despacho Parroquial & Atrio'}</span>
+              <span>{banner?.tagline || 'Despacho Biblioteca'}</span>
             </div>
             <h3 className="text-xl font-bold font-display text-white leading-tight">
               {banner?.title || 'Horarios de Retiro y Atención'}
@@ -76,11 +76,11 @@ export default function HorariosModal({ onClose, banner }) {
               Domingos (Jornada Comunitaria)
             </span>
             <div className="flex justify-between text-warm-charcoal mt-1">
-              <span>Mostrador del Atrio:</span>
+              <span>Mostrador de la Biblioteca:</span>
               <strong className="text-sepia-heading">8:30 a 14:00 hs</strong>
             </div>
             <p className="text-[11px] text-warm-charcoal mt-1">
-              Retiro y devolución de libros durante toda la jornada comunitaria en el atrio central.
+              Retiro y devolución de libros durante toda la jornada comunitaria en la biblioteca.
             </p>
           </div>
 

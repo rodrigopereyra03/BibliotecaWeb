@@ -82,7 +82,7 @@ export default function LoginPage({ onLoginSuccess, onGoToRegister, onGoToCatalo
                 storefront
               </span>
               <div className="flex flex-col text-left">
-                <span className="text-[11px] font-bold">Retiro en el Atrio</span>
+                <span className="text-[11px] font-bold">Retiro en la Biblioteca</span>
                 <span className="text-[10px] text-stone-300">Tras la misa o secretaría</span>
               </div>
             </div>

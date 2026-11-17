@@ -326,10 +326,19 @@ func createTables(db *sql.DB) error {
 	if DriverName == "postgres" {
 		_, _ = db.Exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS password VARCHAR(255) DEFAULT ''")
 		_, _ = db.Exec("ALTER TABLE users ADD COLUMN IF NOT EXISTS address TEXT DEFAULT ''")
+		_, _ = db.Exec("ALTER TABLE reservations ADD COLUMN IF NOT EXISTS pickup_date VARCHAR(100) DEFAULT ''")
 	} else {
 		_, _ = db.Exec("ALTER TABLE users ADD COLUMN password TEXT DEFAULT ''")
 		_, _ = db.Exec("ALTER TABLE users ADD COLUMN address TEXT DEFAULT ''")
+		_, _ = db.Exec("ALTER TABLE reservations ADD COLUMN pickup_date TEXT DEFAULT ''")
 	}
+
+	// Migraciones de contenido institucional (QA Banners & Textos)
+	_, _ = db.Exec(Rebind("UPDATE site_banners SET description = 'Inspirados en su testimonio de búsqueda incansable de la verdad y pasión por las letras, promovemos un espacio de pensamiento crítico, fe y cultura abierto a niños, jóvenes y adultos.' WHERE key = 'hero_slide_2'"))
+	_, _ = db.Exec(Rebind("UPDATE site_banners SET title = 'Biblioteca Abierta: Literatura Universal y Espiritualidad', subtitle = 'Más de 12 géneros seleccionados para retiro en la biblioteca', tagline = 'Retiro Libre y Gratuito • Temperley' WHERE key = 'hero_slide_3'"))
+	_, _ = db.Exec(Rebind("UPDATE site_banners SET tagline = 'Biblioteca Parroquial', subtitle = 'Mostrador de la Biblioteca', badge_text = 'Biblioteca Parroquial' WHERE key = 'sidebar_totem'"))
+	_, _ = db.Exec(Rebind("UPDATE site_banners SET description = 'Tus ejemplares reservados te esperan preparados en la biblioteca. Presentá tu nombre o carnet en secretaría para retirarlos.', subtitle = 'Biblioteca Parroquial · Sigmund Freud 201' WHERE key = 'reservas_banner'"))
+	_, _ = db.Exec(Rebind("UPDATE site_banners SET tagline = 'Despacho Biblioteca', badge_text = 'Despacho Biblioteca' WHERE key = 'horarios_modal'"))
 
 	// Completar domicilio de Rodrigo Pereyra si está en blanco
 	_, _ = db.Exec(Rebind("UPDATE users SET address = 'Ezequiel Paz 224, Temperley' WHERE LOWER(email) = 'rodrigopereyra02@gmail.com' AND (address IS NULL OR address = '')"))
@@ -415,16 +424,16 @@ func SeedDefaultBanners(db *sql.DB) error {
 			Tagline:     "Cultura del Encuentro • Formación y Comunidad",
 			Subtitle:    "Inspirados en su testimonio de búsqueda incansable de la verdad",
 			Quote:       "Quien quiera ganar al mundo para Cristo debe tener el valor de salir a su encuentro con amor y libros en la mano.",
-			Description: "Inspirados en su testimonio de búsqueda incansable de la verdad y pasión por las letras, promovemos un espacio de pensamiento crítico, fe y cultura abierto a jóvenes y adultos.",
+			Description: "Inspirados en su testimonio de búsqueda incansable de la verdad y pasión por las letras, promovemos un espacio de pensamiento crítico, fe y cultura abierto a niños, jóvenes y adultos.",
 			ImageURL:    "/hero-titus.jpg",
 			BadgeText:   "Cultura del Encuentro",
 			ButtonText:  "Ver Gaceta Cultural",
 		},
 		{
 			Key:         "hero_slide_3",
-			Title:       "Atrio Abierto: Literatura Universal y Espiritualidad",
+			Title:       "Biblioteca Abierta: Literatura Universal y Espiritualidad",
 			Tagline:     "Retiro Libre y Gratuito • Temperley",
-			Subtitle:    "Más de 12 géneros seleccionados para retiro en el atrio",
+			Subtitle:    "Más de 12 géneros seleccionados para retiro en la biblioteca",
 			Quote:       "Un libro es un puente entre corazones y una ventana abierta a la esperanza de nuestra comunidad parroquial.",
 			Description: "Te esperamos con más de 12 géneros seleccionados: novelas, cuentos, teología, clásicos y literatura infantil con préstamo a domicilio por 21 días renovables.",
 			ImageURL:    "/capilla-fachada.jpg",
@@ -434,12 +443,12 @@ func SeedDefaultBanners(db *sql.DB) error {
 		{
 			Key:         "sidebar_totem",
 			Title:       "Retiro y Devolución de Libros",
-			Tagline:     "Atrio Parroquial",
-			Subtitle:    "Mostrador de Biblioteca del Atrio",
+			Tagline:     "Biblioteca Parroquial",
+			Subtitle:    "Mostrador de la Biblioteca",
 			Quote:       "",
 			Description: "Vení a buscar tus ejemplares tras la jornada comunitaria o en secretaría.",
 			ImageURL:    "/capilla-fachada.jpg",
-			BadgeText:   "Atrio Parroquial",
+			BadgeText:   "Biblioteca Parroquial",
 			ButtonText:  "Ver Horarios de Despacho",
 		},
 		{
@@ -457,9 +466,9 @@ func SeedDefaultBanners(db *sql.DB) error {
 			Key:         "reservas_banner",
 			Title:       "Mis Reservas & Retiro de Libros",
 			Tagline:     "Pase Digital & Retiro en Sede • Temperley",
-			Subtitle:    "Atrio Parroquial · Sigmund Freud 201",
+			Subtitle:    "Biblioteca Parroquial · Sigmund Freud 201",
 			Quote:       "",
-			Description: "Tus ejemplares reservados te esperan preparados en el atrio parroquial. Presentá tu nombre o carnet en secretaría para retirarlos.",
+			Description: "Tus ejemplares reservados te esperan preparados en la biblioteca. Presentá tu nombre o carnet en secretaría para retirarlos.",
 			ImageURL:    "/capilla-fachada.jpg",
 			BadgeText:   "Pase Digital & Retiro en Sede",
 			ButtonText:  "Explorar Más Libros",
@@ -467,12 +476,12 @@ func SeedDefaultBanners(db *sql.DB) error {
 		{
 			Key:         "horarios_modal",
 			Title:       "Horarios de Retiro y Atención",
-			Tagline:     "Despacho Parroquial & Atrio",
+			Tagline:     "Despacho Biblioteca",
 			Subtitle:    "Sigmund Freud 201 · Temperley",
 			Quote:       "",
 			Description: "Sigmund Freud 201 · Temperley",
 			ImageURL:    "/capilla-fachada.jpg",
-			BadgeText:   "Despacho Parroquial & Atrio",
+			BadgeText:   "Despacho Biblioteca",
 			ButtonText:  "Entendido",
 		},
 		{

@@ -115,7 +115,7 @@ export default function HistorialView({
                 </p>
                 <p className="text-xs text-warm-charcoal max-w-md">
                   {user 
-                    ? "Cuando retire ejemplares reservados en el mostrador del atrio, figurarán aquí junto con su fecha de vencimiento y opción de prórroga." 
+                    ? "Cuando retire ejemplares reservados en el mostrador de la biblioteca, figurarán aquí junto con su fecha de vencimiento y opción de prórroga." 
                     : "Iniciá sesión con tu carnet de lector vecinal para consultar tus préstamos activos y gestionar tus lecturas."}
                 </p>
                 <button
