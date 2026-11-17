@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function MobileBottomNav({ activeTab, setActiveTab, activeReservationsCount = 0 }) {
+export default function MobileBottomNav({ activeTab, setActiveTab, activeReservationsCount = 0, user }) {
   const tabs = [
     { id: 'catalogo', label: 'Catálogo', icon: 'auto_stories' },
     {
@@ -11,6 +11,7 @@ export default function MobileBottomNav({ activeTab, setActiveTab, activeReserva
     },
     { id: 'historial', label: 'Historial', icon: 'history' },
     { id: 'noticias', label: 'Noticias', icon: 'campaign' },
+    ...(user ? [{ id: 'perfil', label: 'Mi Perfil', icon: 'badge' }] : []),
   ];
 
   return (

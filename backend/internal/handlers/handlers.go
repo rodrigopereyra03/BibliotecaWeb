@@ -1101,6 +1101,81 @@ func GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 	jsonResponse(w, http.StatusOK, u)
 }
 
+type UpdateUserProfileRequest struct {
+	UserID   int64  `json:"user_id"`
+	Name     string `json:"name"`
+	Phone    string `json:"phone"`
+	Address  string `json:"address"`
+	Password string `json:"password,omitempty"`
+}
+
+// PUT or POST /api/user/me or /api/user/profile
+func UpdateUserProfile(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPut && r.Method != http.MethodPost {
+		jsonResponse(w, http.StatusMethodNotAllowed, map[string]string{"error": "Método no permitido"})
+		return
+	}
+
+	var req UpdateUserProfileRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "Cuerpo de solicitud inválido"})
+		return
+	}
+
+	if req.UserID == 0 {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "ID de usuario requerido"})
+		return
+	}
+
+	req.Name = strings.TrimSpace(req.Name)
+	if req.Name == "" {
+		jsonResponse(w, http.StatusBadRequest, map[string]string{"error": "El nombre no puede estar vacío"})
+		return
+	}
+
+	req.Phone = strings.TrimSpace(req.Phone)
+	req.Address = strings.TrimSpace(req.Address)
+	req.Password = strings.TrimSpace(req.Password)
+
+	if req.Password != "" {
+		_, err := database.Exec("UPDATE users SET name = ?, phone = ?, address = ?, password = ? WHERE user_id = ?",
+			req.Name, req.Phone, req.Address, req.Password, req.UserID)
+		if err != nil {
+			jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return
+		}
+	} else {
+		_, err := database.Exec("UPDATE users SET name = ?, phone = ?, address = ? WHERE user_id = ?",
+			req.Name, req.Phone, req.Address, req.UserID)
+		if err != nil {
+			jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+			return
+		}
+	}
+
+	// Recuperar el usuario actualizado
+	var u models.User
+	err := database.QueryRow(`
+		SELECT user_id, name, email, member_number, phone, COALESCE(address, ''), avatar_url, role
+		FROM users
+		WHERE user_id = ?
+		LIMIT 1
+	`, req.UserID).Scan(
+		&u.UserID, &u.Name, &u.Email, &u.MemberNumber, &u.Phone, &u.Address, &u.AvatarURL, &u.Role,
+	)
+	if err != nil {
+		jsonResponse(w, http.StatusInternalServerError, map[string]string{"error": err.Error()})
+		return
+	}
+
+	u.ID = u.UserID
+	jsonResponse(w, http.StatusOK, map[string]interface{}{
+		"success": true,
+		"message": "Perfil actualizado con éxito",
+		"user":    u,
+	})
+}
+
 // POST /api/auth/register
 func RegisterUser(w http.ResponseWriter, r *http.Request) {
 	var body struct {
@@ -1139,7 +1214,7 @@ func RegisterUser(w http.ResponseWriter, r *http.Request) {
 
 	num := 4000 + rand.Intn(5000)
 	memberNumber := fmt.Sprintf("GT-%d", num)
-	avatar := "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"
+	avatar := ""
 
 	// Todo nuevo registro es ESTRICTAMENTE 'lector' y almacena el domicilio
 	newID, err := database.InsertUserWithReturnID(`

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import UserAvatar from '../components/UserAvatar';
 
 export default function BackofficeLayout({
   activeView,
@@ -190,11 +191,7 @@ export default function BackofficeLayout({
                 <p className="text-xs font-bold text-sepia-heading">{user?.name || 'Administrador'}</p>
                 <span className="text-[10px] text-gold-burnished font-semibold">{user?.email || 'biblioteca@admin.com'}</span>
               </div>
-              <img
-                src={user?.avatar_url || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=256&q=80"}
-                alt="Admin"
-                className="w-8 h-8 rounded-full object-cover ring-1 ring-gold-burnished/50 shadow-xs"
-              />
+              <UserAvatar user={user} size="sm" showRoleBadge />
               {onLogout && (
                 <button
                   onClick={onLogout}

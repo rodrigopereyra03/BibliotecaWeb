@@ -8,6 +8,7 @@ import CatalogoView from './components/CatalogoView';
 import MisReservasView from './components/MisReservasView';
 import HistorialView from './components/HistorialView';
 import NoticiasView from './components/NoticiasView';
+import PerfilView from './components/PerfilView';
 import PaseQRModal from './components/PaseQRModal';
 import HorariosModal from './components/HorariosModal';
 import BienvenidaModal from './components/BienvenidaModal';
@@ -306,6 +307,11 @@ export default function App() {
     setWelcomeModalUser(newUser);
   };
 
+  const handleUpdateUser = (updatedData) => {
+    setUser(updatedData);
+    loadUsers();
+  };
+
   const handleLoginSuccess = (userData) => {
     setUser(userData);
     if (userData && userData.role === 'admin') {
@@ -458,6 +464,7 @@ export default function App() {
         onGoToLogin={() => setActiveTab('login')}
         onOpenHours={() => setShowHoursModal(true)}
         onGoToBackoffice={canAccessBackoffice ? () => setIsBackoffice(true) : null}
+        onGoToProfile={() => setActiveTab('perfil')}
       />
 
       {/* Mobile Fixed Bottom Navigation Bar */}
@@ -465,6 +472,7 @@ export default function App() {
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         activeReservationsCount={myReservations.length}
+        user={user}
       />
 
       {/* Main Content Area */}
@@ -485,6 +493,7 @@ export default function App() {
             sidebarOpen={sidebarOpen}
             onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
             onGoToBackoffice={canAccessBackoffice ? () => setIsBackoffice(true) : null}
+            onGoToProfile={() => setActiveTab('perfil')}
             onLogout={handleLogout}
           />
         </div>
@@ -534,6 +543,16 @@ export default function App() {
               loading={loadingNews}
               onGoToCatalog={() => setActiveTab('catalogo')}
               banner={banners?.noticias_banner}
+            />
+          )}
+
+          {activeTab === 'perfil' && (
+            <PerfilView
+              user={user}
+              onUpdateUser={handleUpdateUser}
+              onGoToCatalog={() => setActiveTab('catalogo')}
+              loansCount={myLoans.length}
+              activeReservationsCount={myReservations.length}
             />
           )}
         </main>

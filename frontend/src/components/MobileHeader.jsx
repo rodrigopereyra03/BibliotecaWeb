@@ -1,6 +1,7 @@
 import React from 'react';
+import UserAvatar from './UserAvatar';
 
-export default function MobileHeader({ user, onGoToLogin, onOpenHours, onGoToBackoffice }) {
+export default function MobileHeader({ user, onGoToLogin, onOpenHours, onGoToBackoffice, onGoToProfile }) {
   return (
     <header className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-parchment-base/95 backdrop-blur-xl border-b border-marble-border shadow-xs pt-safe">
       <div className="h-16 px-4 flex items-center justify-between gap-3">
@@ -43,15 +44,11 @@ export default function MobileHeader({ user, onGoToLogin, onOpenHours, onGoToBac
 
           <button
             type="button"
-            onClick={onGoToLogin}
+            onClick={user ? onGoToProfile : onGoToLogin}
             className="flex items-center justify-center p-0.5 rounded-full ring-2 ring-gold-burnished/40 active:scale-95 transition-transform"
-            title="Mi Cuenta / Iniciar Sesión"
+            title={user ? 'Mi Perfil y Credencial' : 'Iniciar Sesión'}
           >
-            <img
-              src={user?.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"}
-              alt="Perfil"
-              className="w-7 h-7 rounded-full object-cover"
-            />
+            <UserAvatar user={user} size="sm" showRoleBadge />
           </button>
         </div>
       </div>

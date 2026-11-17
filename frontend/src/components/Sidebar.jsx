@@ -1,4 +1,5 @@
 import React from 'react';
+import UserAvatar from './UserAvatar';
 
 export default function Sidebar({
   activeTab,
@@ -22,6 +23,7 @@ export default function Sidebar({
     },
     { id: 'historial', label: 'Historial de Préstamos', icon: 'history_edu' },
     { id: 'noticias', label: 'Noticias & Cartelera', icon: 'newspaper' },
+    ...(user ? [{ id: 'perfil', label: 'Mi Perfil & Credencial', icon: 'badge' }] : []),
   ];
 
   return (
@@ -106,21 +108,24 @@ export default function Sidebar({
             <>
               <div className="my-1.5 border-t border-marble-border/70"></div>
               <div className={`p-2 rounded-xl bg-parchment-card border border-marble-border/80 flex flex-col gap-1.5 ${sidebarOpen ? '' : 'items-center'}`}>
-                <div className={`flex items-center gap-2 ${sidebarOpen ? '' : 'justify-center'}`}>
-                  <img
-                    src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"}
-                    alt={user.name}
-                    className="w-7 h-7 rounded-full object-cover ring-1 ring-gold-burnished/40 shrink-0"
-                  />
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('perfil')}
+                  title="Ver Mi Perfil y Credencial"
+                  className={`flex items-center gap-2 hover:opacity-90 transition-opacity text-left cursor-pointer group w-full ${sidebarOpen ? '' : 'justify-center'}`}
+                >
+                  <UserAvatar user={user} size="sm" showRoleBadge />
                   {sidebarOpen && (
                     <div className="flex flex-col min-w-0 flex-1">
-                      <span className="text-xs font-bold text-sepia-heading truncate">{user.name}</span>
+                      <span className="text-xs font-bold text-sepia-heading group-hover:text-gold-burnished transition-colors truncate">
+                        {user.name}
+                      </span>
                       <span className="text-[10px] text-gold-burnished font-semibold truncate">
                         {user.role === 'admin' ? 'Administrador' : `#${user.member_number}`}
                       </span>
                     </div>
                   )}
-                </div>
+                </button>
                 {onLogout && (
                   <button
                     onClick={onLogout}

@@ -343,6 +343,9 @@ func createTables(db *sql.DB) error {
 	// Completar domicilio de Rodrigo Pereyra si está en blanco
 	_, _ = db.Exec(Rebind("UPDATE users SET address = 'Ezequiel Paz 224, Temperley' WHERE LOWER(email) = 'rodrigopereyra02@gmail.com' AND (address IS NULL OR address = '')"))
 
+	// Limpiar fotos de personas falsas en avatares
+	_, _ = db.Exec(Rebind("UPDATE users SET avatar_url = '' WHERE avatar_url LIKE '%unsplash%'"))
+
 	if err := SeedAdminUser(db); err != nil {
 		fmt.Printf("Advertencia al sembrar admin: %v\n", err)
 	}
@@ -357,7 +360,7 @@ func SeedAdminUser(db *sql.DB) error {
 	adminName := "Administrador de Biblioteca"
 	adminMember := "ADMIN-001"
 	adminPhone := "+54 11 4244-0000"
-	adminAvatar := "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=256&q=80"
+	adminAvatar := ""
 
 	var count int
 	err := db.QueryRow(Rebind("SELECT COUNT(*) FROM users WHERE LOWER(email) = LOWER(?)"), adminEmail).Scan(&count)

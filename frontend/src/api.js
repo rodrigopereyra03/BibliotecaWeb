@@ -278,6 +278,32 @@ export const api = {
     return userWithToken;
   },
 
+  async updateProfile(profileData) {
+    const res = await fetch(`${API_BASE}/user/profile`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(profileData),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      throw new Error(data.error || 'Error al actualizar perfil');
+    }
+    if (data.user) {
+      const stored = localStorage.getItem('biblioteca_user');
+      const parsed = stored ? JSON.parse(stored) : {};
+      const updated = {
+        ...parsed,
+        ...data.user,
+        id: data.user.id || data.user.user_id || parsed.id,
+        user_id: data.user.user_id || data.user.id || parsed.user_id,
+        token: parsed.token,
+      };
+      localStorage.setItem('biblioteca_user', JSON.stringify(updated));
+      return updated;
+    }
+    return data;
+  },
+
   async logout() {
     localStorage.removeItem('biblioteca_user');
     localStorage.removeItem('biblioteca_backoffice');

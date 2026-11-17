@@ -188,6 +188,18 @@ func main() {
 	mux.HandleFunc("/api/user/me", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet {
 			handlers.GetCurrentUser(w, r)
+		} else if r.Method == http.MethodPut || r.Method == http.MethodPost {
+			handlers.UpdateUserProfile(w, r)
+		} else {
+			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
+		}
+	})
+
+	mux.HandleFunc("/api/user/profile", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPut || r.Method == http.MethodPost {
+			handlers.UpdateUserProfile(w, r)
+		} else if r.Method == http.MethodGet {
+			handlers.GetCurrentUser(w, r)
 		} else {
 			http.Error(w, "Método no permitido", http.StatusMethodNotAllowed)
 		}

@@ -1,4 +1,5 @@
 import React from 'react';
+import UserAvatar from './UserAvatar';
 
 export default function Header({
   searchTerm,
@@ -10,6 +11,7 @@ export default function Header({
   sidebarOpen = true,
   onToggleSidebar,
   onGoToBackoffice,
+  onGoToProfile,
   onLogout,
 }) {
   return (
@@ -90,19 +92,22 @@ export default function Header({
 
               {/* User Badge */}
               <div className="flex items-center gap-2.5 pl-2 border-l border-marble-border shrink-0">
-                <div className="flex flex-col text-right hidden sm:flex leading-tight">
-                  <span className="text-xs font-semibold text-sepia-heading whitespace-nowrap">
-                    {user.name}
-                  </span>
-                  <span className="text-[11px] text-gold-burnished font-medium whitespace-nowrap">
-                    {user.role === 'admin' ? 'Administrador' : `Credencial #${user.member_number}`}
-                  </span>
-                </div>
-                <img
-                  src={user.avatar_url || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80"}
-                  alt={user.name}
-                  className="w-9 h-9 rounded-full object-cover ring-2 ring-gold-burnished/40 shadow-xs shrink-0"
-                />
+                <button
+                  type="button"
+                  onClick={onGoToProfile}
+                  title="Ver Mi Perfil y Credencial"
+                  className="flex items-center gap-2.5 text-right hover:opacity-90 transition-opacity cursor-pointer group"
+                >
+                  <div className="flex flex-col text-right hidden sm:flex leading-tight">
+                    <span className="text-xs font-semibold text-sepia-heading group-hover:text-gold-burnished transition-colors whitespace-nowrap">
+                      {user.name}
+                    </span>
+                    <span className="text-[11px] text-gold-burnished font-medium whitespace-nowrap">
+                      {user.role === 'admin' ? 'Administrador' : `Credencial #${user.member_number}`}
+                    </span>
+                  </div>
+                  <UserAvatar user={user} size="md" showRoleBadge />
+                </button>
                 {onLogout && (
                   <button
                     onClick={onLogout}
