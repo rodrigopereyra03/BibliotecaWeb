@@ -77,15 +77,15 @@ export default function MisReservasView({
         <div className="absolute -left-10 -bottom-10 w-60 h-60 rounded-full bg-gold-burnished/10 blur-3xl pointer-events-none"></div>
         <div className="absolute right-1/4 -top-12 w-72 h-72 rounded-full bg-marian-blue/10 blur-3xl pointer-events-none"></div>
 
-        {/* Right side masked image */}
-        <div className="absolute right-0 top-0 bottom-0 w-[360px] xl:w-[400px] pointer-events-none select-none overflow-hidden hidden xl:block">
+        {/* Right side prominent image with soft edge fade */}
+        <div className="absolute right-0 top-0 bottom-0 w-[440px] xl:w-[480px] pointer-events-none select-none overflow-hidden hidden xl:block">
           <img
             src={banner?.image_url || '/capilla-fachada.jpg'}
             alt="Capilla Nuestra Señora de Lourdes"
-            className="w-full h-full object-cover object-center opacity-85"
+            className="w-full h-full object-cover object-center opacity-95"
             style={{
-              maskImage: 'linear-gradient(to left, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0) 85%)',
-              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0) 85%)',
+              maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)',
+              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)',
             }}
           />
           <div className="absolute bottom-3 right-5 px-3 py-1 rounded-full bg-stone-900/85 backdrop-blur-md border border-white/20 flex items-center gap-1.5 shadow-xs">
@@ -96,7 +96,7 @@ export default function MisReservasView({
           </div>
         </div>
 
-        <div className="relative z-10 flex flex-col gap-5 max-w-[70%] lg:max-w-[65%] xl:max-w-[66%]">
+        <div className="relative z-10 flex flex-col gap-5 max-w-[58%] lg:max-w-[54%] xl:max-w-[52%]">
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2 flex-wrap">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm border border-marble-border shadow-2xs">

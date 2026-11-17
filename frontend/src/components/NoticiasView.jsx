@@ -46,15 +46,15 @@ export default function NoticiasView({ news, loading, onGoToCatalog, banner }) {
         <div className="absolute -left-12 -bottom-12 w-64 h-64 rounded-full bg-gold-burnished/10 blur-3xl pointer-events-none"></div>
         <div className="absolute right-1/3 -top-16 w-80 h-80 rounded-full bg-marian-blue/10 blur-3xl pointer-events-none"></div>
 
-        {/* Right side masked image */}
-        <div className="absolute right-0 top-0 bottom-0 w-[360px] xl:w-[400px] pointer-events-none select-none overflow-hidden hidden xl:block">
+        {/* Right side prominent image with soft edge fade */}
+        <div className="absolute right-0 top-0 bottom-0 w-[460px] xl:w-[500px] pointer-events-none select-none overflow-hidden hidden xl:block">
           <img
             src={banner?.image_url || '/hero-titus.jpg'}
             alt="Patrono del Saber y la Comunicación"
-            className="w-full h-full object-cover object-top opacity-85 transition-opacity"
+            className="w-full h-full object-cover object-top opacity-95 transition-opacity"
             style={{
-              maskImage: 'linear-gradient(to left, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0) 85%)',
-              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0) 85%)',
+              maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)',
+              WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)',
             }}
           />
           <div className="absolute bottom-3 right-5 px-3 py-1 rounded-full bg-stone-900/85 backdrop-blur-md border border-white/20 flex items-center gap-1.5 shadow-xs">
@@ -65,7 +65,7 @@ export default function NoticiasView({ news, loading, onGoToCatalog, banner }) {
           </div>
         </div>
 
-        <div className="relative z-10 flex flex-col gap-4 max-w-[70%] lg:max-w-[65%] xl:max-w-[66%]">
+        <div className="relative z-10 flex flex-col gap-4 max-w-[58%] lg:max-w-[54%] xl:max-w-[52%]">
           <div className="flex flex-col gap-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm border border-marble-border shadow-2xs w-max">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>

@@ -440,19 +440,19 @@ export default function CatalogoView({
         ></div>
         <div className="absolute right-1/3 -top-16 w-80 h-80 rounded-full bg-amber-500/10 blur-3xl pointer-events-none"></div>
 
-        {/* Hero Image (Editorial fade blend) */}
-        <div className="absolute right-0 top-0 bottom-0 w-[360px] xl:w-[400px] pointer-events-none select-none overflow-hidden hidden xl:block">
+        {/* Hero Image (Editorial prominent display with soft edge fade) */}
+        <div className="absolute right-0 top-0 bottom-0 w-[460px] xl:w-[520px] pointer-events-none select-none overflow-hidden hidden xl:block">
           {heroSlides.map((slide, idx) => (
             <img
               key={slide.id}
               src={slide.image}
               alt={slide.imageAlt}
               className={`absolute inset-0 w-full h-full object-cover ${slide.imagePosition} transition-opacity duration-700 ${
-                idx === currentSlide ? 'opacity-90' : 'opacity-0'
+                idx === currentSlide ? 'opacity-95' : 'opacity-0'
               }`}
               style={{
-                maskImage: 'linear-gradient(to left, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0) 85%)',
-                WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,0.95) 25%, rgba(0,0,0,0) 85%)',
+                maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)',
+                WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 72%, rgba(0,0,0,0) 100%)',
               }}
             />
           ))}
@@ -464,8 +464,8 @@ export default function CatalogoView({
           </div>
         </div>
 
-        {/* Slide Content (Limit to 65% width to avoid touching image/face) */}
-        <div className="relative z-10 flex flex-col gap-4 max-w-[70%] lg:max-w-[65%] xl:max-w-[66%] mb-6">
+        {/* Slide Content (Contained to 52% so it never overlaps the photo) */}
+        <div className="relative z-10 flex flex-col gap-4 max-w-[58%] lg:max-w-[54%] xl:max-w-[52%] mb-6">
           <div className="flex flex-col gap-2">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/95 backdrop-blur-sm border border-marble-border shadow-2xs w-max transition-all">
               <span className="w-1.5 h-1.5 rounded-full bg-gold-burnished"></span>
