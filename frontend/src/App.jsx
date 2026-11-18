@@ -512,6 +512,7 @@ export default function App() {
               setSearchTerm={setSearchTerm}
               onReserveSuccess={handleReserveSuccess}
               banners={banners}
+              stats={stats}
             />
           )}
 

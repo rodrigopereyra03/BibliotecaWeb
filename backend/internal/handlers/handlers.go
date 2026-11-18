@@ -47,7 +47,7 @@ func GetBooks(w http.ResponseWriter, r *http.Request) {
 	if format == "physical" {
 		baseQuery += ` AND (format = 'physical' OR format = 'both')`
 	} else if format == "digital" {
-		baseQuery += ` AND (format = 'digital' OR format = 'both' OR has_digital = 1)`
+		baseQuery += ` AND (format = 'digital' OR format = 'both' OR has_digital = TRUE)`
 	}
 
 	baseQuery += ` ORDER BY featured DESC, rating DESC, id ASC`

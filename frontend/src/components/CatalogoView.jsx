@@ -12,6 +12,7 @@ export default function CatalogoView({
   setSearchTerm,
   onReserveSuccess,
   banners,
+  stats,
 }) {
   const toast = useToast();
   const [selectedBook, setSelectedBook] = useState(null);
@@ -170,19 +171,33 @@ export default function CatalogoView({
     'Historia & Biografías',
   ];
 
-  const physicalBooksCount = (books || []).filter(
-    (b) => b.format === 'physical' || b.format === 'both' || b.format === 'Físico' || b.format === 'Ambos' || !b.format
-  ).length;
+  const physicalBooksCount = stats?.physical_books !== undefined
+    ? stats.physical_books
+    : (books || []).filter(
+        (b) => b.format === 'physical' || b.format === 'both' || b.format === 'Físico' || b.format === 'Ambos' || !b.format
+      ).length;
 
-  const digitalBooksCount = (books || []).filter(
-    (b) => b.has_digital || b.format === 'digital' || b.format === 'both' || b.format === 'Digital' || b.format === 'Ambos' || Boolean(b.digital_url)
-  ).length;
+  const digitalBooksCount = stats?.digital_books !== undefined
+    ? stats.digital_books
+    : (books || []).filter(
+        (b) => b.has_digital || b.format === 'digital' || b.format === 'both' || b.format === 'Digital' || b.format === 'Ambos' || Boolean(b.digital_url)
+      ).length;
 
+  const totalBooksCount = stats?.total_books !== undefined
+    ? stats.total_books
+    : (books || []).length;
+
+  // Sincronizar libro seleccionado cuando cambia la lista de libros (ej. al alternar entre físicos y digitales)
   useEffect(() => {
-    if (books && books.length > 0 && !selectedBook) {
-      const first = books[0];
-      setSelectedBook(first);
-      setActiveTabMode(first.format === 'digital' ? 'digital' : 'physical');
+    if (books && books.length > 0) {
+      const exists = selectedBook && books.some((b) => b.id === selectedBook.id);
+      if (!exists) {
+        const first = books[0];
+        setSelectedBook(first);
+        setActiveTabMode(first.format === 'digital' ? 'digital' : 'physical');
+      }
+    } else if (books && books.length === 0) {
+      setSelectedBook(null);
     }
   }, [books]);
 
@@ -332,7 +347,7 @@ export default function CatalogoView({
             }`}
           >
             <span className="material-symbols-outlined text-sm">menu_book</span>
-            <span>Todos ({books.length})</span>
+            <span>Todos ({totalBooksCount})</span>
           </button>
           <button
             type="button"
@@ -344,7 +359,7 @@ export default function CatalogoView({
             }`}
           >
             <span className="material-symbols-outlined text-sm">import_contacts</span>
-            <span>Libros Físicos</span>
+            <span>Libros Físicos ({physicalBooksCount})</span>
           </button>
           <button
             type="button"
@@ -356,7 +371,7 @@ export default function CatalogoView({
             }`}
           >
             <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
-            <span>Descarga PDF</span>
+            <span>Descarga PDF ({digitalBooksCount})</span>
           </button>
           {categories.filter((c) => c !== 'Todas las Categorías').map((cat) => (
             <button
@@ -579,7 +594,7 @@ export default function CatalogoView({
                     : 'text-warm-charcoal hover:text-sepia-ink'
                 }`}
               >
-                Todos ({books.length})
+                Todos ({totalBooksCount})
               </button>
               <button
                 type="button"
