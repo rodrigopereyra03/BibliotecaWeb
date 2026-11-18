@@ -400,7 +400,10 @@ export default function CatalogoView({
               <span className="text-[10px] uppercase tracking-wider text-warm-charcoal font-semibold">Edición Destacada</span>
             </div>
 
-            <div className="bg-white rounded-xl p-3.5 border border-marble-border shadow-xs flex flex-col gap-3 relative overflow-hidden">
+            <div
+              onClick={() => handleSelectBook(featuredBook, featuredBook.format === 'digital' ? 'digital' : 'physical')}
+              className="bg-white rounded-xl p-3.5 border border-marble-border hover:border-gold-burnished/60 shadow-xs flex flex-col gap-3 relative overflow-hidden cursor-pointer active:scale-[0.99] transition-all"
+            >
               <div className="flex gap-3 items-start">
                 <div className="relative w-20 h-28 rounded-lg overflow-hidden shrink-0 shadow-sm border border-marble-border bg-parchment-surface">
                   <img
@@ -440,7 +443,10 @@ export default function CatalogoView({
 
               <button
                 type="button"
-                onClick={() => handleSelectBook(featuredBook, featuredBook.format === 'digital' ? 'digital' : 'physical')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleSelectBook(featuredBook, featuredBook.format === 'digital' ? 'digital' : 'physical');
+                }}
                 className={`w-full py-2 px-3 rounded-lg font-bold text-xs shadow-xs flex items-center justify-center gap-1.5 transition-all ${
                   featuredBook.format === 'digital'
                     ? 'bg-marian-blue hover:bg-blue-900 text-white'
@@ -1028,8 +1034,8 @@ export default function CatalogoView({
               return (
                 <div
                   key={b.id}
-                  onClick={() => handleSelectBook(b)}
-                  className="bg-white rounded-xl p-3 border border-marble-border shadow-2xs hover:shadow-xs transition-all flex gap-3 items-center cursor-pointer active:scale-[0.99]"
+                  onClick={() => handleSelectBook(b, b.format === 'digital' ? 'digital' : 'physical')}
+                  className="bg-white rounded-xl p-3 border border-marble-border hover:border-gold-burnished/60 shadow-2xs hover:shadow-xs transition-all flex gap-3 items-center cursor-pointer active:scale-[0.99]"
                 >
                   <div className="relative w-16 h-22 rounded-md overflow-hidden bg-parchment-surface border border-marble-border shrink-0">
                     <img
@@ -1103,7 +1109,8 @@ export default function CatalogoView({
               return (
                 <div
                   key={b.id}
-                  className="book-card group relative rounded-xl bg-parchment-card hover:bg-white p-4 border border-marble-border shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+                  onClick={() => handleSelectBook(b, b.format === 'digital' ? 'digital' : 'physical')}
+                  className="book-card group relative rounded-xl bg-parchment-card hover:bg-white p-4 border border-marble-border hover:border-gold-burnished/60 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between cursor-pointer active:scale-[0.99]"
                 >
                   <div className="flex flex-col gap-3">
                     <div className="relative w-full h-56 rounded-lg overflow-hidden bg-parchment-surface border border-marble-border/60 shadow-xs flex items-center justify-center">
@@ -1174,7 +1181,10 @@ export default function CatalogoView({
                     {b.format === 'digital' ? (
                       <button
                         type="button"
-                        onClick={() => handleSelectBook(b, 'digital')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectBook(b, 'digital');
+                        }}
                         className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded bg-marian-blue hover:bg-blue-900 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
                       >
                         <span className="material-symbols-outlined text-sm">download</span>
@@ -1183,7 +1193,10 @@ export default function CatalogoView({
                     ) : (
                       <button
                         type="button"
-                        onClick={() => handleSelectBook(b, 'physical')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleSelectBook(b, 'physical');
+                        }}
                         className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded bg-gold-burnished hover:bg-gold-accent text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
                       >
                         <span className="material-symbols-outlined text-sm">bookmark_add</span>

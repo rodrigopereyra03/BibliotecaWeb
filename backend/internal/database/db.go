@@ -349,6 +349,23 @@ func createTables(db *sql.DB) error {
 	// Asegurar que libros digitales no tengan copias físicas ni ubicación de estantería
 	_, _ = db.Exec(Rebind("UPDATE books SET total_copies = 0, available_copies = 0, location = 'Repositorio Digital (PDF)' WHERE format = 'digital'"))
 
+	// Reparación integral de acentos y caracteres UTF-8 en libros
+	_, _ = db.Exec(Rebind(`UPDATE books SET 
+		title = 'Harry Potter y la piedra filosofal',
+		genre = 'Misterio & Suspenso',
+		synopsis = 'Harry Potter y la piedra filosofal es la primera novela de la famosa saga literaria de fantasía escrita por la autora británica J. K. Rowling. Publicado originalmente en 1997, el libro narra el descubrimiento de un mundo oculto de magia y el inicio de la lucha entre el bien y el mal desde la perspectiva de un niño huérfano.',
+		location = 'Columna 2A · Fila 1'
+		WHERE id = 1`))
+
+	_, _ = db.Exec(Rebind(`UPDATE books SET 
+		title = 'El regreso del hijo pródigo',
+		genre = 'Novela Histórica',
+		synopsis = 'El regreso del hijo pródigo es una de las parábolas más conocidas del Evangelio de Lucas, que dio origen a célebres obras en la historia del arte y la literatura espiritual. El relato narra el perdón incondicional de un padre hacia su hijo menor tras haber malgastado toda su herencia.',
+		location = 'Repositorio Digital (PDF)'
+		WHERE id = 2`))
+
+	_, _ = db.Exec(Rebind(`UPDATE books SET genre = 'Novela Histórica' WHERE genre LIKE '%Hist%rica%'`))
+
 	if err := SeedAdminUser(db); err != nil {
 		fmt.Printf("Advertencia al sembrar admin: %v\n", err)
 	}
