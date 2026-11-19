@@ -13,6 +13,9 @@ export default function CatalogoView({
   onReserveSuccess,
   banners,
   stats,
+  user,
+  onGoToLogin,
+  onGoToRegister,
 }) {
   const toast = useToast();
   const [selectedBook, setSelectedBook] = useState(null);
@@ -21,7 +24,10 @@ export default function CatalogoView({
   const [activeTabMode, setActiveTabMode] = useState('physical');
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const workbenchRef = useRef(null);
+
+  const isAuthenticated = Boolean(user && (user.id || user.user_id));
 
   // Generar próximos días disponibles de retiro en biblioteca (Lunes a Domingo)
   const upcomingDays = React.useMemo(() => {
@@ -225,6 +231,11 @@ export default function CatalogoView({
 
   const handleConfirmReservation = async () => {
     if (!selectedBook) return;
+    if (!isAuthenticated) {
+      setShowAuthModal(true);
+      toast.warning('Para reservar un libro físico necesitás iniciar sesión o registrarte como lector.', 'Identificación Requerida');
+      return;
+    }
     setReserving(true);
     const chosenDay = upcomingDays[selectedDayIndex] || upcomingDays[0];
     const fullPickupSlot = `${chosenDay.dayName} ${chosenDay.date.getDate()}/${chosenDay.date.getMonth() + 1} · ${selectedShiftId}`;
@@ -446,17 +457,23 @@ export default function CatalogoView({
                 onClick={(e) => {
                   e.stopPropagation();
                   handleSelectBook(featuredBook, featuredBook.format === 'digital' ? 'digital' : 'physical');
+                  if (featuredBook.format === 'digital' && !isAuthenticated) {
+                    setShowAuthModal(true);
+                    toast.warning('Para descargar o leer este libro en PDF debés iniciar sesión o registrarte.', 'Acceso Requerido');
+                  }
                 }}
-                className={`w-full py-2 px-3 rounded-lg font-bold text-xs shadow-xs flex items-center justify-center gap-1.5 transition-all ${
+                className={`w-full py-2 px-3 rounded-lg font-bold text-xs shadow-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                   featuredBook.format === 'digital'
                     ? 'bg-marian-blue hover:bg-blue-900 text-white'
                     : 'bg-gold-burnished hover:bg-gold-accent text-white'
                 }`}
               >
                 <span className="material-symbols-outlined text-sm">
-                  {featuredBook.format === 'digital' ? 'download' : 'bookmark_add'}
+                  {featuredBook.format === 'digital' ? (isAuthenticated ? 'download' : 'lock') : 'bookmark_add'}
                 </span>
-                {featuredBook.format === 'digital' ? 'Leer / Descargar PDF' : 'Apartar para Retiro'}
+                {featuredBook.format === 'digital'
+                  ? (isAuthenticated ? 'Leer / Descargar PDF' : 'Descargar PDF (Requiere Cuenta)')
+                  : 'Apartar para Retiro'}
               </button>
             </div>
           </section>
@@ -924,44 +941,97 @@ export default function CatalogoView({
                 ) : (
                   <div className="p-6 sm:p-8 rounded-xl bg-white border border-marble-border shadow-xs flex flex-col gap-5 text-center items-center">
                     <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-200 text-marian-blue flex items-center justify-center shadow-xs">
-                      <span className="material-symbols-outlined text-3xl">picture_as_pdf</span>
+                      <span className="material-symbols-outlined text-3xl">
+                        {isAuthenticated ? 'picture_as_pdf' : 'lock'}
+                      </span>
                     </div>
 
                     <div className="max-w-lg">
                       <span className="px-3 py-1 rounded-full bg-blue-50 text-marian-blue text-xs uppercase tracking-wider font-bold border border-blue-200 inline-block mb-2">
-                        Edición Digital Comunitaria · Acceso Inmediato
+                        {isAuthenticated ? 'Edición Digital Comunitaria · Acceso Inmediato' : 'Edición Digital Protegida · Acceso Miembros'}
                       </span>
                       <h4 className="text-xl sm:text-2xl font-bold font-display text-sepia-heading">
                         Lectura y Descarga Directa
                       </h4>
                       <p className="text-xs sm:text-sm text-warm-charcoal mt-2 leading-relaxed">
-                        Este libro se encuentra disponible en formato digital (PDF) para toda la comunidad de la Capilla Ntra. Sra. de Lourdes. <strong>No requiere retiro físico ni reserva presencial en el despacho</strong>: podés descargarlo a tu dispositivo o leerlo online al instante.
+                        Este libro se encuentra disponible en formato digital (PDF) para la comunidad de lectores de la Capilla Ntra. Sra. de Lourdes. <strong>No requiere retiro físico ni reserva presencial en el despacho</strong>.
                       </p>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-md pt-1">
+                    <div className="w-full max-w-md pt-1">
                       {selectedBook.digital_url ? (
-                        <>
-                          <a
-                            href={selectedBook.digital_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            download
-                            className="w-full sm:w-auto px-6 py-3 rounded-xl bg-marian-blue hover:bg-blue-900 text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer flex-1"
-                          >
-                            <span className="material-symbols-outlined text-lg">download</span>
-                            <span>Descargar PDF</span>
-                          </a>
-                          <a
-                            href={selectedBook.digital_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="w-full sm:w-auto px-5 py-3 rounded-xl bg-parchment-surface hover:bg-parchment-card border border-marble-border text-sepia-heading text-xs sm:text-sm font-bold shadow-xs hover:border-gold-burnished/50 transition-all flex items-center justify-center gap-2 cursor-pointer"
-                          >
-                            <span className="material-symbols-outlined text-lg">chrome_reader_mode</span>
-                            <span>Leer Online</span>
-                          </a>
-                        </>
+                        isAuthenticated ? (
+                          <div className="flex flex-col items-center gap-3 w-full">
+                            <div className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold">
+                              <span className="material-symbols-outlined text-sm text-emerald-600">verified</span>
+                              <span>Descarga habilitada para <strong>{user?.name || user?.email}</strong></span>
+                            </div>
+                            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full">
+                              <a
+                                href={selectedBook.digital_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                download
+                                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-marian-blue hover:bg-blue-900 text-white text-xs sm:text-sm font-bold shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer flex-1"
+                              >
+                                <span className="material-symbols-outlined text-lg">download</span>
+                                <span>Descargar PDF</span>
+                              </a>
+                              <a
+                                href={selectedBook.digital_url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-parchment-surface hover:bg-parchment-card border border-marble-border text-sepia-heading text-xs sm:text-sm font-bold shadow-xs hover:border-gold-burnished/50 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                              >
+                                <span className="material-symbols-outlined text-lg">chrome_reader_mode</span>
+                                <span>Leer Online</span>
+                              </a>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="w-full p-5 rounded-2xl bg-amber-50/70 border border-gold-burnished/30 shadow-xs flex flex-col items-center gap-3 text-center">
+                            <div className="w-10 h-10 rounded-full bg-white border border-gold-burnished/30 text-gold-burnished flex items-center justify-center shadow-2xs">
+                              <span className="material-symbols-outlined text-xl">lock</span>
+                            </div>
+                            <div className="flex flex-col gap-1 max-w-sm">
+                              <h5 className="text-sm font-bold font-display text-sepia-heading">
+                                Descarga Exclusiva para Lectores Registrados
+                              </h5>
+                              <p className="text-xs text-warm-charcoal leading-relaxed">
+                                Para descargar este ejemplar en PDF o leerlo online necesitás iniciar sesión con tu cuenta o registrarte gratis como miembro de la comunidad.
+                              </p>
+                            </div>
+                            <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full justify-center pt-1 max-w-xs">
+                              <button
+                                type="button"
+                                onClick={onGoToLogin}
+                                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gold-burnished hover:bg-gold-accent text-white text-xs font-bold shadow-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer flex-1"
+                              >
+                                <span className="material-symbols-outlined text-sm">login</span>
+                                Iniciar Sesión
+                              </button>
+                              <button
+                                type="button"
+                                onClick={onGoToRegister}
+                                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-white hover:bg-parchment-surface border border-gold-burnished/40 text-sepia-heading hover:text-gold-burnished text-xs font-bold shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer flex-1"
+                              >
+                                <span className="material-symbols-outlined text-sm">person_add</span>
+                                Registrarse
+                              </button>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowAuthModal(true);
+                                toast.warning('Para descargar o leer este libro en PDF debés iniciar sesión o registrarte.', 'Acceso Requerido');
+                              }}
+                              className="mt-1 text-[11px] text-marian-blue hover:text-blue-900 font-semibold underline cursor-pointer flex items-center gap-1"
+                            >
+                              <span className="material-symbols-outlined text-xs">info</span>
+                              ¿Por qué es necesario registrarse?
+                            </button>
+                          </div>
+                        )
                       ) : (
                         <div className="p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-800 text-xs">
                           El archivo PDF de este título se encuentra en proceso de carga.
@@ -1070,7 +1140,7 @@ export default function CatalogoView({
                       {b.format === 'digital' ? (
                         <span className="text-marian-blue font-semibold flex items-center gap-1">
                           <span className="w-1.5 h-1.5 rounded-full bg-marian-blue"></span>
-                          Descarga Libre
+                          {isAuthenticated ? 'Descarga Habilitada' : 'Exclusivo Socios'}
                         </span>
                       ) : (
                         <span className={isAvailable ? 'text-green-700 font-semibold' : 'text-terracotta font-semibold'}>
@@ -1085,16 +1155,24 @@ export default function CatalogoView({
                     onClick={(e) => {
                       e.stopPropagation();
                       handleSelectBook(b, b.format === 'digital' ? 'digital' : 'physical');
+                      if (b.format === 'digital' && !isAuthenticated) {
+                        setShowAuthModal(true);
+                        toast.warning('Para descargar o leer este libro en PDF debés iniciar sesión o registrarte.', 'Acceso Requerido');
+                      }
                     }}
                     className={`w-8 h-8 rounded-full border flex items-center justify-center shrink-0 transition-colors ${
                       b.format === 'digital'
                         ? 'bg-blue-50 border-blue-200 text-marian-blue hover:bg-marian-blue hover:text-white'
                         : 'bg-gold-light border-gold-burnished/30 text-gold-burnished hover:bg-gold-burnished hover:text-white'
                     }`}
-                    title={b.format === 'digital' ? 'Leer / Descargar PDF' : 'Reservar Ejemplar'}
+                    title={
+                      b.format === 'digital'
+                        ? (isAuthenticated ? 'Leer / Descargar PDF' : 'Requiere Iniciar Sesión para Descargar')
+                        : 'Reservar Ejemplar'
+                    }
                   >
                     <span className="material-symbols-outlined text-base">
-                      {b.format === 'digital' ? 'download' : 'bookmark_add'}
+                      {b.format === 'digital' ? (isAuthenticated ? 'download' : 'lock') : 'bookmark_add'}
                     </span>
                   </button>
                 </div>
@@ -1161,7 +1239,9 @@ export default function CatalogoView({
                     {b.format === 'digital' ? (
                       <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-blue-50 border border-blue-200 text-xs">
                         <span className="w-1.5 h-1.5 rounded-full bg-marian-blue"></span>
-                        <span className="text-xs text-marian-blue font-semibold">Descarga Libre</span>
+                        <span className="text-xs text-marian-blue font-semibold">
+                          {isAuthenticated ? 'Descarga Habilitada' : 'Exclusivo Socios'}
+                        </span>
                         <span className="text-[11px] text-marian-blue font-bold ml-auto">PDF Online</span>
                       </div>
                     ) : (
@@ -1184,11 +1264,17 @@ export default function CatalogoView({
                         onClick={(e) => {
                           e.stopPropagation();
                           handleSelectBook(b, 'digital');
+                          if (!isAuthenticated) {
+                            setShowAuthModal(true);
+                            toast.warning('Para descargar o leer este libro en PDF debés iniciar sesión o registrarte.', 'Acceso Requerido');
+                          }
                         }}
                         className="w-full inline-flex items-center justify-center gap-1.5 py-2 px-3 rounded bg-marian-blue hover:bg-blue-900 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
                       >
-                        <span className="material-symbols-outlined text-sm">download</span>
-                        Leer / Descargar PDF
+                        <span className="material-symbols-outlined text-sm">
+                          {isAuthenticated ? 'download' : 'lock'}
+                        </span>
+                        {isAuthenticated ? 'Leer / Descargar PDF' : 'Descargar PDF (Acceso Socios)'}
                       </button>
                     ) : (
                       <button
@@ -1209,6 +1295,78 @@ export default function CatalogoView({
             })}
           </div>
         </>
+      )}
+
+      {/* MODAL DE IDENTIFICACIÓN REQUERIDA (DESCARGA DIGITAL O RESERVA) */}
+      {showAuthModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl max-w-md w-full border border-marble-border shadow-2xl p-6 relative flex flex-col items-center text-center gap-4">
+            <button
+              type="button"
+              onClick={() => setShowAuthModal(false)}
+              className="absolute top-4 right-4 text-warm-charcoal hover:text-sepia-heading cursor-pointer p-1 rounded-full hover:bg-parchment-base transition-colors"
+              title="Cerrar"
+            >
+              <span className="material-symbols-outlined text-lg">close</span>
+            </button>
+
+            <div className="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-200 text-marian-blue flex items-center justify-center shadow-xs">
+              <span className="material-symbols-outlined text-3xl">lock_person</span>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-gold-burnished">
+                Biblioteca Popular San Tito Brandsma
+              </span>
+              <h3 className="text-xl font-bold font-display text-sepia-heading">
+                Identificación Requerida
+              </h3>
+              <p className="text-xs text-warm-charcoal leading-relaxed mt-1">
+                Para descargar o leer online en formato PDF{' '}
+                {selectedBook ? (
+                  <strong className="text-sepia-heading">«{selectedBook.title}»</strong>
+                ) : (
+                  'ejemplares digitales'
+                )}
+                , debés tener una cuenta de lector e iniciar sesión. La inscripción es 100% gratuita y abierta a toda la comunidad.
+              </p>
+            </div>
+
+            <div className="w-full flex flex-col gap-2 pt-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAuthModal(false);
+                  if (onGoToLogin) onGoToLogin();
+                }}
+                className="w-full py-2.5 px-4 rounded-xl bg-gold-burnished hover:bg-gold-accent text-white font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-base">login</span>
+                Iniciar Sesión
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAuthModal(false);
+                  if (onGoToRegister) onGoToRegister();
+                }}
+                className="w-full py-2.5 px-4 rounded-xl bg-marian-blue hover:bg-blue-900 text-white font-bold text-xs sm:text-sm shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <span className="material-symbols-outlined text-base">person_add</span>
+                Registrarse Gratis como Lector
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setShowAuthModal(false)}
+                className="w-full py-2 px-4 rounded-xl bg-parchment-surface hover:bg-parchment-card text-warm-charcoal font-medium text-xs transition-all cursor-pointer mt-1"
+              >
+                Continuar Explorando Catálogo
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

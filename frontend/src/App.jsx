@@ -272,9 +272,14 @@ export default function App() {
 
   // Handle reserve action from Public Catalog
   const handleReserveSuccess = async (reservationData) => {
+    if (!user) {
+      toast.warning('Para reservar un libro físico necesitás iniciar sesión o registrarte como lector.', 'Acceso Requerido');
+      setActiveTab('login');
+      return;
+    }
     const newReservation = await api.createReservation({
       ...reservationData,
-      user_id: user?.id || 1,
+      user_id: user.id || user.user_id,
     });
     await Promise.all([loadReservations(), loadBooks(), loadStats()]);
     setActivePassModal(newReservation);
@@ -513,6 +518,9 @@ export default function App() {
               onReserveSuccess={handleReserveSuccess}
               banners={banners}
               stats={stats}
+              user={user}
+              onGoToLogin={() => setActiveTab('login')}
+              onGoToRegister={() => setActiveTab('registro')}
             />
           )}
 
